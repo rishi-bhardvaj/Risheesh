@@ -1,0 +1,150 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../features/ai/presentation/ai_screen.dart';
+import '../../features/career/presentation/application_details_screen.dart';
+import '../../features/career/presentation/career_profile_view.dart';
+import '../../features/career/presentation/career_screen.dart';
+import '../../features/career/presentation/job_details_screen.dart';
+import '../../features/home/presentation/home_screen.dart';
+import '../../features/onboarding/presentation/onboarding_screen.dart';
+import '../../features/onboarding/providers/onboarding_provider.dart';
+import '../../features/settings/presentation/settings_screen.dart';
+import '../../features/track/presentation/track_screen.dart';
+import '../../features/work/presentation/eod_history_screen.dart';
+import '../../features/work/presentation/project_details_screen.dart';
+import '../../features/work/presentation/work_note_details_screen.dart';
+import '../../features/work/presentation/work_screen.dart';
+import '../../shared/widgets/app_scaffold.dart';
+
+final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+final _homeNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'home');
+final _careerNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'career');
+final _workNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'work');
+final _trackNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'track');
+final _aiNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'ai');
+
+final routerProvider = Provider<GoRouter>((ref) {
+  final isOnboardingCompleted = ref.watch(onboardingCompletedProvider);
+
+  return GoRouter(
+    navigatorKey: _rootNavigatorKey,
+    initialLocation: isOnboardingCompleted ? '/home' : '/onboarding',
+    redirect: (context, state) {
+      final isGoingToOnboarding = state.matchedLocation == '/onboarding';
+
+      if (!isOnboardingCompleted && !isGoingToOnboarding) {
+        return '/onboarding';
+      }
+      if (isOnboardingCompleted && isGoingToOnboarding) {
+        return '/home';
+      }
+      return null;
+    },
+    routes: [
+      GoRoute(
+        path: '/onboarding',
+        builder: (context, state) => const OnboardingScreen(),
+      ),
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) {
+          return AppScaffold(navigationShell: navigationShell);
+        },
+        branches: [
+          // Branch 1: Home
+          StatefulShellBranch(
+            navigatorKey: _homeNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/home',
+                builder: (context, state) => const HomeScreen(),
+              ),
+            ],
+          ),
+          // Branch 2: Career
+          StatefulShellBranch(
+            navigatorKey: _careerNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/career',
+                builder: (context, state) => const CareerScreen(),
+              ),
+            ],
+          ),
+          // Branch 3: Work
+          StatefulShellBranch(
+            navigatorKey: _workNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/work',
+                builder: (context, state) => const WorkScreen(),
+              ),
+            ],
+          ),
+          // Branch 4: Track
+          StatefulShellBranch(
+            navigatorKey: _trackNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/track',
+                builder: (context, state) => const TrackScreen(),
+              ),
+            ],
+          ),
+          // Branch 5: AI
+          StatefulShellBranch(
+            navigatorKey: _aiNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/ai',
+                builder: (context, state) => const AIScreen(),
+              ),
+            ],
+          ),
+        ],
+      ),
+      // Settings route (accessible from any screen's AppBar)
+      // Deep Sub-Routes with Root Navigator Key
+      // Career Deep Routes
+      GoRoute(
+        path: '/career/job/:id',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => JobDetailsScreen(jobId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: '/career/application/:id',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => ApplicationDetailsScreen(applicationId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: '/career/profile',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const CareerProfileView(),
+      ),
+      // Work Deep Routes
+      GoRoute(
+        path: '/work/project/:id',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => ProjectDetailsScreen(projectId: state.pathParameters['id']!),
+      ),
+      // Settings route
+      GoRoute(
+        path: '/work/note/:id',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => WorkNoteDetailsScreen(noteId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: '/work/eod-history',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const EODHistoryScreen(),
+      ),
+      // Settings Route
+      GoRoute(
+        path: '/settings',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const SettingsScreen(),
+      ),
+    ],
+  );
+});
+
