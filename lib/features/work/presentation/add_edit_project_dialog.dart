@@ -7,8 +7,17 @@ import '../providers/work_providers.dart';
 
 class AddEditProjectDialog extends ConsumerStatefulWidget {
   final Project? existingProject;
+  final String? initialClientId;
+  final String? initialNotes;
+  final bool isFreelance;
 
-  const AddEditProjectDialog({super.key, this.existingProject});
+  const AddEditProjectDialog({
+    super.key,
+    this.existingProject,
+    this.initialClientId,
+    this.initialNotes,
+    this.isFreelance = false,
+  });
 
   @override
   ConsumerState<AddEditProjectDialog> createState() => _AddEditProjectDialogState();
@@ -36,7 +45,7 @@ class _AddEditProjectDialogState extends ConsumerState<AddEditProjectDialog> {
     _techStackController = TextEditingController(text: p?.techStack ?? '');
     _githubController = TextEditingController(text: p?.githubUrl ?? '');
     _liveUrlController = TextEditingController(text: p?.liveUrl ?? '');
-    _notesController = TextEditingController(text: p?.notes ?? '');
+    _notesController = TextEditingController(text: p?.notes ?? widget.initialNotes ?? '');
     _status = ProjectStatus.fromString(p?.status);
     _progress = p?.progress ?? 0.2;
     _deadline = p?.deadline;
@@ -71,6 +80,8 @@ class _AddEditProjectDialogState extends ConsumerState<AddEditProjectDialog> {
           liveUrl: _liveUrlController.text,
           deadline: _deadline,
           notes: _notesController.text,
+          clientId: widget.existingProject!.clientId ?? widget.initialClientId,
+          isFreelance: widget.existingProject!.isFreelance,
         );
       } else {
         await repo.addProject(
@@ -83,6 +94,8 @@ class _AddEditProjectDialogState extends ConsumerState<AddEditProjectDialog> {
           liveUrl: _liveUrlController.text,
           deadline: _deadline,
           notes: _notesController.text,
+          clientId: widget.initialClientId,
+          isFreelance: widget.isFreelance,
         );
       }
       if (mounted) {

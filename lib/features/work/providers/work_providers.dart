@@ -417,6 +417,9 @@ class WorkRepository {
     String? liveUrl,
     DateTime? deadline,
     String? notes,
+    String? clientId,
+    String? leadId,
+    bool isFreelance = false,
   }) async {
     final now = DateTime.now();
     final companion = ProjectsCompanion(
@@ -430,6 +433,9 @@ class WorkRepository {
       liveUrl: Value(liveUrl?.trim().isEmpty == true ? null : liveUrl?.trim()),
       deadline: Value(deadline),
       notes: Value(notes?.trim().isEmpty == true ? null : notes?.trim()),
+      clientId: Value(clientId),
+      leadId: Value(leadId),
+      isFreelance: Value(isFreelance),
       createdAt: Value(now),
       updatedAt: Value(now),
     );
@@ -447,6 +453,9 @@ class WorkRepository {
     String? liveUrl,
     DateTime? deadline,
     String? notes,
+    String? clientId,
+    String? leadId,
+    bool? isFreelance,
   }) async {
     final companion = ProjectsCompanion(
       id: Value(id),
@@ -459,6 +468,9 @@ class WorkRepository {
       liveUrl: Value(liveUrl?.trim().isEmpty == true ? null : liveUrl?.trim()),
       deadline: Value(deadline),
       notes: Value(notes?.trim().isEmpty == true ? null : notes?.trim()),
+      clientId: clientId != null ? Value(clientId) : const Value.absent(),
+      leadId: leadId != null ? Value(leadId) : const Value.absent(),
+      isFreelance: isFreelance != null ? Value(isFreelance) : const Value.absent(),
       updatedAt: Value(DateTime.now()),
     );
     await db.updateProject(companion);

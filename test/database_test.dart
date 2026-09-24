@@ -481,4 +481,244 @@ void main() {
       expect(remaining.first.id, 'note-1');
     });
   });
+
+  group('Phase 4 Freelance Module Database & Flow Tests', () {
+    test('Client CRM creation, retrieval, update, and deletion', () async {
+      final now = DateTime.now();
+
+      final client1 = ClientsCompanion(
+        id: const Value('client-1'),
+        name: const Value('Apex Fintech Inc'),
+        contactName: const Value('Sarah Jenkins'),
+        email: const Value('sarah@apexfintech.io'),
+        phone: const Value('+1-555-0199'),
+        platform: const Value('Direct'),
+        location: const Value('San Francisco, USA'),
+        status: const Value('ACTIVE'),
+        notes: const Value('Specializes in real-time settlement rails'),
+        createdAt: Value(now),
+        updatedAt: Value(now),
+      );
+
+      await db.insertClient(client1);
+
+      final retrieved = await db.getClientById('client-1');
+      expect(retrieved != null, true);
+      expect(retrieved!.name, 'Apex Fintech Inc');
+      expect(retrieved.contactName, 'Sarah Jenkins');
+      expect(retrieved.status, 'ACTIVE');
+
+      // Update client
+      await db.updateClient(client1.copyWith(
+        status: const Value('INACTIVE'),
+        notes: const Value('Project completed successfully. Retainer on hold.'),
+        updatedAt: Value(DateTime.now()),
+      ));
+
+      final updated = await db.getClientById('client-1');
+      expect(updated!.status, 'INACTIVE');
+      expect(updated.notes, 'Project completed successfully. Retainer on hold.');
+
+      // Query all clients
+      var allClients = await db.getAllClients();
+      expect(allClients.length, 1);
+
+      // Delete client
+      await db.deleteClient('client-1');
+      allClients = await db.getAllClients();
+      expect(allClients.isEmpty, true);
+    });
+
+    test('Freelance Lead pipeline progression, proposal drafting, and follow-ups', () async {
+      final now = DateTime.now();
+
+      final lead = FreelanceLeadsCompanion(
+        id: const Value('lead-101'),
+        title: const Value('High-Throughput Matching Engine (Go / Flutter UI)'),
+        clientName: const Value('CryptoTrading Co'),
+        contactName: const Value('Alex Rivera'),
+        contactInfo: const Value('alex@cryptotrading.co / Telegram: @alex_crypto'),
+        platform: const Value('Upwork'),
+        description: const Value('We need a real-time order matching engine with low latency.'),
+        skills: const Value('Go, WebSockets, Flutter, Redis'),
+        budget: const Value(5000.0),
+        currency: const Value('USD'),
+        url: const Value('https://upwork.com/jobs/~01abc'),
+        status: const Value('NEW_LEAD'),
+        proposal: const Value(''),
+        followUpDate: Value(now.add(const Duration(days: 2))),
+        deadline: Value(now.add(const Duration(days: 30))),
+        createdAt: Value(now),
+        updatedAt: Value(now),
+      );
+
+      await db.insertLead(lead);
+
+      var fetchedLead = await db.getLeadById('lead-101');
+      expect(fetchedLead != null, true);
+      expect(fetchedLead!.status, 'NEW_LEAD');
+      expect(fetchedLead.budget, 5000.0);
+      expect(fetchedLead.currency, 'USD');
+
+      // Move lead to PROPOSAL_SENT and save proposal draft
+      await db.updateLead(lead.copyWith(
+        status: const Value('PROPOSAL_SENT'),
+        proposal: const Value('Proposal: I will design the WebSocket engine using Go and Flutter frontend...'),
+        updatedAt: Value(DateTime.now()),
+      ));
+
+      fetchedLead = await db.getLeadById('lead-101');
+      expect(fetchedLead!.status, 'PROPOSAL_SENT');
+      expect(fetchedLead.proposal!.contains('Proposal: I will design'), true);
+
+      // Advance to WON
+      await db.updateLead(lead.copyWith(
+        status: const Value('WON'),
+        updatedAt: Value(DateTime.now()),
+      ));
+
+      fetchedLead = await db.getLeadById('lead-101');
+      expect(fetchedLead!.status, 'WON');
+    });
+
+    test('Lead conversion into Client and Freelance Project linking', () async {
+      final now = DateTime.now();
+
+      // Insert won lead
+      await db.insertLead(FreelanceLeadsCompanion(
+        id: const Value('lead-202'),
+        title: const Value('Flutter Mobile POS Application'),
+        clientName: const Value('RetailNext Ltd'),
+        contactName: const Value('Michael Scott'),
+        contactInfo: const Value('mscott@retailnext.com'),
+        platform: const Value('LinkedIn'),
+        budget: const Value(3500.0),
+        currency: const Value('USD'),
+        status: const Value('WON'),
+        createdAt: Value(now),
+        updatedAt: Value(now),
+      ));
+
+      // Convert to Client
+      final clientComp = ClientsCompanion(
+        id: const Value('client-202'),
+        name: const Value('RetailNext Ltd'),
+        contactName: const Value('Michael Scott'),
+        email: const Value('mscott@retailnext.com'),
+        platform: const Value('LinkedIn'),
+        status: const Value('ACTIVE'),
+        createdAt: Value(now),
+        updatedAt: Value(now),
+      );
+      await db.insertClient(clientComp);
+
+      // Link won lead to new client
+      await db.updateLead((await db.getLeadById('lead-202'))!.toCompanion(false).copyWith(
+        clientId: const Value('client-202'),
+      ));
+
+      // Create linked Freelance Project
+      final projectComp = ProjectsCompanion(
+        id: const Value('proj-freelance-1'),
+        name: const Value('RetailNext Mobile POS'),
+        description: const Value('Cross-platform Flutter POS with offline-first Drift DB and Bluetooth printer support'),
+        status: const Value('in_progress'),
+        progress: const Value(0.25),
+        techStack: const Value('Flutter, Drift, Bluetooth ESC/POS'),
+        clientId: const Value('client-202'),
+        leadId: const Value('lead-202'),
+        isFreelance: const Value(true),
+        createdAt: Value(now),
+        updatedAt: Value(now),
+      );
+      await db.insertProject(projectComp);
+
+      // Verify Project Linking
+      final proj = await (db.select(db.projects)..where((p) => p.id.equals('proj-freelance-1'))).getSingle();
+      expect(proj.isFreelance, true);
+      expect(proj.clientId, 'client-202');
+      expect(proj.leadId, 'lead-202');
+
+      // Verify querying projects for this client
+      final clientProjects = await db.getProjectsByClientId('client-202');
+      expect(clientProjects.length, 1);
+      expect(clientProjects.first.name, 'RetailNext Mobile POS');
+    });
+
+    test('Freelance Milestone Payments tracking and revenue calculation', () async {
+      final now = DateTime.now();
+
+      await db.insertClient(ClientsCompanion(
+        id: const Value('client-303'),
+        name: const Value('Nova AI Labs'),
+        status: const Value('ACTIVE'),
+        createdAt: Value(now),
+        updatedAt: Value(now),
+      ));
+
+      // Create milestone 1 (INVOICED)
+      final pay1 = FreelancePaymentsCompanion(
+        id: const Value('pay-1'),
+        clientId: const Value('client-303'),
+        description: const Value('Sprint 1: Architecture & Auth'),
+        amount: const Value(1500.0),
+        currency: const Value('USD'),
+        status: const Value('INVOICED'),
+        paymentDate: Value(now.add(const Duration(days: 7))),
+        createdAt: Value(now),
+        updatedAt: Value(now),
+      );
+
+      // Create milestone 2 (EXPECTED)
+      final pay2 = FreelancePaymentsCompanion(
+        id: const Value('pay-2'),
+        clientId: const Value('client-303'),
+        description: const Value('Sprint 2: Core Dashboard & Export'),
+        amount: const Value(2000.0),
+        currency: const Value('USD'),
+        status: const Value('EXPECTED'),
+        paymentDate: Value(now.add(const Duration(days: 21))),
+        createdAt: Value(now),
+        updatedAt: Value(now),
+      );
+
+      await db.insertPayment(pay1);
+      await db.insertPayment(pay2);
+
+      var payments = await db.getAllPayments();
+      expect(payments.length, 2);
+
+      // Mark payment 1 as RECEIVED
+      await db.updatePayment(pay1.copyWith(
+        status: const Value('RECEIVED'),
+        paymentDate: Value(DateTime.now()),
+        updatedAt: Value(DateTime.now()),
+      ));
+
+      final updatedPay1 = await db.getPaymentById('pay-1');
+      expect(updatedPay1!.status, 'RECEIVED');
+
+      // Verify revenue calculations
+      payments = await db.getAllPayments();
+      final totalReceived = payments
+          .where((p) => p.status.toUpperCase() == 'RECEIVED')
+          .fold<double>(0.0, (sum, p) => sum + p.amount);
+      final totalPending = payments
+          .where((p) => p.status.toUpperCase() == 'INVOICED' || p.status.toUpperCase() == 'EXPECTED')
+          .fold<double>(0.0, (sum, p) => sum + p.amount);
+
+      expect(totalReceived, 1500.0);
+      expect(totalPending, 2000.0);
+
+      // Query payments by client
+      final clientPayments = await db.getPaymentsByClientId('client-303');
+      expect(clientPayments.length, 2);
+
+      // Delete payment
+      await db.deletePayment('pay-2');
+      payments = await db.getAllPayments();
+      expect(payments.length, 1);
+      expect(payments.first.id, 'pay-1');
+    });
+  });
 }

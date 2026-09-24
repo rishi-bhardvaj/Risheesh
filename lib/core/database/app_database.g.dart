@@ -1034,6 +1034,1926 @@ class UserProfilesCompanion extends UpdateCompanion<UserProfile> {
   }
 }
 
+class $ClientsTable extends Clients with TableInfo<$ClientsTable, Client> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ClientsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 1,
+      maxTextLength: 150,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _contactNameMeta = const VerificationMeta(
+    'contactName',
+  );
+  @override
+  late final GeneratedColumn<String> contactName = GeneratedColumn<String>(
+    'contact_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _emailMeta = const VerificationMeta('email');
+  @override
+  late final GeneratedColumn<String> email = GeneratedColumn<String>(
+    'email',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _phoneMeta = const VerificationMeta('phone');
+  @override
+  late final GeneratedColumn<String> phone = GeneratedColumn<String>(
+    'phone',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _platformMeta = const VerificationMeta(
+    'platform',
+  );
+  @override
+  late final GeneratedColumn<String> platform = GeneratedColumn<String>(
+    'platform',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _locationMeta = const VerificationMeta(
+    'location',
+  );
+  @override
+  late final GeneratedColumn<String> location = GeneratedColumn<String>(
+    'location',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('PROSPECT'),
+  );
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    name,
+    contactName,
+    email,
+    phone,
+    platform,
+    location,
+    status,
+    notes,
+    createdAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'clients';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Client> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('contact_name')) {
+      context.handle(
+        _contactNameMeta,
+        contactName.isAcceptableOrUnknown(
+          data['contact_name']!,
+          _contactNameMeta,
+        ),
+      );
+    }
+    if (data.containsKey('email')) {
+      context.handle(
+        _emailMeta,
+        email.isAcceptableOrUnknown(data['email']!, _emailMeta),
+      );
+    }
+    if (data.containsKey('phone')) {
+      context.handle(
+        _phoneMeta,
+        phone.isAcceptableOrUnknown(data['phone']!, _phoneMeta),
+      );
+    }
+    if (data.containsKey('platform')) {
+      context.handle(
+        _platformMeta,
+        platform.isAcceptableOrUnknown(data['platform']!, _platformMeta),
+      );
+    }
+    if (data.containsKey('location')) {
+      context.handle(
+        _locationMeta,
+        location.isAcceptableOrUnknown(data['location']!, _locationMeta),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Client map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Client(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      contactName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}contact_name'],
+      ),
+      email: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}email'],
+      ),
+      phone: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}phone'],
+      ),
+      platform: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}platform'],
+      ),
+      location: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}location'],
+      ),
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $ClientsTable createAlias(String alias) {
+    return $ClientsTable(attachedDatabase, alias);
+  }
+}
+
+class Client extends DataClass implements Insertable<Client> {
+  final String id;
+  final String name;
+  final String? contactName;
+  final String? email;
+  final String? phone;
+  final String? platform;
+  final String? location;
+  final String status;
+  final String? notes;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const Client({
+    required this.id,
+    required this.name,
+    this.contactName,
+    this.email,
+    this.phone,
+    this.platform,
+    this.location,
+    required this.status,
+    this.notes,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['name'] = Variable<String>(name);
+    if (!nullToAbsent || contactName != null) {
+      map['contact_name'] = Variable<String>(contactName);
+    }
+    if (!nullToAbsent || email != null) {
+      map['email'] = Variable<String>(email);
+    }
+    if (!nullToAbsent || phone != null) {
+      map['phone'] = Variable<String>(phone);
+    }
+    if (!nullToAbsent || platform != null) {
+      map['platform'] = Variable<String>(platform);
+    }
+    if (!nullToAbsent || location != null) {
+      map['location'] = Variable<String>(location);
+    }
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  ClientsCompanion toCompanion(bool nullToAbsent) {
+    return ClientsCompanion(
+      id: Value(id),
+      name: Value(name),
+      contactName: contactName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(contactName),
+      email: email == null && nullToAbsent
+          ? const Value.absent()
+          : Value(email),
+      phone: phone == null && nullToAbsent
+          ? const Value.absent()
+          : Value(phone),
+      platform: platform == null && nullToAbsent
+          ? const Value.absent()
+          : Value(platform),
+      location: location == null && nullToAbsent
+          ? const Value.absent()
+          : Value(location),
+      status: Value(status),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory Client.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Client(
+      id: serializer.fromJson<String>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      contactName: serializer.fromJson<String?>(json['contactName']),
+      email: serializer.fromJson<String?>(json['email']),
+      phone: serializer.fromJson<String?>(json['phone']),
+      platform: serializer.fromJson<String?>(json['platform']),
+      location: serializer.fromJson<String?>(json['location']),
+      status: serializer.fromJson<String>(json['status']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'name': serializer.toJson<String>(name),
+      'contactName': serializer.toJson<String?>(contactName),
+      'email': serializer.toJson<String?>(email),
+      'phone': serializer.toJson<String?>(phone),
+      'platform': serializer.toJson<String?>(platform),
+      'location': serializer.toJson<String?>(location),
+      'status': serializer.toJson<String>(status),
+      'notes': serializer.toJson<String?>(notes),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  Client copyWith({
+    String? id,
+    String? name,
+    Value<String?> contactName = const Value.absent(),
+    Value<String?> email = const Value.absent(),
+    Value<String?> phone = const Value.absent(),
+    Value<String?> platform = const Value.absent(),
+    Value<String?> location = const Value.absent(),
+    String? status,
+    Value<String?> notes = const Value.absent(),
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => Client(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    contactName: contactName.present ? contactName.value : this.contactName,
+    email: email.present ? email.value : this.email,
+    phone: phone.present ? phone.value : this.phone,
+    platform: platform.present ? platform.value : this.platform,
+    location: location.present ? location.value : this.location,
+    status: status ?? this.status,
+    notes: notes.present ? notes.value : this.notes,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  Client copyWithCompanion(ClientsCompanion data) {
+    return Client(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      contactName: data.contactName.present
+          ? data.contactName.value
+          : this.contactName,
+      email: data.email.present ? data.email.value : this.email,
+      phone: data.phone.present ? data.phone.value : this.phone,
+      platform: data.platform.present ? data.platform.value : this.platform,
+      location: data.location.present ? data.location.value : this.location,
+      status: data.status.present ? data.status.value : this.status,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Client(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('contactName: $contactName, ')
+          ..write('email: $email, ')
+          ..write('phone: $phone, ')
+          ..write('platform: $platform, ')
+          ..write('location: $location, ')
+          ..write('status: $status, ')
+          ..write('notes: $notes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    name,
+    contactName,
+    email,
+    phone,
+    platform,
+    location,
+    status,
+    notes,
+    createdAt,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Client &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.contactName == this.contactName &&
+          other.email == this.email &&
+          other.phone == this.phone &&
+          other.platform == this.platform &&
+          other.location == this.location &&
+          other.status == this.status &&
+          other.notes == this.notes &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class ClientsCompanion extends UpdateCompanion<Client> {
+  final Value<String> id;
+  final Value<String> name;
+  final Value<String?> contactName;
+  final Value<String?> email;
+  final Value<String?> phone;
+  final Value<String?> platform;
+  final Value<String?> location;
+  final Value<String> status;
+  final Value<String?> notes;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const ClientsCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.contactName = const Value.absent(),
+    this.email = const Value.absent(),
+    this.phone = const Value.absent(),
+    this.platform = const Value.absent(),
+    this.location = const Value.absent(),
+    this.status = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ClientsCompanion.insert({
+    required String id,
+    required String name,
+    this.contactName = const Value.absent(),
+    this.email = const Value.absent(),
+    this.phone = const Value.absent(),
+    this.platform = const Value.absent(),
+    this.location = const Value.absent(),
+    this.status = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       name = Value(name);
+  static Insertable<Client> custom({
+    Expression<String>? id,
+    Expression<String>? name,
+    Expression<String>? contactName,
+    Expression<String>? email,
+    Expression<String>? phone,
+    Expression<String>? platform,
+    Expression<String>? location,
+    Expression<String>? status,
+    Expression<String>? notes,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (contactName != null) 'contact_name': contactName,
+      if (email != null) 'email': email,
+      if (phone != null) 'phone': phone,
+      if (platform != null) 'platform': platform,
+      if (location != null) 'location': location,
+      if (status != null) 'status': status,
+      if (notes != null) 'notes': notes,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ClientsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? name,
+    Value<String?>? contactName,
+    Value<String?>? email,
+    Value<String?>? phone,
+    Value<String?>? platform,
+    Value<String?>? location,
+    Value<String>? status,
+    Value<String?>? notes,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return ClientsCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      contactName: contactName ?? this.contactName,
+      email: email ?? this.email,
+      phone: phone ?? this.phone,
+      platform: platform ?? this.platform,
+      location: location ?? this.location,
+      status: status ?? this.status,
+      notes: notes ?? this.notes,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (contactName.present) {
+      map['contact_name'] = Variable<String>(contactName.value);
+    }
+    if (email.present) {
+      map['email'] = Variable<String>(email.value);
+    }
+    if (phone.present) {
+      map['phone'] = Variable<String>(phone.value);
+    }
+    if (platform.present) {
+      map['platform'] = Variable<String>(platform.value);
+    }
+    if (location.present) {
+      map['location'] = Variable<String>(location.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ClientsCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('contactName: $contactName, ')
+          ..write('email: $email, ')
+          ..write('phone: $phone, ')
+          ..write('platform: $platform, ')
+          ..write('location: $location, ')
+          ..write('status: $status, ')
+          ..write('notes: $notes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $FreelanceLeadsTable extends FreelanceLeads
+    with TableInfo<$FreelanceLeadsTable, FreelanceLead> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $FreelanceLeadsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _clientIdMeta = const VerificationMeta(
+    'clientId',
+  );
+  @override
+  late final GeneratedColumn<String> clientId = GeneratedColumn<String>(
+    'client_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES clients (id) ON DELETE SET NULL',
+    ),
+  );
+  static const VerificationMeta _projectIdMeta = const VerificationMeta(
+    'projectId',
+  );
+  @override
+  late final GeneratedColumn<String> projectId = GeneratedColumn<String>(
+    'project_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES projects (id) ON DELETE SET NULL',
+    ),
+  );
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 1,
+      maxTextLength: 200,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _clientNameMeta = const VerificationMeta(
+    'clientName',
+  );
+  @override
+  late final GeneratedColumn<String> clientName = GeneratedColumn<String>(
+    'client_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _contactNameMeta = const VerificationMeta(
+    'contactName',
+  );
+  @override
+  late final GeneratedColumn<String> contactName = GeneratedColumn<String>(
+    'contact_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _contactInfoMeta = const VerificationMeta(
+    'contactInfo',
+  );
+  @override
+  late final GeneratedColumn<String> contactInfo = GeneratedColumn<String>(
+    'contact_info',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _platformMeta = const VerificationMeta(
+    'platform',
+  );
+  @override
+  late final GeneratedColumn<String> platform = GeneratedColumn<String>(
+    'platform',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _descriptionMeta = const VerificationMeta(
+    'description',
+  );
+  @override
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+    'description',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _skillsMeta = const VerificationMeta('skills');
+  @override
+  late final GeneratedColumn<String> skills = GeneratedColumn<String>(
+    'skills',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _budgetMeta = const VerificationMeta('budget');
+  @override
+  late final GeneratedColumn<double> budget = GeneratedColumn<double>(
+    'budget',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _currencyMeta = const VerificationMeta(
+    'currency',
+  );
+  @override
+  late final GeneratedColumn<String> currency = GeneratedColumn<String>(
+    'currency',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('USD'),
+  );
+  static const VerificationMeta _urlMeta = const VerificationMeta('url');
+  @override
+  late final GeneratedColumn<String> url = GeneratedColumn<String>(
+    'url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('NEW_LEAD'),
+  );
+  static const VerificationMeta _proposalMeta = const VerificationMeta(
+    'proposal',
+  );
+  @override
+  late final GeneratedColumn<String> proposal = GeneratedColumn<String>(
+    'proposal',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _deadlineMeta = const VerificationMeta(
+    'deadline',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deadline = GeneratedColumn<DateTime>(
+    'deadline',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _followUpDateMeta = const VerificationMeta(
+    'followUpDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> followUpDate = GeneratedColumn<DateTime>(
+    'follow_up_date',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _followUpNoteMeta = const VerificationMeta(
+    'followUpNote',
+  );
+  @override
+  late final GeneratedColumn<String> followUpNote = GeneratedColumn<String>(
+    'follow_up_note',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _nextActionMeta = const VerificationMeta(
+    'nextAction',
+  );
+  @override
+  late final GeneratedColumn<String> nextAction = GeneratedColumn<String>(
+    'next_action',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _leadDateMeta = const VerificationMeta(
+    'leadDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> leadDate = GeneratedColumn<DateTime>(
+    'lead_date',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    clientId,
+    projectId,
+    title,
+    clientName,
+    contactName,
+    contactInfo,
+    platform,
+    description,
+    skills,
+    budget,
+    currency,
+    url,
+    status,
+    proposal,
+    deadline,
+    followUpDate,
+    followUpNote,
+    nextAction,
+    notes,
+    leadDate,
+    createdAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'freelance_leads';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<FreelanceLead> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('client_id')) {
+      context.handle(
+        _clientIdMeta,
+        clientId.isAcceptableOrUnknown(data['client_id']!, _clientIdMeta),
+      );
+    }
+    if (data.containsKey('project_id')) {
+      context.handle(
+        _projectIdMeta,
+        projectId.isAcceptableOrUnknown(data['project_id']!, _projectIdMeta),
+      );
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+        _titleMeta,
+        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('client_name')) {
+      context.handle(
+        _clientNameMeta,
+        clientName.isAcceptableOrUnknown(data['client_name']!, _clientNameMeta),
+      );
+    }
+    if (data.containsKey('contact_name')) {
+      context.handle(
+        _contactNameMeta,
+        contactName.isAcceptableOrUnknown(
+          data['contact_name']!,
+          _contactNameMeta,
+        ),
+      );
+    }
+    if (data.containsKey('contact_info')) {
+      context.handle(
+        _contactInfoMeta,
+        contactInfo.isAcceptableOrUnknown(
+          data['contact_info']!,
+          _contactInfoMeta,
+        ),
+      );
+    }
+    if (data.containsKey('platform')) {
+      context.handle(
+        _platformMeta,
+        platform.isAcceptableOrUnknown(data['platform']!, _platformMeta),
+      );
+    }
+    if (data.containsKey('description')) {
+      context.handle(
+        _descriptionMeta,
+        description.isAcceptableOrUnknown(
+          data['description']!,
+          _descriptionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('skills')) {
+      context.handle(
+        _skillsMeta,
+        skills.isAcceptableOrUnknown(data['skills']!, _skillsMeta),
+      );
+    }
+    if (data.containsKey('budget')) {
+      context.handle(
+        _budgetMeta,
+        budget.isAcceptableOrUnknown(data['budget']!, _budgetMeta),
+      );
+    }
+    if (data.containsKey('currency')) {
+      context.handle(
+        _currencyMeta,
+        currency.isAcceptableOrUnknown(data['currency']!, _currencyMeta),
+      );
+    }
+    if (data.containsKey('url')) {
+      context.handle(
+        _urlMeta,
+        url.isAcceptableOrUnknown(data['url']!, _urlMeta),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    if (data.containsKey('proposal')) {
+      context.handle(
+        _proposalMeta,
+        proposal.isAcceptableOrUnknown(data['proposal']!, _proposalMeta),
+      );
+    }
+    if (data.containsKey('deadline')) {
+      context.handle(
+        _deadlineMeta,
+        deadline.isAcceptableOrUnknown(data['deadline']!, _deadlineMeta),
+      );
+    }
+    if (data.containsKey('follow_up_date')) {
+      context.handle(
+        _followUpDateMeta,
+        followUpDate.isAcceptableOrUnknown(
+          data['follow_up_date']!,
+          _followUpDateMeta,
+        ),
+      );
+    }
+    if (data.containsKey('follow_up_note')) {
+      context.handle(
+        _followUpNoteMeta,
+        followUpNote.isAcceptableOrUnknown(
+          data['follow_up_note']!,
+          _followUpNoteMeta,
+        ),
+      );
+    }
+    if (data.containsKey('next_action')) {
+      context.handle(
+        _nextActionMeta,
+        nextAction.isAcceptableOrUnknown(data['next_action']!, _nextActionMeta),
+      );
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
+    if (data.containsKey('lead_date')) {
+      context.handle(
+        _leadDateMeta,
+        leadDate.isAcceptableOrUnknown(data['lead_date']!, _leadDateMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  FreelanceLead map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return FreelanceLead(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      clientId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}client_id'],
+      ),
+      projectId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}project_id'],
+      ),
+      title: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title'],
+      )!,
+      clientName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}client_name'],
+      ),
+      contactName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}contact_name'],
+      ),
+      contactInfo: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}contact_info'],
+      ),
+      platform: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}platform'],
+      ),
+      description: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}description'],
+      ),
+      skills: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}skills'],
+      ),
+      budget: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}budget'],
+      ),
+      currency: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}currency'],
+      )!,
+      url: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}url'],
+      ),
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      proposal: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}proposal'],
+      ),
+      deadline: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deadline'],
+      ),
+      followUpDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}follow_up_date'],
+      ),
+      followUpNote: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}follow_up_note'],
+      ),
+      nextAction: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}next_action'],
+      ),
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      leadDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}lead_date'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $FreelanceLeadsTable createAlias(String alias) {
+    return $FreelanceLeadsTable(attachedDatabase, alias);
+  }
+}
+
+class FreelanceLead extends DataClass implements Insertable<FreelanceLead> {
+  final String id;
+  final String? clientId;
+  final String? projectId;
+  final String title;
+  final String? clientName;
+  final String? contactName;
+  final String? contactInfo;
+  final String? platform;
+  final String? description;
+  final String? skills;
+  final double? budget;
+  final String currency;
+  final String? url;
+  final String status;
+  final String? proposal;
+  final DateTime? deadline;
+  final DateTime? followUpDate;
+  final String? followUpNote;
+  final String? nextAction;
+  final String? notes;
+  final DateTime? leadDate;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const FreelanceLead({
+    required this.id,
+    this.clientId,
+    this.projectId,
+    required this.title,
+    this.clientName,
+    this.contactName,
+    this.contactInfo,
+    this.platform,
+    this.description,
+    this.skills,
+    this.budget,
+    required this.currency,
+    this.url,
+    required this.status,
+    this.proposal,
+    this.deadline,
+    this.followUpDate,
+    this.followUpNote,
+    this.nextAction,
+    this.notes,
+    this.leadDate,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    if (!nullToAbsent || clientId != null) {
+      map['client_id'] = Variable<String>(clientId);
+    }
+    if (!nullToAbsent || projectId != null) {
+      map['project_id'] = Variable<String>(projectId);
+    }
+    map['title'] = Variable<String>(title);
+    if (!nullToAbsent || clientName != null) {
+      map['client_name'] = Variable<String>(clientName);
+    }
+    if (!nullToAbsent || contactName != null) {
+      map['contact_name'] = Variable<String>(contactName);
+    }
+    if (!nullToAbsent || contactInfo != null) {
+      map['contact_info'] = Variable<String>(contactInfo);
+    }
+    if (!nullToAbsent || platform != null) {
+      map['platform'] = Variable<String>(platform);
+    }
+    if (!nullToAbsent || description != null) {
+      map['description'] = Variable<String>(description);
+    }
+    if (!nullToAbsent || skills != null) {
+      map['skills'] = Variable<String>(skills);
+    }
+    if (!nullToAbsent || budget != null) {
+      map['budget'] = Variable<double>(budget);
+    }
+    map['currency'] = Variable<String>(currency);
+    if (!nullToAbsent || url != null) {
+      map['url'] = Variable<String>(url);
+    }
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || proposal != null) {
+      map['proposal'] = Variable<String>(proposal);
+    }
+    if (!nullToAbsent || deadline != null) {
+      map['deadline'] = Variable<DateTime>(deadline);
+    }
+    if (!nullToAbsent || followUpDate != null) {
+      map['follow_up_date'] = Variable<DateTime>(followUpDate);
+    }
+    if (!nullToAbsent || followUpNote != null) {
+      map['follow_up_note'] = Variable<String>(followUpNote);
+    }
+    if (!nullToAbsent || nextAction != null) {
+      map['next_action'] = Variable<String>(nextAction);
+    }
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    if (!nullToAbsent || leadDate != null) {
+      map['lead_date'] = Variable<DateTime>(leadDate);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  FreelanceLeadsCompanion toCompanion(bool nullToAbsent) {
+    return FreelanceLeadsCompanion(
+      id: Value(id),
+      clientId: clientId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(clientId),
+      projectId: projectId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(projectId),
+      title: Value(title),
+      clientName: clientName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(clientName),
+      contactName: contactName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(contactName),
+      contactInfo: contactInfo == null && nullToAbsent
+          ? const Value.absent()
+          : Value(contactInfo),
+      platform: platform == null && nullToAbsent
+          ? const Value.absent()
+          : Value(platform),
+      description: description == null && nullToAbsent
+          ? const Value.absent()
+          : Value(description),
+      skills: skills == null && nullToAbsent
+          ? const Value.absent()
+          : Value(skills),
+      budget: budget == null && nullToAbsent
+          ? const Value.absent()
+          : Value(budget),
+      currency: Value(currency),
+      url: url == null && nullToAbsent ? const Value.absent() : Value(url),
+      status: Value(status),
+      proposal: proposal == null && nullToAbsent
+          ? const Value.absent()
+          : Value(proposal),
+      deadline: deadline == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deadline),
+      followUpDate: followUpDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(followUpDate),
+      followUpNote: followUpNote == null && nullToAbsent
+          ? const Value.absent()
+          : Value(followUpNote),
+      nextAction: nextAction == null && nullToAbsent
+          ? const Value.absent()
+          : Value(nextAction),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      leadDate: leadDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(leadDate),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory FreelanceLead.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return FreelanceLead(
+      id: serializer.fromJson<String>(json['id']),
+      clientId: serializer.fromJson<String?>(json['clientId']),
+      projectId: serializer.fromJson<String?>(json['projectId']),
+      title: serializer.fromJson<String>(json['title']),
+      clientName: serializer.fromJson<String?>(json['clientName']),
+      contactName: serializer.fromJson<String?>(json['contactName']),
+      contactInfo: serializer.fromJson<String?>(json['contactInfo']),
+      platform: serializer.fromJson<String?>(json['platform']),
+      description: serializer.fromJson<String?>(json['description']),
+      skills: serializer.fromJson<String?>(json['skills']),
+      budget: serializer.fromJson<double?>(json['budget']),
+      currency: serializer.fromJson<String>(json['currency']),
+      url: serializer.fromJson<String?>(json['url']),
+      status: serializer.fromJson<String>(json['status']),
+      proposal: serializer.fromJson<String?>(json['proposal']),
+      deadline: serializer.fromJson<DateTime?>(json['deadline']),
+      followUpDate: serializer.fromJson<DateTime?>(json['followUpDate']),
+      followUpNote: serializer.fromJson<String?>(json['followUpNote']),
+      nextAction: serializer.fromJson<String?>(json['nextAction']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      leadDate: serializer.fromJson<DateTime?>(json['leadDate']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'clientId': serializer.toJson<String?>(clientId),
+      'projectId': serializer.toJson<String?>(projectId),
+      'title': serializer.toJson<String>(title),
+      'clientName': serializer.toJson<String?>(clientName),
+      'contactName': serializer.toJson<String?>(contactName),
+      'contactInfo': serializer.toJson<String?>(contactInfo),
+      'platform': serializer.toJson<String?>(platform),
+      'description': serializer.toJson<String?>(description),
+      'skills': serializer.toJson<String?>(skills),
+      'budget': serializer.toJson<double?>(budget),
+      'currency': serializer.toJson<String>(currency),
+      'url': serializer.toJson<String?>(url),
+      'status': serializer.toJson<String>(status),
+      'proposal': serializer.toJson<String?>(proposal),
+      'deadline': serializer.toJson<DateTime?>(deadline),
+      'followUpDate': serializer.toJson<DateTime?>(followUpDate),
+      'followUpNote': serializer.toJson<String?>(followUpNote),
+      'nextAction': serializer.toJson<String?>(nextAction),
+      'notes': serializer.toJson<String?>(notes),
+      'leadDate': serializer.toJson<DateTime?>(leadDate),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  FreelanceLead copyWith({
+    String? id,
+    Value<String?> clientId = const Value.absent(),
+    Value<String?> projectId = const Value.absent(),
+    String? title,
+    Value<String?> clientName = const Value.absent(),
+    Value<String?> contactName = const Value.absent(),
+    Value<String?> contactInfo = const Value.absent(),
+    Value<String?> platform = const Value.absent(),
+    Value<String?> description = const Value.absent(),
+    Value<String?> skills = const Value.absent(),
+    Value<double?> budget = const Value.absent(),
+    String? currency,
+    Value<String?> url = const Value.absent(),
+    String? status,
+    Value<String?> proposal = const Value.absent(),
+    Value<DateTime?> deadline = const Value.absent(),
+    Value<DateTime?> followUpDate = const Value.absent(),
+    Value<String?> followUpNote = const Value.absent(),
+    Value<String?> nextAction = const Value.absent(),
+    Value<String?> notes = const Value.absent(),
+    Value<DateTime?> leadDate = const Value.absent(),
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => FreelanceLead(
+    id: id ?? this.id,
+    clientId: clientId.present ? clientId.value : this.clientId,
+    projectId: projectId.present ? projectId.value : this.projectId,
+    title: title ?? this.title,
+    clientName: clientName.present ? clientName.value : this.clientName,
+    contactName: contactName.present ? contactName.value : this.contactName,
+    contactInfo: contactInfo.present ? contactInfo.value : this.contactInfo,
+    platform: platform.present ? platform.value : this.platform,
+    description: description.present ? description.value : this.description,
+    skills: skills.present ? skills.value : this.skills,
+    budget: budget.present ? budget.value : this.budget,
+    currency: currency ?? this.currency,
+    url: url.present ? url.value : this.url,
+    status: status ?? this.status,
+    proposal: proposal.present ? proposal.value : this.proposal,
+    deadline: deadline.present ? deadline.value : this.deadline,
+    followUpDate: followUpDate.present ? followUpDate.value : this.followUpDate,
+    followUpNote: followUpNote.present ? followUpNote.value : this.followUpNote,
+    nextAction: nextAction.present ? nextAction.value : this.nextAction,
+    notes: notes.present ? notes.value : this.notes,
+    leadDate: leadDate.present ? leadDate.value : this.leadDate,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  FreelanceLead copyWithCompanion(FreelanceLeadsCompanion data) {
+    return FreelanceLead(
+      id: data.id.present ? data.id.value : this.id,
+      clientId: data.clientId.present ? data.clientId.value : this.clientId,
+      projectId: data.projectId.present ? data.projectId.value : this.projectId,
+      title: data.title.present ? data.title.value : this.title,
+      clientName: data.clientName.present
+          ? data.clientName.value
+          : this.clientName,
+      contactName: data.contactName.present
+          ? data.contactName.value
+          : this.contactName,
+      contactInfo: data.contactInfo.present
+          ? data.contactInfo.value
+          : this.contactInfo,
+      platform: data.platform.present ? data.platform.value : this.platform,
+      description: data.description.present
+          ? data.description.value
+          : this.description,
+      skills: data.skills.present ? data.skills.value : this.skills,
+      budget: data.budget.present ? data.budget.value : this.budget,
+      currency: data.currency.present ? data.currency.value : this.currency,
+      url: data.url.present ? data.url.value : this.url,
+      status: data.status.present ? data.status.value : this.status,
+      proposal: data.proposal.present ? data.proposal.value : this.proposal,
+      deadline: data.deadline.present ? data.deadline.value : this.deadline,
+      followUpDate: data.followUpDate.present
+          ? data.followUpDate.value
+          : this.followUpDate,
+      followUpNote: data.followUpNote.present
+          ? data.followUpNote.value
+          : this.followUpNote,
+      nextAction: data.nextAction.present
+          ? data.nextAction.value
+          : this.nextAction,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      leadDate: data.leadDate.present ? data.leadDate.value : this.leadDate,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FreelanceLead(')
+          ..write('id: $id, ')
+          ..write('clientId: $clientId, ')
+          ..write('projectId: $projectId, ')
+          ..write('title: $title, ')
+          ..write('clientName: $clientName, ')
+          ..write('contactName: $contactName, ')
+          ..write('contactInfo: $contactInfo, ')
+          ..write('platform: $platform, ')
+          ..write('description: $description, ')
+          ..write('skills: $skills, ')
+          ..write('budget: $budget, ')
+          ..write('currency: $currency, ')
+          ..write('url: $url, ')
+          ..write('status: $status, ')
+          ..write('proposal: $proposal, ')
+          ..write('deadline: $deadline, ')
+          ..write('followUpDate: $followUpDate, ')
+          ..write('followUpNote: $followUpNote, ')
+          ..write('nextAction: $nextAction, ')
+          ..write('notes: $notes, ')
+          ..write('leadDate: $leadDate, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hashAll([
+    id,
+    clientId,
+    projectId,
+    title,
+    clientName,
+    contactName,
+    contactInfo,
+    platform,
+    description,
+    skills,
+    budget,
+    currency,
+    url,
+    status,
+    proposal,
+    deadline,
+    followUpDate,
+    followUpNote,
+    nextAction,
+    notes,
+    leadDate,
+    createdAt,
+    updatedAt,
+  ]);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is FreelanceLead &&
+          other.id == this.id &&
+          other.clientId == this.clientId &&
+          other.projectId == this.projectId &&
+          other.title == this.title &&
+          other.clientName == this.clientName &&
+          other.contactName == this.contactName &&
+          other.contactInfo == this.contactInfo &&
+          other.platform == this.platform &&
+          other.description == this.description &&
+          other.skills == this.skills &&
+          other.budget == this.budget &&
+          other.currency == this.currency &&
+          other.url == this.url &&
+          other.status == this.status &&
+          other.proposal == this.proposal &&
+          other.deadline == this.deadline &&
+          other.followUpDate == this.followUpDate &&
+          other.followUpNote == this.followUpNote &&
+          other.nextAction == this.nextAction &&
+          other.notes == this.notes &&
+          other.leadDate == this.leadDate &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class FreelanceLeadsCompanion extends UpdateCompanion<FreelanceLead> {
+  final Value<String> id;
+  final Value<String?> clientId;
+  final Value<String?> projectId;
+  final Value<String> title;
+  final Value<String?> clientName;
+  final Value<String?> contactName;
+  final Value<String?> contactInfo;
+  final Value<String?> platform;
+  final Value<String?> description;
+  final Value<String?> skills;
+  final Value<double?> budget;
+  final Value<String> currency;
+  final Value<String?> url;
+  final Value<String> status;
+  final Value<String?> proposal;
+  final Value<DateTime?> deadline;
+  final Value<DateTime?> followUpDate;
+  final Value<String?> followUpNote;
+  final Value<String?> nextAction;
+  final Value<String?> notes;
+  final Value<DateTime?> leadDate;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const FreelanceLeadsCompanion({
+    this.id = const Value.absent(),
+    this.clientId = const Value.absent(),
+    this.projectId = const Value.absent(),
+    this.title = const Value.absent(),
+    this.clientName = const Value.absent(),
+    this.contactName = const Value.absent(),
+    this.contactInfo = const Value.absent(),
+    this.platform = const Value.absent(),
+    this.description = const Value.absent(),
+    this.skills = const Value.absent(),
+    this.budget = const Value.absent(),
+    this.currency = const Value.absent(),
+    this.url = const Value.absent(),
+    this.status = const Value.absent(),
+    this.proposal = const Value.absent(),
+    this.deadline = const Value.absent(),
+    this.followUpDate = const Value.absent(),
+    this.followUpNote = const Value.absent(),
+    this.nextAction = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.leadDate = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  FreelanceLeadsCompanion.insert({
+    required String id,
+    this.clientId = const Value.absent(),
+    this.projectId = const Value.absent(),
+    required String title,
+    this.clientName = const Value.absent(),
+    this.contactName = const Value.absent(),
+    this.contactInfo = const Value.absent(),
+    this.platform = const Value.absent(),
+    this.description = const Value.absent(),
+    this.skills = const Value.absent(),
+    this.budget = const Value.absent(),
+    this.currency = const Value.absent(),
+    this.url = const Value.absent(),
+    this.status = const Value.absent(),
+    this.proposal = const Value.absent(),
+    this.deadline = const Value.absent(),
+    this.followUpDate = const Value.absent(),
+    this.followUpNote = const Value.absent(),
+    this.nextAction = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.leadDate = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       title = Value(title);
+  static Insertable<FreelanceLead> custom({
+    Expression<String>? id,
+    Expression<String>? clientId,
+    Expression<String>? projectId,
+    Expression<String>? title,
+    Expression<String>? clientName,
+    Expression<String>? contactName,
+    Expression<String>? contactInfo,
+    Expression<String>? platform,
+    Expression<String>? description,
+    Expression<String>? skills,
+    Expression<double>? budget,
+    Expression<String>? currency,
+    Expression<String>? url,
+    Expression<String>? status,
+    Expression<String>? proposal,
+    Expression<DateTime>? deadline,
+    Expression<DateTime>? followUpDate,
+    Expression<String>? followUpNote,
+    Expression<String>? nextAction,
+    Expression<String>? notes,
+    Expression<DateTime>? leadDate,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (clientId != null) 'client_id': clientId,
+      if (projectId != null) 'project_id': projectId,
+      if (title != null) 'title': title,
+      if (clientName != null) 'client_name': clientName,
+      if (contactName != null) 'contact_name': contactName,
+      if (contactInfo != null) 'contact_info': contactInfo,
+      if (platform != null) 'platform': platform,
+      if (description != null) 'description': description,
+      if (skills != null) 'skills': skills,
+      if (budget != null) 'budget': budget,
+      if (currency != null) 'currency': currency,
+      if (url != null) 'url': url,
+      if (status != null) 'status': status,
+      if (proposal != null) 'proposal': proposal,
+      if (deadline != null) 'deadline': deadline,
+      if (followUpDate != null) 'follow_up_date': followUpDate,
+      if (followUpNote != null) 'follow_up_note': followUpNote,
+      if (nextAction != null) 'next_action': nextAction,
+      if (notes != null) 'notes': notes,
+      if (leadDate != null) 'lead_date': leadDate,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  FreelanceLeadsCompanion copyWith({
+    Value<String>? id,
+    Value<String?>? clientId,
+    Value<String?>? projectId,
+    Value<String>? title,
+    Value<String?>? clientName,
+    Value<String?>? contactName,
+    Value<String?>? contactInfo,
+    Value<String?>? platform,
+    Value<String?>? description,
+    Value<String?>? skills,
+    Value<double?>? budget,
+    Value<String>? currency,
+    Value<String?>? url,
+    Value<String>? status,
+    Value<String?>? proposal,
+    Value<DateTime?>? deadline,
+    Value<DateTime?>? followUpDate,
+    Value<String?>? followUpNote,
+    Value<String?>? nextAction,
+    Value<String?>? notes,
+    Value<DateTime?>? leadDate,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return FreelanceLeadsCompanion(
+      id: id ?? this.id,
+      clientId: clientId ?? this.clientId,
+      projectId: projectId ?? this.projectId,
+      title: title ?? this.title,
+      clientName: clientName ?? this.clientName,
+      contactName: contactName ?? this.contactName,
+      contactInfo: contactInfo ?? this.contactInfo,
+      platform: platform ?? this.platform,
+      description: description ?? this.description,
+      skills: skills ?? this.skills,
+      budget: budget ?? this.budget,
+      currency: currency ?? this.currency,
+      url: url ?? this.url,
+      status: status ?? this.status,
+      proposal: proposal ?? this.proposal,
+      deadline: deadline ?? this.deadline,
+      followUpDate: followUpDate ?? this.followUpDate,
+      followUpNote: followUpNote ?? this.followUpNote,
+      nextAction: nextAction ?? this.nextAction,
+      notes: notes ?? this.notes,
+      leadDate: leadDate ?? this.leadDate,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (clientId.present) {
+      map['client_id'] = Variable<String>(clientId.value);
+    }
+    if (projectId.present) {
+      map['project_id'] = Variable<String>(projectId.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (clientName.present) {
+      map['client_name'] = Variable<String>(clientName.value);
+    }
+    if (contactName.present) {
+      map['contact_name'] = Variable<String>(contactName.value);
+    }
+    if (contactInfo.present) {
+      map['contact_info'] = Variable<String>(contactInfo.value);
+    }
+    if (platform.present) {
+      map['platform'] = Variable<String>(platform.value);
+    }
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
+    }
+    if (skills.present) {
+      map['skills'] = Variable<String>(skills.value);
+    }
+    if (budget.present) {
+      map['budget'] = Variable<double>(budget.value);
+    }
+    if (currency.present) {
+      map['currency'] = Variable<String>(currency.value);
+    }
+    if (url.present) {
+      map['url'] = Variable<String>(url.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (proposal.present) {
+      map['proposal'] = Variable<String>(proposal.value);
+    }
+    if (deadline.present) {
+      map['deadline'] = Variable<DateTime>(deadline.value);
+    }
+    if (followUpDate.present) {
+      map['follow_up_date'] = Variable<DateTime>(followUpDate.value);
+    }
+    if (followUpNote.present) {
+      map['follow_up_note'] = Variable<String>(followUpNote.value);
+    }
+    if (nextAction.present) {
+      map['next_action'] = Variable<String>(nextAction.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (leadDate.present) {
+      map['lead_date'] = Variable<DateTime>(leadDate.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FreelanceLeadsCompanion(')
+          ..write('id: $id, ')
+          ..write('clientId: $clientId, ')
+          ..write('projectId: $projectId, ')
+          ..write('title: $title, ')
+          ..write('clientName: $clientName, ')
+          ..write('contactName: $contactName, ')
+          ..write('contactInfo: $contactInfo, ')
+          ..write('platform: $platform, ')
+          ..write('description: $description, ')
+          ..write('skills: $skills, ')
+          ..write('budget: $budget, ')
+          ..write('currency: $currency, ')
+          ..write('url: $url, ')
+          ..write('status: $status, ')
+          ..write('proposal: $proposal, ')
+          ..write('deadline: $deadline, ')
+          ..write('followUpDate: $followUpDate, ')
+          ..write('followUpNote: $followUpNote, ')
+          ..write('nextAction: $nextAction, ')
+          ..write('notes: $notes, ')
+          ..write('leadDate: $leadDate, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -1147,6 +3067,47 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _clientIdMeta = const VerificationMeta(
+    'clientId',
+  );
+  @override
+  late final GeneratedColumn<String> clientId = GeneratedColumn<String>(
+    'client_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES clients (id) ON DELETE SET NULL',
+    ),
+  );
+  static const VerificationMeta _leadIdMeta = const VerificationMeta('leadId');
+  @override
+  late final GeneratedColumn<String> leadId = GeneratedColumn<String>(
+    'lead_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES freelance_leads (id) ON DELETE SET NULL',
+    ),
+  );
+  static const VerificationMeta _isFreelanceMeta = const VerificationMeta(
+    'isFreelance',
+  );
+  @override
+  late final GeneratedColumn<bool> isFreelance = GeneratedColumn<bool>(
+    'is_freelance',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_freelance" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -1183,6 +3144,9 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
     liveUrl,
     deadline,
     notes,
+    clientId,
+    leadId,
+    isFreelance,
     createdAt,
     updatedAt,
   ];
@@ -1262,6 +3226,27 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
         notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
       );
     }
+    if (data.containsKey('client_id')) {
+      context.handle(
+        _clientIdMeta,
+        clientId.isAcceptableOrUnknown(data['client_id']!, _clientIdMeta),
+      );
+    }
+    if (data.containsKey('lead_id')) {
+      context.handle(
+        _leadIdMeta,
+        leadId.isAcceptableOrUnknown(data['lead_id']!, _leadIdMeta),
+      );
+    }
+    if (data.containsKey('is_freelance')) {
+      context.handle(
+        _isFreelanceMeta,
+        isFreelance.isAcceptableOrUnknown(
+          data['is_freelance']!,
+          _isFreelanceMeta,
+        ),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -1323,6 +3308,18 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
         DriftSqlType.string,
         data['${effectivePrefix}notes'],
       ),
+      clientId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}client_id'],
+      ),
+      leadId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}lead_id'],
+      ),
+      isFreelance: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_freelance'],
+      )!,
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -1351,6 +3348,9 @@ class Project extends DataClass implements Insertable<Project> {
   final String? liveUrl;
   final DateTime? deadline;
   final String? notes;
+  final String? clientId;
+  final String? leadId;
+  final bool isFreelance;
   final DateTime createdAt;
   final DateTime updatedAt;
   const Project({
@@ -1364,6 +3364,9 @@ class Project extends DataClass implements Insertable<Project> {
     this.liveUrl,
     this.deadline,
     this.notes,
+    this.clientId,
+    this.leadId,
+    required this.isFreelance,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -1392,6 +3395,13 @@ class Project extends DataClass implements Insertable<Project> {
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
     }
+    if (!nullToAbsent || clientId != null) {
+      map['client_id'] = Variable<String>(clientId);
+    }
+    if (!nullToAbsent || leadId != null) {
+      map['lead_id'] = Variable<String>(leadId);
+    }
+    map['is_freelance'] = Variable<bool>(isFreelance);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
@@ -1421,6 +3431,13 @@ class Project extends DataClass implements Insertable<Project> {
       notes: notes == null && nullToAbsent
           ? const Value.absent()
           : Value(notes),
+      clientId: clientId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(clientId),
+      leadId: leadId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(leadId),
+      isFreelance: Value(isFreelance),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
     );
@@ -1442,6 +3459,9 @@ class Project extends DataClass implements Insertable<Project> {
       liveUrl: serializer.fromJson<String?>(json['liveUrl']),
       deadline: serializer.fromJson<DateTime?>(json['deadline']),
       notes: serializer.fromJson<String?>(json['notes']),
+      clientId: serializer.fromJson<String?>(json['clientId']),
+      leadId: serializer.fromJson<String?>(json['leadId']),
+      isFreelance: serializer.fromJson<bool>(json['isFreelance']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
@@ -1460,6 +3480,9 @@ class Project extends DataClass implements Insertable<Project> {
       'liveUrl': serializer.toJson<String?>(liveUrl),
       'deadline': serializer.toJson<DateTime?>(deadline),
       'notes': serializer.toJson<String?>(notes),
+      'clientId': serializer.toJson<String?>(clientId),
+      'leadId': serializer.toJson<String?>(leadId),
+      'isFreelance': serializer.toJson<bool>(isFreelance),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
@@ -1476,6 +3499,9 @@ class Project extends DataClass implements Insertable<Project> {
     Value<String?> liveUrl = const Value.absent(),
     Value<DateTime?> deadline = const Value.absent(),
     Value<String?> notes = const Value.absent(),
+    Value<String?> clientId = const Value.absent(),
+    Value<String?> leadId = const Value.absent(),
+    bool? isFreelance,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) => Project(
@@ -1489,6 +3515,9 @@ class Project extends DataClass implements Insertable<Project> {
     liveUrl: liveUrl.present ? liveUrl.value : this.liveUrl,
     deadline: deadline.present ? deadline.value : this.deadline,
     notes: notes.present ? notes.value : this.notes,
+    clientId: clientId.present ? clientId.value : this.clientId,
+    leadId: leadId.present ? leadId.value : this.leadId,
+    isFreelance: isFreelance ?? this.isFreelance,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
   );
@@ -1506,6 +3535,11 @@ class Project extends DataClass implements Insertable<Project> {
       liveUrl: data.liveUrl.present ? data.liveUrl.value : this.liveUrl,
       deadline: data.deadline.present ? data.deadline.value : this.deadline,
       notes: data.notes.present ? data.notes.value : this.notes,
+      clientId: data.clientId.present ? data.clientId.value : this.clientId,
+      leadId: data.leadId.present ? data.leadId.value : this.leadId,
+      isFreelance: data.isFreelance.present
+          ? data.isFreelance.value
+          : this.isFreelance,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
@@ -1524,6 +3558,9 @@ class Project extends DataClass implements Insertable<Project> {
           ..write('liveUrl: $liveUrl, ')
           ..write('deadline: $deadline, ')
           ..write('notes: $notes, ')
+          ..write('clientId: $clientId, ')
+          ..write('leadId: $leadId, ')
+          ..write('isFreelance: $isFreelance, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -1542,6 +3579,9 @@ class Project extends DataClass implements Insertable<Project> {
     liveUrl,
     deadline,
     notes,
+    clientId,
+    leadId,
+    isFreelance,
     createdAt,
     updatedAt,
   );
@@ -1559,6 +3599,9 @@ class Project extends DataClass implements Insertable<Project> {
           other.liveUrl == this.liveUrl &&
           other.deadline == this.deadline &&
           other.notes == this.notes &&
+          other.clientId == this.clientId &&
+          other.leadId == this.leadId &&
+          other.isFreelance == this.isFreelance &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
 }
@@ -1574,6 +3617,9 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
   final Value<String?> liveUrl;
   final Value<DateTime?> deadline;
   final Value<String?> notes;
+  final Value<String?> clientId;
+  final Value<String?> leadId;
+  final Value<bool> isFreelance;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<int> rowid;
@@ -1588,6 +3634,9 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     this.liveUrl = const Value.absent(),
     this.deadline = const Value.absent(),
     this.notes = const Value.absent(),
+    this.clientId = const Value.absent(),
+    this.leadId = const Value.absent(),
+    this.isFreelance = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -1603,6 +3652,9 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     this.liveUrl = const Value.absent(),
     this.deadline = const Value.absent(),
     this.notes = const Value.absent(),
+    this.clientId = const Value.absent(),
+    this.leadId = const Value.absent(),
+    this.isFreelance = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -1619,6 +3671,9 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     Expression<String>? liveUrl,
     Expression<DateTime>? deadline,
     Expression<String>? notes,
+    Expression<String>? clientId,
+    Expression<String>? leadId,
+    Expression<bool>? isFreelance,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<int>? rowid,
@@ -1634,6 +3689,9 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
       if (liveUrl != null) 'live_url': liveUrl,
       if (deadline != null) 'deadline': deadline,
       if (notes != null) 'notes': notes,
+      if (clientId != null) 'client_id': clientId,
+      if (leadId != null) 'lead_id': leadId,
+      if (isFreelance != null) 'is_freelance': isFreelance,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (rowid != null) 'rowid': rowid,
@@ -1651,6 +3709,9 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     Value<String?>? liveUrl,
     Value<DateTime?>? deadline,
     Value<String?>? notes,
+    Value<String?>? clientId,
+    Value<String?>? leadId,
+    Value<bool>? isFreelance,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
     Value<int>? rowid,
@@ -1666,6 +3727,9 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
       liveUrl: liveUrl ?? this.liveUrl,
       deadline: deadline ?? this.deadline,
       notes: notes ?? this.notes,
+      clientId: clientId ?? this.clientId,
+      leadId: leadId ?? this.leadId,
+      isFreelance: isFreelance ?? this.isFreelance,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       rowid: rowid ?? this.rowid,
@@ -1705,6 +3769,15 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
     }
+    if (clientId.present) {
+      map['client_id'] = Variable<String>(clientId.value);
+    }
+    if (leadId.present) {
+      map['lead_id'] = Variable<String>(leadId.value);
+    }
+    if (isFreelance.present) {
+      map['is_freelance'] = Variable<bool>(isFreelance.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -1730,6 +3803,9 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
           ..write('liveUrl: $liveUrl, ')
           ..write('deadline: $deadline, ')
           ..write('notes: $notes, ')
+          ..write('clientId: $clientId, ')
+          ..write('leadId: $leadId, ')
+          ..write('isFreelance: $isFreelance, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('rowid: $rowid')
@@ -6486,7 +8562,7 @@ class $ThingsToAsksTable extends ThingsToAsks
     false,
     additionalChecks: GeneratedColumn.checkTextLength(
       minTextLength: 1,
-      maxTextLength: 250,
+      maxTextLength: 200,
     ),
     type: DriftSqlType.string,
     requiredDuringInsert: true,
@@ -6524,6 +8600,17 @@ class $ThingsToAsksTable extends ThingsToAsks
     requiredDuringInsert: false,
     defaultValue: const Constant('open'),
   );
+  static const VerificationMeta _completedAtMeta = const VerificationMeta(
+    'completedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> completedAt = GeneratedColumn<DateTime>(
+    'completed_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -6536,17 +8623,6 @@ class $ThingsToAsksTable extends ThingsToAsks
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
-  static const VerificationMeta _completedAtMeta = const VerificationMeta(
-    'completedAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> completedAt = GeneratedColumn<DateTime>(
-    'completed_at',
-    aliasedName,
-    true,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: false,
-  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -6554,8 +8630,8 @@ class $ThingsToAsksTable extends ThingsToAsks
     description,
     priority,
     status,
-    createdAt,
     completedAt,
+    createdAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -6603,12 +8679,6 @@ class $ThingsToAsksTable extends ThingsToAsks
         status.isAcceptableOrUnknown(data['status']!, _statusMeta),
       );
     }
-    if (data.containsKey('created_at')) {
-      context.handle(
-        _createdAtMeta,
-        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
-      );
-    }
     if (data.containsKey('completed_at')) {
       context.handle(
         _completedAtMeta,
@@ -6616,6 +8686,12 @@ class $ThingsToAsksTable extends ThingsToAsks
           data['completed_at']!,
           _completedAtMeta,
         ),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
       );
     }
     return context;
@@ -6647,14 +8723,14 @@ class $ThingsToAsksTable extends ThingsToAsks
         DriftSqlType.string,
         data['${effectivePrefix}status'],
       )!,
-      createdAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}created_at'],
-      )!,
       completedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}completed_at'],
       ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
     );
   }
 
@@ -6670,16 +8746,16 @@ class ThingsToAsk extends DataClass implements Insertable<ThingsToAsk> {
   final String? description;
   final String priority;
   final String status;
-  final DateTime createdAt;
   final DateTime? completedAt;
+  final DateTime createdAt;
   const ThingsToAsk({
     required this.id,
     required this.title,
     this.description,
     required this.priority,
     required this.status,
-    required this.createdAt,
     this.completedAt,
+    required this.createdAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -6691,10 +8767,10 @@ class ThingsToAsk extends DataClass implements Insertable<ThingsToAsk> {
     }
     map['priority'] = Variable<String>(priority);
     map['status'] = Variable<String>(status);
-    map['created_at'] = Variable<DateTime>(createdAt);
     if (!nullToAbsent || completedAt != null) {
       map['completed_at'] = Variable<DateTime>(completedAt);
     }
+    map['created_at'] = Variable<DateTime>(createdAt);
     return map;
   }
 
@@ -6707,10 +8783,10 @@ class ThingsToAsk extends DataClass implements Insertable<ThingsToAsk> {
           : Value(description),
       priority: Value(priority),
       status: Value(status),
-      createdAt: Value(createdAt),
       completedAt: completedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(completedAt),
+      createdAt: Value(createdAt),
     );
   }
 
@@ -6725,8 +8801,8 @@ class ThingsToAsk extends DataClass implements Insertable<ThingsToAsk> {
       description: serializer.fromJson<String?>(json['description']),
       priority: serializer.fromJson<String>(json['priority']),
       status: serializer.fromJson<String>(json['status']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       completedAt: serializer.fromJson<DateTime?>(json['completedAt']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
     );
   }
   @override
@@ -6738,8 +8814,8 @@ class ThingsToAsk extends DataClass implements Insertable<ThingsToAsk> {
       'description': serializer.toJson<String?>(description),
       'priority': serializer.toJson<String>(priority),
       'status': serializer.toJson<String>(status),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
       'completedAt': serializer.toJson<DateTime?>(completedAt),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
     };
   }
 
@@ -6749,16 +8825,16 @@ class ThingsToAsk extends DataClass implements Insertable<ThingsToAsk> {
     Value<String?> description = const Value.absent(),
     String? priority,
     String? status,
-    DateTime? createdAt,
     Value<DateTime?> completedAt = const Value.absent(),
+    DateTime? createdAt,
   }) => ThingsToAsk(
     id: id ?? this.id,
     title: title ?? this.title,
     description: description.present ? description.value : this.description,
     priority: priority ?? this.priority,
     status: status ?? this.status,
-    createdAt: createdAt ?? this.createdAt,
     completedAt: completedAt.present ? completedAt.value : this.completedAt,
+    createdAt: createdAt ?? this.createdAt,
   );
   ThingsToAsk copyWithCompanion(ThingsToAsksCompanion data) {
     return ThingsToAsk(
@@ -6769,10 +8845,10 @@ class ThingsToAsk extends DataClass implements Insertable<ThingsToAsk> {
           : this.description,
       priority: data.priority.present ? data.priority.value : this.priority,
       status: data.status.present ? data.status.value : this.status,
-      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       completedAt: data.completedAt.present
           ? data.completedAt.value
           : this.completedAt,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
   }
 
@@ -6784,8 +8860,8 @@ class ThingsToAsk extends DataClass implements Insertable<ThingsToAsk> {
           ..write('description: $description, ')
           ..write('priority: $priority, ')
           ..write('status: $status, ')
-          ..write('createdAt: $createdAt, ')
-          ..write('completedAt: $completedAt')
+          ..write('completedAt: $completedAt, ')
+          ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
   }
@@ -6797,8 +8873,8 @@ class ThingsToAsk extends DataClass implements Insertable<ThingsToAsk> {
     description,
     priority,
     status,
-    createdAt,
     completedAt,
+    createdAt,
   );
   @override
   bool operator ==(Object other) =>
@@ -6809,8 +8885,8 @@ class ThingsToAsk extends DataClass implements Insertable<ThingsToAsk> {
           other.description == this.description &&
           other.priority == this.priority &&
           other.status == this.status &&
-          other.createdAt == this.createdAt &&
-          other.completedAt == this.completedAt);
+          other.completedAt == this.completedAt &&
+          other.createdAt == this.createdAt);
 }
 
 class ThingsToAsksCompanion extends UpdateCompanion<ThingsToAsk> {
@@ -6819,8 +8895,8 @@ class ThingsToAsksCompanion extends UpdateCompanion<ThingsToAsk> {
   final Value<String?> description;
   final Value<String> priority;
   final Value<String> status;
-  final Value<DateTime> createdAt;
   final Value<DateTime?> completedAt;
+  final Value<DateTime> createdAt;
   final Value<int> rowid;
   const ThingsToAsksCompanion({
     this.id = const Value.absent(),
@@ -6828,8 +8904,8 @@ class ThingsToAsksCompanion extends UpdateCompanion<ThingsToAsk> {
     this.description = const Value.absent(),
     this.priority = const Value.absent(),
     this.status = const Value.absent(),
-    this.createdAt = const Value.absent(),
     this.completedAt = const Value.absent(),
+    this.createdAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ThingsToAsksCompanion.insert({
@@ -6838,8 +8914,8 @@ class ThingsToAsksCompanion extends UpdateCompanion<ThingsToAsk> {
     this.description = const Value.absent(),
     this.priority = const Value.absent(),
     this.status = const Value.absent(),
-    this.createdAt = const Value.absent(),
     this.completedAt = const Value.absent(),
+    this.createdAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        title = Value(title);
@@ -6849,8 +8925,8 @@ class ThingsToAsksCompanion extends UpdateCompanion<ThingsToAsk> {
     Expression<String>? description,
     Expression<String>? priority,
     Expression<String>? status,
-    Expression<DateTime>? createdAt,
     Expression<DateTime>? completedAt,
+    Expression<DateTime>? createdAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -6859,8 +8935,8 @@ class ThingsToAsksCompanion extends UpdateCompanion<ThingsToAsk> {
       if (description != null) 'description': description,
       if (priority != null) 'priority': priority,
       if (status != null) 'status': status,
-      if (createdAt != null) 'created_at': createdAt,
       if (completedAt != null) 'completed_at': completedAt,
+      if (createdAt != null) 'created_at': createdAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -6871,8 +8947,8 @@ class ThingsToAsksCompanion extends UpdateCompanion<ThingsToAsk> {
     Value<String?>? description,
     Value<String>? priority,
     Value<String>? status,
-    Value<DateTime>? createdAt,
     Value<DateTime?>? completedAt,
+    Value<DateTime>? createdAt,
     Value<int>? rowid,
   }) {
     return ThingsToAsksCompanion(
@@ -6881,8 +8957,8 @@ class ThingsToAsksCompanion extends UpdateCompanion<ThingsToAsk> {
       description: description ?? this.description,
       priority: priority ?? this.priority,
       status: status ?? this.status,
-      createdAt: createdAt ?? this.createdAt,
       completedAt: completedAt ?? this.completedAt,
+      createdAt: createdAt ?? this.createdAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -6905,11 +8981,11 @@ class ThingsToAsksCompanion extends UpdateCompanion<ThingsToAsk> {
     if (status.present) {
       map['status'] = Variable<String>(status.value);
     }
-    if (createdAt.present) {
-      map['created_at'] = Variable<DateTime>(createdAt.value);
-    }
     if (completedAt.present) {
       map['completed_at'] = Variable<DateTime>(completedAt.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -6925,8 +9001,8 @@ class ThingsToAsksCompanion extends UpdateCompanion<ThingsToAsk> {
           ..write('description: $description, ')
           ..write('priority: $priority, ')
           ..write('status: $status, ')
-          ..write('createdAt: $createdAt, ')
           ..write('completedAt: $completedAt, ')
+          ..write('createdAt: $createdAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -6956,7 +9032,7 @@ class $WorkNotesTable extends WorkNotes
     false,
     additionalChecks: GeneratedColumn.checkTextLength(
       minTextLength: 1,
-      maxTextLength: 250,
+      maxTextLength: 200,
     ),
     type: DriftSqlType.string,
     requiredDuringInsert: true,
@@ -6982,7 +9058,7 @@ class $WorkNotesTable extends WorkNotes
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
-    defaultValue: const Constant('general'),
+    defaultValue: const Constant('scratchpad'),
   );
   static const VerificationMeta _projectIdMeta = const VerificationMeta(
     'projectId',
@@ -7559,10 +9635,674 @@ class WorkNotesCompanion extends UpdateCompanion<WorkNote> {
   }
 }
 
+class $FreelancePaymentsTable extends FreelancePayments
+    with TableInfo<$FreelancePaymentsTable, FreelancePayment> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $FreelancePaymentsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _clientIdMeta = const VerificationMeta(
+    'clientId',
+  );
+  @override
+  late final GeneratedColumn<String> clientId = GeneratedColumn<String>(
+    'client_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES clients (id) ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _projectIdMeta = const VerificationMeta(
+    'projectId',
+  );
+  @override
+  late final GeneratedColumn<String> projectId = GeneratedColumn<String>(
+    'project_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES projects (id) ON DELETE SET NULL',
+    ),
+  );
+  static const VerificationMeta _amountMeta = const VerificationMeta('amount');
+  @override
+  late final GeneratedColumn<double> amount = GeneratedColumn<double>(
+    'amount',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _currencyMeta = const VerificationMeta(
+    'currency',
+  );
+  @override
+  late final GeneratedColumn<String> currency = GeneratedColumn<String>(
+    'currency',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('USD'),
+  );
+  static const VerificationMeta _paymentDateMeta = const VerificationMeta(
+    'paymentDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> paymentDate = GeneratedColumn<DateTime>(
+    'payment_date',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('EXPECTED'),
+  );
+  static const VerificationMeta _descriptionMeta = const VerificationMeta(
+    'description',
+  );
+  @override
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+    'description',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    clientId,
+    projectId,
+    amount,
+    currency,
+    paymentDate,
+    status,
+    description,
+    notes,
+    createdAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'freelance_payments';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<FreelancePayment> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('client_id')) {
+      context.handle(
+        _clientIdMeta,
+        clientId.isAcceptableOrUnknown(data['client_id']!, _clientIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_clientIdMeta);
+    }
+    if (data.containsKey('project_id')) {
+      context.handle(
+        _projectIdMeta,
+        projectId.isAcceptableOrUnknown(data['project_id']!, _projectIdMeta),
+      );
+    }
+    if (data.containsKey('amount')) {
+      context.handle(
+        _amountMeta,
+        amount.isAcceptableOrUnknown(data['amount']!, _amountMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_amountMeta);
+    }
+    if (data.containsKey('currency')) {
+      context.handle(
+        _currencyMeta,
+        currency.isAcceptableOrUnknown(data['currency']!, _currencyMeta),
+      );
+    }
+    if (data.containsKey('payment_date')) {
+      context.handle(
+        _paymentDateMeta,
+        paymentDate.isAcceptableOrUnknown(
+          data['payment_date']!,
+          _paymentDateMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_paymentDateMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    if (data.containsKey('description')) {
+      context.handle(
+        _descriptionMeta,
+        description.isAcceptableOrUnknown(
+          data['description']!,
+          _descriptionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  FreelancePayment map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return FreelancePayment(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      clientId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}client_id'],
+      )!,
+      projectId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}project_id'],
+      ),
+      amount: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}amount'],
+      )!,
+      currency: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}currency'],
+      )!,
+      paymentDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}payment_date'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      description: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}description'],
+      ),
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $FreelancePaymentsTable createAlias(String alias) {
+    return $FreelancePaymentsTable(attachedDatabase, alias);
+  }
+}
+
+class FreelancePayment extends DataClass
+    implements Insertable<FreelancePayment> {
+  final String id;
+  final String clientId;
+  final String? projectId;
+  final double amount;
+  final String currency;
+  final DateTime paymentDate;
+  final String status;
+  final String? description;
+  final String? notes;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const FreelancePayment({
+    required this.id,
+    required this.clientId,
+    this.projectId,
+    required this.amount,
+    required this.currency,
+    required this.paymentDate,
+    required this.status,
+    this.description,
+    this.notes,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['client_id'] = Variable<String>(clientId);
+    if (!nullToAbsent || projectId != null) {
+      map['project_id'] = Variable<String>(projectId);
+    }
+    map['amount'] = Variable<double>(amount);
+    map['currency'] = Variable<String>(currency);
+    map['payment_date'] = Variable<DateTime>(paymentDate);
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || description != null) {
+      map['description'] = Variable<String>(description);
+    }
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  FreelancePaymentsCompanion toCompanion(bool nullToAbsent) {
+    return FreelancePaymentsCompanion(
+      id: Value(id),
+      clientId: Value(clientId),
+      projectId: projectId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(projectId),
+      amount: Value(amount),
+      currency: Value(currency),
+      paymentDate: Value(paymentDate),
+      status: Value(status),
+      description: description == null && nullToAbsent
+          ? const Value.absent()
+          : Value(description),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory FreelancePayment.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return FreelancePayment(
+      id: serializer.fromJson<String>(json['id']),
+      clientId: serializer.fromJson<String>(json['clientId']),
+      projectId: serializer.fromJson<String?>(json['projectId']),
+      amount: serializer.fromJson<double>(json['amount']),
+      currency: serializer.fromJson<String>(json['currency']),
+      paymentDate: serializer.fromJson<DateTime>(json['paymentDate']),
+      status: serializer.fromJson<String>(json['status']),
+      description: serializer.fromJson<String?>(json['description']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'clientId': serializer.toJson<String>(clientId),
+      'projectId': serializer.toJson<String?>(projectId),
+      'amount': serializer.toJson<double>(amount),
+      'currency': serializer.toJson<String>(currency),
+      'paymentDate': serializer.toJson<DateTime>(paymentDate),
+      'status': serializer.toJson<String>(status),
+      'description': serializer.toJson<String?>(description),
+      'notes': serializer.toJson<String?>(notes),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  FreelancePayment copyWith({
+    String? id,
+    String? clientId,
+    Value<String?> projectId = const Value.absent(),
+    double? amount,
+    String? currency,
+    DateTime? paymentDate,
+    String? status,
+    Value<String?> description = const Value.absent(),
+    Value<String?> notes = const Value.absent(),
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => FreelancePayment(
+    id: id ?? this.id,
+    clientId: clientId ?? this.clientId,
+    projectId: projectId.present ? projectId.value : this.projectId,
+    amount: amount ?? this.amount,
+    currency: currency ?? this.currency,
+    paymentDate: paymentDate ?? this.paymentDate,
+    status: status ?? this.status,
+    description: description.present ? description.value : this.description,
+    notes: notes.present ? notes.value : this.notes,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  FreelancePayment copyWithCompanion(FreelancePaymentsCompanion data) {
+    return FreelancePayment(
+      id: data.id.present ? data.id.value : this.id,
+      clientId: data.clientId.present ? data.clientId.value : this.clientId,
+      projectId: data.projectId.present ? data.projectId.value : this.projectId,
+      amount: data.amount.present ? data.amount.value : this.amount,
+      currency: data.currency.present ? data.currency.value : this.currency,
+      paymentDate: data.paymentDate.present
+          ? data.paymentDate.value
+          : this.paymentDate,
+      status: data.status.present ? data.status.value : this.status,
+      description: data.description.present
+          ? data.description.value
+          : this.description,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FreelancePayment(')
+          ..write('id: $id, ')
+          ..write('clientId: $clientId, ')
+          ..write('projectId: $projectId, ')
+          ..write('amount: $amount, ')
+          ..write('currency: $currency, ')
+          ..write('paymentDate: $paymentDate, ')
+          ..write('status: $status, ')
+          ..write('description: $description, ')
+          ..write('notes: $notes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    clientId,
+    projectId,
+    amount,
+    currency,
+    paymentDate,
+    status,
+    description,
+    notes,
+    createdAt,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is FreelancePayment &&
+          other.id == this.id &&
+          other.clientId == this.clientId &&
+          other.projectId == this.projectId &&
+          other.amount == this.amount &&
+          other.currency == this.currency &&
+          other.paymentDate == this.paymentDate &&
+          other.status == this.status &&
+          other.description == this.description &&
+          other.notes == this.notes &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class FreelancePaymentsCompanion extends UpdateCompanion<FreelancePayment> {
+  final Value<String> id;
+  final Value<String> clientId;
+  final Value<String?> projectId;
+  final Value<double> amount;
+  final Value<String> currency;
+  final Value<DateTime> paymentDate;
+  final Value<String> status;
+  final Value<String?> description;
+  final Value<String?> notes;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const FreelancePaymentsCompanion({
+    this.id = const Value.absent(),
+    this.clientId = const Value.absent(),
+    this.projectId = const Value.absent(),
+    this.amount = const Value.absent(),
+    this.currency = const Value.absent(),
+    this.paymentDate = const Value.absent(),
+    this.status = const Value.absent(),
+    this.description = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  FreelancePaymentsCompanion.insert({
+    required String id,
+    required String clientId,
+    this.projectId = const Value.absent(),
+    required double amount,
+    this.currency = const Value.absent(),
+    required DateTime paymentDate,
+    this.status = const Value.absent(),
+    this.description = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       clientId = Value(clientId),
+       amount = Value(amount),
+       paymentDate = Value(paymentDate);
+  static Insertable<FreelancePayment> custom({
+    Expression<String>? id,
+    Expression<String>? clientId,
+    Expression<String>? projectId,
+    Expression<double>? amount,
+    Expression<String>? currency,
+    Expression<DateTime>? paymentDate,
+    Expression<String>? status,
+    Expression<String>? description,
+    Expression<String>? notes,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (clientId != null) 'client_id': clientId,
+      if (projectId != null) 'project_id': projectId,
+      if (amount != null) 'amount': amount,
+      if (currency != null) 'currency': currency,
+      if (paymentDate != null) 'payment_date': paymentDate,
+      if (status != null) 'status': status,
+      if (description != null) 'description': description,
+      if (notes != null) 'notes': notes,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  FreelancePaymentsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? clientId,
+    Value<String?>? projectId,
+    Value<double>? amount,
+    Value<String>? currency,
+    Value<DateTime>? paymentDate,
+    Value<String>? status,
+    Value<String?>? description,
+    Value<String?>? notes,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return FreelancePaymentsCompanion(
+      id: id ?? this.id,
+      clientId: clientId ?? this.clientId,
+      projectId: projectId ?? this.projectId,
+      amount: amount ?? this.amount,
+      currency: currency ?? this.currency,
+      paymentDate: paymentDate ?? this.paymentDate,
+      status: status ?? this.status,
+      description: description ?? this.description,
+      notes: notes ?? this.notes,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (clientId.present) {
+      map['client_id'] = Variable<String>(clientId.value);
+    }
+    if (projectId.present) {
+      map['project_id'] = Variable<String>(projectId.value);
+    }
+    if (amount.present) {
+      map['amount'] = Variable<double>(amount.value);
+    }
+    if (currency.present) {
+      map['currency'] = Variable<String>(currency.value);
+    }
+    if (paymentDate.present) {
+      map['payment_date'] = Variable<DateTime>(paymentDate.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FreelancePaymentsCompanion(')
+          ..write('id: $id, ')
+          ..write('clientId: $clientId, ')
+          ..write('projectId: $projectId, ')
+          ..write('amount: $amount, ')
+          ..write('currency: $currency, ')
+          ..write('paymentDate: $paymentDate, ')
+          ..write('status: $status, ')
+          ..write('description: $description, ')
+          ..write('notes: $notes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $UserProfilesTable userProfiles = $UserProfilesTable(this);
+  late final $ClientsTable clients = $ClientsTable(this);
+  late final $FreelanceLeadsTable freelanceLeads = $FreelanceLeadsTable(this);
   late final $ProjectsTable projects = $ProjectsTable(this);
   late final $TasksTable tasks = $TasksTable(this);
   late final $ResumesTable resumes = $ResumesTable(this);
@@ -7574,12 +10314,16 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $EODNotesTable eODNotes = $EODNotesTable(this);
   late final $ThingsToAsksTable thingsToAsks = $ThingsToAsksTable(this);
   late final $WorkNotesTable workNotes = $WorkNotesTable(this);
+  late final $FreelancePaymentsTable freelancePayments =
+      $FreelancePaymentsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     userProfiles,
+    clients,
+    freelanceLeads,
     projects,
     tasks,
     resumes,
@@ -7589,9 +10333,38 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     eODNotes,
     thingsToAsks,
     workNotes,
+    freelancePayments,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'clients',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('freelance_leads', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'projects',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('freelance_leads', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'clients',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('projects', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'freelance_leads',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('projects', kind: UpdateKind.update)],
+    ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
         'projects',
@@ -7619,6 +10392,20 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('work_notes', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'clients',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('freelance_payments', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'projects',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('freelance_payments', kind: UpdateKind.update)],
     ),
   ]);
 }
@@ -8082,6 +10869,1480 @@ typedef $$UserProfilesTableProcessedTableManager =
       UserProfile,
       PrefetchHooks Function()
     >;
+typedef $$ClientsTableCreateCompanionBuilder = ClientsCompanion Function({
+  required String id,
+  required String name,
+  Value<String?> contactName,
+  Value<String?> email,
+  Value<String?> phone,
+  Value<String?> platform,
+  Value<String?> location,
+  Value<String> status,
+  Value<String?> notes,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+  Value<int> rowid,
+});
+typedef $$ClientsTableUpdateCompanionBuilder = ClientsCompanion Function({
+  Value<String> id,
+  Value<String> name,
+  Value<String?> contactName,
+  Value<String?> email,
+  Value<String?> phone,
+  Value<String?> platform,
+  Value<String?> location,
+  Value<String> status,
+  Value<String?> notes,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+  Value<int> rowid,
+});
+
+final class $$ClientsTableReferences
+    extends BaseReferences<_$AppDatabase, $ClientsTable, Client> {
+  $$ClientsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$FreelanceLeadsTable, List<FreelanceLead>>
+  _freelanceLeadsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.freelanceLeads,
+    aliasName: 'clients__id__freelance_leads__client_id',
+  );
+
+  $$FreelanceLeadsTableProcessedTableManager get freelanceLeadsRefs {
+    final manager = $$FreelanceLeadsTableTableManager(
+      $_db,
+      $_db.freelanceLeads,
+    ).filter((f) => f.clientId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_freelanceLeadsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$ProjectsTable, List<Project>> _projectsRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.projects,
+    aliasName: 'clients__id__projects__client_id',
+  );
+
+  $$ProjectsTableProcessedTableManager get projectsRefs {
+    final manager = $$ProjectsTableTableManager(
+      $_db,
+      $_db.projects,
+    ).filter((f) => f.clientId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_projectsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$FreelancePaymentsTable, List<FreelancePayment>>
+  _freelancePaymentsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.freelancePayments,
+        aliasName: 'clients__id__freelance_payments__client_id',
+      );
+
+  $$FreelancePaymentsTableProcessedTableManager get freelancePaymentsRefs {
+    final manager = $$FreelancePaymentsTableTableManager(
+      $_db,
+      $_db.freelancePayments,
+    ).filter((f) => f.clientId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _freelancePaymentsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$ClientsTableFilterComposer
+    extends Composer<_$AppDatabase, $ClientsTable> {
+  $$ClientsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get contactName => $composableBuilder(
+    column: $table.contactName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get email => $composableBuilder(
+    column: $table.email,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get phone => $composableBuilder(
+    column: $table.phone,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get platform => $composableBuilder(
+    column: $table.platform,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get location => $composableBuilder(
+    column: $table.location,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> freelanceLeadsRefs(
+    Expression<bool> Function($$FreelanceLeadsTableFilterComposer f) f,
+  ) {
+    final $$FreelanceLeadsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.freelanceLeads,
+      getReferencedColumn: (t) => t.clientId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FreelanceLeadsTableFilterComposer(
+            $db: $db,
+            $table: $db.freelanceLeads,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> projectsRefs(
+    Expression<bool> Function($$ProjectsTableFilterComposer f) f,
+  ) {
+    final $$ProjectsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.clientId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableFilterComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> freelancePaymentsRefs(
+    Expression<bool> Function($$FreelancePaymentsTableFilterComposer f) f,
+  ) {
+    final $$FreelancePaymentsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.freelancePayments,
+      getReferencedColumn: (t) => t.clientId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FreelancePaymentsTableFilterComposer(
+            $db: $db,
+            $table: $db.freelancePayments,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$ClientsTableOrderingComposer
+    extends Composer<_$AppDatabase, $ClientsTable> {
+  $$ClientsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get contactName => $composableBuilder(
+    column: $table.contactName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get email => $composableBuilder(
+    column: $table.email,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get phone => $composableBuilder(
+    column: $table.phone,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get platform => $composableBuilder(
+    column: $table.platform,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get location => $composableBuilder(
+    column: $table.location,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ClientsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ClientsTable> {
+  $$ClientsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get contactName => $composableBuilder(
+    column: $table.contactName,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get email =>
+      $composableBuilder(column: $table.email, builder: (column) => column);
+
+  GeneratedColumn<String> get phone =>
+      $composableBuilder(column: $table.phone, builder: (column) => column);
+
+  GeneratedColumn<String> get platform =>
+      $composableBuilder(column: $table.platform, builder: (column) => column);
+
+  GeneratedColumn<String> get location =>
+      $composableBuilder(column: $table.location, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  Expression<T> freelanceLeadsRefs<T extends Object>(
+    Expression<T> Function($$FreelanceLeadsTableAnnotationComposer a) f,
+  ) {
+    final $$FreelanceLeadsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.freelanceLeads,
+      getReferencedColumn: (t) => t.clientId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FreelanceLeadsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.freelanceLeads,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> projectsRefs<T extends Object>(
+    Expression<T> Function($$ProjectsTableAnnotationComposer a) f,
+  ) {
+    final $$ProjectsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.clientId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> freelancePaymentsRefs<T extends Object>(
+    Expression<T> Function($$FreelancePaymentsTableAnnotationComposer a) f,
+  ) {
+    final $$FreelancePaymentsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.freelancePayments,
+          getReferencedColumn: (t) => t.clientId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$FreelancePaymentsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.freelancePayments,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+}
+
+class $$ClientsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ClientsTable,
+          Client,
+          $$ClientsTableFilterComposer,
+          $$ClientsTableOrderingComposer,
+          $$ClientsTableAnnotationComposer,
+          $$ClientsTableCreateCompanionBuilder,
+          $$ClientsTableUpdateCompanionBuilder,
+          (Client, $$ClientsTableReferences),
+          Client,
+          PrefetchHooks Function({
+            bool freelanceLeadsRefs,
+            bool projectsRefs,
+            bool freelancePaymentsRefs,
+          })
+        > {
+  $$ClientsTableTableManager(_$AppDatabase db, $ClientsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ClientsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ClientsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ClientsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String?> contactName = const Value.absent(),
+                Value<String?> email = const Value.absent(),
+                Value<String?> phone = const Value.absent(),
+                Value<String?> platform = const Value.absent(),
+                Value<String?> location = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ClientsCompanion(
+                id: id,
+                name: name,
+                contactName: contactName,
+                email: email,
+                phone: phone,
+                platform: platform,
+                location: location,
+                status: status,
+                notes: notes,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String name,
+                Value<String?> contactName = const Value.absent(),
+                Value<String?> email = const Value.absent(),
+                Value<String?> phone = const Value.absent(),
+                Value<String?> platform = const Value.absent(),
+                Value<String?> location = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ClientsCompanion.insert(
+                id: id,
+                name: name,
+                contactName: contactName,
+                email: email,
+                phone: phone,
+                platform: platform,
+                location: location,
+                status: status,
+                notes: notes,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ClientsTable, Client>(table),
+                  $$ClientsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({
+                freelanceLeadsRefs = false,
+                projectsRefs = false,
+                freelancePaymentsRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (freelanceLeadsRefs) db.freelanceLeads,
+                    if (projectsRefs) db.projects,
+                    if (freelancePaymentsRefs) db.freelancePayments,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (freelanceLeadsRefs)
+                        await $_getPrefetchedData<
+                          Client,
+                          $ClientsTable,
+                          FreelanceLead
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ClientsTableReferences
+                              ._freelanceLeadsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ClientsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).freelanceLeadsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.clientId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (projectsRefs)
+                        await $_getPrefetchedData<
+                          Client,
+                          $ClientsTable,
+                          Project
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ClientsTableReferences
+                              ._projectsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ClientsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).projectsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.clientId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (freelancePaymentsRefs)
+                        await $_getPrefetchedData<
+                          Client,
+                          $ClientsTable,
+                          FreelancePayment
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ClientsTableReferences
+                              ._freelancePaymentsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ClientsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).freelancePaymentsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.clientId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$ClientsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ClientsTable,
+      Client,
+      $$ClientsTableFilterComposer,
+      $$ClientsTableOrderingComposer,
+      $$ClientsTableAnnotationComposer,
+      $$ClientsTableCreateCompanionBuilder,
+      $$ClientsTableUpdateCompanionBuilder,
+      (Client, $$ClientsTableReferences),
+      Client,
+      PrefetchHooks Function({
+        bool freelanceLeadsRefs,
+        bool projectsRefs,
+        bool freelancePaymentsRefs,
+      })
+    >;
+typedef $$FreelanceLeadsTableCreateCompanionBuilder =
+    FreelanceLeadsCompanion Function({
+      required String id,
+      Value<String?> clientId,
+      Value<String?> projectId,
+      required String title,
+      Value<String?> clientName,
+      Value<String?> contactName,
+      Value<String?> contactInfo,
+      Value<String?> platform,
+      Value<String?> description,
+      Value<String?> skills,
+      Value<double?> budget,
+      Value<String> currency,
+      Value<String?> url,
+      Value<String> status,
+      Value<String?> proposal,
+      Value<DateTime?> deadline,
+      Value<DateTime?> followUpDate,
+      Value<String?> followUpNote,
+      Value<String?> nextAction,
+      Value<String?> notes,
+      Value<DateTime?> leadDate,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+typedef $$FreelanceLeadsTableUpdateCompanionBuilder =
+    FreelanceLeadsCompanion Function({
+      Value<String> id,
+      Value<String?> clientId,
+      Value<String?> projectId,
+      Value<String> title,
+      Value<String?> clientName,
+      Value<String?> contactName,
+      Value<String?> contactInfo,
+      Value<String?> platform,
+      Value<String?> description,
+      Value<String?> skills,
+      Value<double?> budget,
+      Value<String> currency,
+      Value<String?> url,
+      Value<String> status,
+      Value<String?> proposal,
+      Value<DateTime?> deadline,
+      Value<DateTime?> followUpDate,
+      Value<String?> followUpNote,
+      Value<String?> nextAction,
+      Value<String?> notes,
+      Value<DateTime?> leadDate,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+final class $$FreelanceLeadsTableReferences
+    extends BaseReferences<_$AppDatabase, $FreelanceLeadsTable, FreelanceLead> {
+  $$FreelanceLeadsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $ClientsTable _clientIdTable(_$AppDatabase db) =>
+      db.clients.createAlias('freelance_leads__client_id__clients__id');
+
+  $$ClientsTableProcessedTableManager? get clientId {
+    final $_column = $_itemColumn<String>('client_id');
+    if ($_column == null) return null;
+    final manager = $$ClientsTableTableManager(
+      $_db,
+      $_db.clients,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_clientIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $ProjectsTable _projectIdTable(_$AppDatabase db) =>
+      db.projects.createAlias('freelance_leads__project_id__projects__id');
+
+  $$ProjectsTableProcessedTableManager? get projectId {
+    final $_column = $_itemColumn<String>('project_id');
+    if ($_column == null) return null;
+    final manager = $$ProjectsTableTableManager(
+      $_db,
+      $_db.projects,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_projectIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static MultiTypedResultKey<$ProjectsTable, List<Project>> _projectsRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.projects,
+    aliasName: 'freelance_leads__id__projects__lead_id',
+  );
+
+  $$ProjectsTableProcessedTableManager get projectsRefs {
+    final manager = $$ProjectsTableTableManager(
+      $_db,
+      $_db.projects,
+    ).filter((f) => f.leadId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_projectsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$FreelanceLeadsTableFilterComposer
+    extends Composer<_$AppDatabase, $FreelanceLeadsTable> {
+  $$FreelanceLeadsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get clientName => $composableBuilder(
+    column: $table.clientName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get contactName => $composableBuilder(
+    column: $table.contactName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get contactInfo => $composableBuilder(
+    column: $table.contactInfo,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get platform => $composableBuilder(
+    column: $table.platform,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get skills => $composableBuilder(
+    column: $table.skills,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get budget => $composableBuilder(
+    column: $table.budget,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get currency => $composableBuilder(
+    column: $table.currency,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get url => $composableBuilder(
+    column: $table.url,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get proposal => $composableBuilder(
+    column: $table.proposal,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deadline => $composableBuilder(
+    column: $table.deadline,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get followUpDate => $composableBuilder(
+    column: $table.followUpDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get followUpNote => $composableBuilder(
+    column: $table.followUpNote,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get nextAction => $composableBuilder(
+    column: $table.nextAction,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get leadDate => $composableBuilder(
+    column: $table.leadDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$ClientsTableFilterComposer get clientId {
+    final $$ClientsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.clientId,
+      referencedTable: $db.clients,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientsTableFilterComposer(
+            $db: $db,
+            $table: $db.clients,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProjectsTableFilterComposer get projectId {
+    final $$ProjectsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.projectId,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableFilterComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<bool> projectsRefs(
+    Expression<bool> Function($$ProjectsTableFilterComposer f) f,
+  ) {
+    final $$ProjectsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.leadId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableFilterComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$FreelanceLeadsTableOrderingComposer
+    extends Composer<_$AppDatabase, $FreelanceLeadsTable> {
+  $$FreelanceLeadsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get clientName => $composableBuilder(
+    column: $table.clientName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get contactName => $composableBuilder(
+    column: $table.contactName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get contactInfo => $composableBuilder(
+    column: $table.contactInfo,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get platform => $composableBuilder(
+    column: $table.platform,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get skills => $composableBuilder(
+    column: $table.skills,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get budget => $composableBuilder(
+    column: $table.budget,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get currency => $composableBuilder(
+    column: $table.currency,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get url => $composableBuilder(
+    column: $table.url,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get proposal => $composableBuilder(
+    column: $table.proposal,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deadline => $composableBuilder(
+    column: $table.deadline,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get followUpDate => $composableBuilder(
+    column: $table.followUpDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get followUpNote => $composableBuilder(
+    column: $table.followUpNote,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get nextAction => $composableBuilder(
+    column: $table.nextAction,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get leadDate => $composableBuilder(
+    column: $table.leadDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$ClientsTableOrderingComposer get clientId {
+    final $$ClientsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.clientId,
+      referencedTable: $db.clients,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientsTableOrderingComposer(
+            $db: $db,
+            $table: $db.clients,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProjectsTableOrderingComposer get projectId {
+    final $$ProjectsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.projectId,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableOrderingComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$FreelanceLeadsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $FreelanceLeadsTable> {
+  $$FreelanceLeadsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<String> get clientName => $composableBuilder(
+    column: $table.clientName,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get contactName => $composableBuilder(
+    column: $table.contactName,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get contactInfo => $composableBuilder(
+    column: $table.contactInfo,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get platform =>
+      $composableBuilder(column: $table.platform, builder: (column) => column);
+
+  GeneratedColumn<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get skills =>
+      $composableBuilder(column: $table.skills, builder: (column) => column);
+
+  GeneratedColumn<double> get budget =>
+      $composableBuilder(column: $table.budget, builder: (column) => column);
+
+  GeneratedColumn<String> get currency =>
+      $composableBuilder(column: $table.currency, builder: (column) => column);
+
+  GeneratedColumn<String> get url =>
+      $composableBuilder(column: $table.url, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get proposal =>
+      $composableBuilder(column: $table.proposal, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deadline =>
+      $composableBuilder(column: $table.deadline, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get followUpDate => $composableBuilder(
+    column: $table.followUpDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get followUpNote => $composableBuilder(
+    column: $table.followUpNote,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get nextAction => $composableBuilder(
+    column: $table.nextAction,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get leadDate =>
+      $composableBuilder(column: $table.leadDate, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  $$ClientsTableAnnotationComposer get clientId {
+    final $$ClientsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.clientId,
+      referencedTable: $db.clients,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.clients,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProjectsTableAnnotationComposer get projectId {
+    final $$ProjectsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.projectId,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<T> projectsRefs<T extends Object>(
+    Expression<T> Function($$ProjectsTableAnnotationComposer a) f,
+  ) {
+    final $$ProjectsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.leadId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$FreelanceLeadsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $FreelanceLeadsTable,
+          FreelanceLead,
+          $$FreelanceLeadsTableFilterComposer,
+          $$FreelanceLeadsTableOrderingComposer,
+          $$FreelanceLeadsTableAnnotationComposer,
+          $$FreelanceLeadsTableCreateCompanionBuilder,
+          $$FreelanceLeadsTableUpdateCompanionBuilder,
+          (FreelanceLead, $$FreelanceLeadsTableReferences),
+          FreelanceLead,
+          PrefetchHooks Function({
+            bool clientId,
+            bool projectId,
+            bool projectsRefs,
+          })
+        > {
+  $$FreelanceLeadsTableTableManager(
+    _$AppDatabase db,
+    $FreelanceLeadsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$FreelanceLeadsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$FreelanceLeadsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$FreelanceLeadsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String?> clientId = const Value.absent(),
+                Value<String?> projectId = const Value.absent(),
+                Value<String> title = const Value.absent(),
+                Value<String?> clientName = const Value.absent(),
+                Value<String?> contactName = const Value.absent(),
+                Value<String?> contactInfo = const Value.absent(),
+                Value<String?> platform = const Value.absent(),
+                Value<String?> description = const Value.absent(),
+                Value<String?> skills = const Value.absent(),
+                Value<double?> budget = const Value.absent(),
+                Value<String> currency = const Value.absent(),
+                Value<String?> url = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> proposal = const Value.absent(),
+                Value<DateTime?> deadline = const Value.absent(),
+                Value<DateTime?> followUpDate = const Value.absent(),
+                Value<String?> followUpNote = const Value.absent(),
+                Value<String?> nextAction = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<DateTime?> leadDate = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => FreelanceLeadsCompanion(
+                id: id,
+                clientId: clientId,
+                projectId: projectId,
+                title: title,
+                clientName: clientName,
+                contactName: contactName,
+                contactInfo: contactInfo,
+                platform: platform,
+                description: description,
+                skills: skills,
+                budget: budget,
+                currency: currency,
+                url: url,
+                status: status,
+                proposal: proposal,
+                deadline: deadline,
+                followUpDate: followUpDate,
+                followUpNote: followUpNote,
+                nextAction: nextAction,
+                notes: notes,
+                leadDate: leadDate,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                Value<String?> clientId = const Value.absent(),
+                Value<String?> projectId = const Value.absent(),
+                required String title,
+                Value<String?> clientName = const Value.absent(),
+                Value<String?> contactName = const Value.absent(),
+                Value<String?> contactInfo = const Value.absent(),
+                Value<String?> platform = const Value.absent(),
+                Value<String?> description = const Value.absent(),
+                Value<String?> skills = const Value.absent(),
+                Value<double?> budget = const Value.absent(),
+                Value<String> currency = const Value.absent(),
+                Value<String?> url = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> proposal = const Value.absent(),
+                Value<DateTime?> deadline = const Value.absent(),
+                Value<DateTime?> followUpDate = const Value.absent(),
+                Value<String?> followUpNote = const Value.absent(),
+                Value<String?> nextAction = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<DateTime?> leadDate = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => FreelanceLeadsCompanion.insert(
+                id: id,
+                clientId: clientId,
+                projectId: projectId,
+                title: title,
+                clientName: clientName,
+                contactName: contactName,
+                contactInfo: contactInfo,
+                platform: platform,
+                description: description,
+                skills: skills,
+                budget: budget,
+                currency: currency,
+                url: url,
+                status: status,
+                proposal: proposal,
+                deadline: deadline,
+                followUpDate: followUpDate,
+                followUpNote: followUpNote,
+                nextAction: nextAction,
+                notes: notes,
+                leadDate: leadDate,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$FreelanceLeadsTable, FreelanceLead>(table),
+                  $$FreelanceLeadsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({clientId = false, projectId = false, projectsRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [if (projectsRefs) db.projects],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (clientId) {
+                          state = state.withJoin(
+                            currentTable: table,
+                            currentColumn: table.clientId,
+                            referencedTable: $$FreelanceLeadsTableReferences
+                                ._clientIdTable(db),
+                            referencedColumn: $$FreelanceLeadsTableReferences
+                                ._clientIdTable(db)
+                                .id,
+                          ) as T;
+                        }
+                        if (projectId) {
+                          state = state.withJoin(
+                            currentTable: table,
+                            currentColumn: table.projectId,
+                            referencedTable: $$FreelanceLeadsTableReferences
+                                ._projectIdTable(db),
+                            referencedColumn: $$FreelanceLeadsTableReferences
+                                ._projectIdTable(db)
+                                .id,
+                          ) as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (projectsRefs)
+                        await $_getPrefetchedData<
+                          FreelanceLead,
+                          $FreelanceLeadsTable,
+                          Project
+                        >(
+                          currentTable: table,
+                          referencedTable: $$FreelanceLeadsTableReferences
+                              ._projectsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$FreelanceLeadsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).projectsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.leadId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$FreelanceLeadsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $FreelanceLeadsTable,
+      FreelanceLead,
+      $$FreelanceLeadsTableFilterComposer,
+      $$FreelanceLeadsTableOrderingComposer,
+      $$FreelanceLeadsTableAnnotationComposer,
+      $$FreelanceLeadsTableCreateCompanionBuilder,
+      $$FreelanceLeadsTableUpdateCompanionBuilder,
+      (FreelanceLead, $$FreelanceLeadsTableReferences),
+      FreelanceLead,
+      PrefetchHooks Function({bool clientId, bool projectId, bool projectsRefs})
+    >;
 typedef $$ProjectsTableCreateCompanionBuilder = ProjectsCompanion Function({
   required String id,
   required String name,
@@ -8093,6 +12354,9 @@ typedef $$ProjectsTableCreateCompanionBuilder = ProjectsCompanion Function({
   Value<String?> liveUrl,
   Value<DateTime?> deadline,
   Value<String?> notes,
+  Value<String?> clientId,
+  Value<String?> leadId,
+  Value<bool> isFreelance,
   Value<DateTime> createdAt,
   Value<DateTime> updatedAt,
   Value<int> rowid,
@@ -8108,6 +12372,9 @@ typedef $$ProjectsTableUpdateCompanionBuilder = ProjectsCompanion Function({
   Value<String?> liveUrl,
   Value<DateTime?> deadline,
   Value<String?> notes,
+  Value<String?> clientId,
+  Value<String?> leadId,
+  Value<bool> isFreelance,
   Value<DateTime> createdAt,
   Value<DateTime> updatedAt,
   Value<int> rowid,
@@ -8116,6 +12383,58 @@ typedef $$ProjectsTableUpdateCompanionBuilder = ProjectsCompanion Function({
 final class $$ProjectsTableReferences
     extends BaseReferences<_$AppDatabase, $ProjectsTable, Project> {
   $$ProjectsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $ClientsTable _clientIdTable(_$AppDatabase db) =>
+      db.clients.createAlias('projects__client_id__clients__id');
+
+  $$ClientsTableProcessedTableManager? get clientId {
+    final $_column = $_itemColumn<String>('client_id');
+    if ($_column == null) return null;
+    final manager = $$ClientsTableTableManager(
+      $_db,
+      $_db.clients,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_clientIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $FreelanceLeadsTable _leadIdTable(_$AppDatabase db) =>
+      db.freelanceLeads.createAlias('projects__lead_id__freelance_leads__id');
+
+  $$FreelanceLeadsTableProcessedTableManager? get leadId {
+    final $_column = $_itemColumn<String>('lead_id');
+    if ($_column == null) return null;
+    final manager = $$FreelanceLeadsTableTableManager(
+      $_db,
+      $_db.freelanceLeads,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_leadIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static MultiTypedResultKey<$FreelanceLeadsTable, List<FreelanceLead>>
+  _freelanceLeadsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.freelanceLeads,
+    aliasName: 'projects__id__freelance_leads__project_id',
+  );
+
+  $$FreelanceLeadsTableProcessedTableManager get freelanceLeadsRefs {
+    final manager = $$FreelanceLeadsTableTableManager(
+      $_db,
+      $_db.freelanceLeads,
+    ).filter((f) => f.projectId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_freelanceLeadsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 
   static MultiTypedResultKey<$TasksTable, List<Task>> _tasksRefsTable(
     _$AppDatabase db,
@@ -8149,6 +12468,27 @@ final class $$ProjectsTableReferences
     ).filter((f) => f.projectId.id.sqlEquals($_itemColumn<String>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_workNotesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$FreelancePaymentsTable, List<FreelancePayment>>
+  _freelancePaymentsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.freelancePayments,
+        aliasName: 'projects__id__freelance_payments__project_id',
+      );
+
+  $$FreelancePaymentsTableProcessedTableManager get freelancePaymentsRefs {
+    final manager = $$FreelancePaymentsTableTableManager(
+      $_db,
+      $_db.freelancePayments,
+    ).filter((f) => f.projectId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _freelancePaymentsRefsTable($_db),
+    );
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
@@ -8214,6 +12554,11 @@ class $$ProjectsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<bool> get isFreelance => $composableBuilder(
+    column: $table.isFreelance,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnFilters(column),
@@ -8223,6 +12568,77 @@ class $$ProjectsTableFilterComposer
     column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  $$ClientsTableFilterComposer get clientId {
+    final $$ClientsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.clientId,
+      referencedTable: $db.clients,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientsTableFilterComposer(
+            $db: $db,
+            $table: $db.clients,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$FreelanceLeadsTableFilterComposer get leadId {
+    final $$FreelanceLeadsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.leadId,
+      referencedTable: $db.freelanceLeads,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FreelanceLeadsTableFilterComposer(
+            $db: $db,
+            $table: $db.freelanceLeads,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<bool> freelanceLeadsRefs(
+    Expression<bool> Function($$FreelanceLeadsTableFilterComposer f) f,
+  ) {
+    final $$FreelanceLeadsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.freelanceLeads,
+      getReferencedColumn: (t) => t.projectId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FreelanceLeadsTableFilterComposer(
+            $db: $db,
+            $table: $db.freelanceLeads,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 
   Expression<bool> tasksRefs(
     Expression<bool> Function($$TasksTableFilterComposer f) f,
@@ -8265,6 +12681,31 @@ class $$ProjectsTableFilterComposer
           }) => $$WorkNotesTableFilterComposer(
             $db: $db,
             $table: $db.workNotes,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> freelancePaymentsRefs(
+    Expression<bool> Function($$FreelancePaymentsTableFilterComposer f) f,
+  ) {
+    final $$FreelancePaymentsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.freelancePayments,
+      getReferencedColumn: (t) => t.projectId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FreelancePaymentsTableFilterComposer(
+            $db: $db,
+            $table: $db.freelancePayments,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -8334,6 +12775,11 @@ class $$ProjectsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get isFreelance => $composableBuilder(
+    column: $table.isFreelance,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -8343,6 +12789,52 @@ class $$ProjectsTableOrderingComposer
     column: $table.updatedAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  $$ClientsTableOrderingComposer get clientId {
+    final $$ClientsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.clientId,
+      referencedTable: $db.clients,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientsTableOrderingComposer(
+            $db: $db,
+            $table: $db.clients,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$FreelanceLeadsTableOrderingComposer get leadId {
+    final $$FreelanceLeadsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.leadId,
+      referencedTable: $db.freelanceLeads,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FreelanceLeadsTableOrderingComposer(
+            $db: $db,
+            $table: $db.freelanceLeads,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$ProjectsTableAnnotationComposer
@@ -8386,11 +12878,87 @@ class $$ProjectsTableAnnotationComposer
   GeneratedColumn<String> get notes =>
       $composableBuilder(column: $table.notes, builder: (column) => column);
 
+  GeneratedColumn<bool> get isFreelance => $composableBuilder(
+    column: $table.isFreelance,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  $$ClientsTableAnnotationComposer get clientId {
+    final $$ClientsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.clientId,
+      referencedTable: $db.clients,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.clients,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$FreelanceLeadsTableAnnotationComposer get leadId {
+    final $$FreelanceLeadsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.leadId,
+      referencedTable: $db.freelanceLeads,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FreelanceLeadsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.freelanceLeads,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<T> freelanceLeadsRefs<T extends Object>(
+    Expression<T> Function($$FreelanceLeadsTableAnnotationComposer a) f,
+  ) {
+    final $$FreelanceLeadsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.freelanceLeads,
+      getReferencedColumn: (t) => t.projectId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FreelanceLeadsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.freelanceLeads,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 
   Expression<T> tasksRefs<T extends Object>(
     Expression<T> Function($$TasksTableAnnotationComposer a) f,
@@ -8441,6 +13009,32 @@ class $$ProjectsTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> freelancePaymentsRefs<T extends Object>(
+    Expression<T> Function($$FreelancePaymentsTableAnnotationComposer a) f,
+  ) {
+    final $$FreelancePaymentsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.freelancePayments,
+          getReferencedColumn: (t) => t.projectId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$FreelancePaymentsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.freelancePayments,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$ProjectsTableTableManager
@@ -8456,7 +13050,14 @@ class $$ProjectsTableTableManager
           $$ProjectsTableUpdateCompanionBuilder,
           (Project, $$ProjectsTableReferences),
           Project,
-          PrefetchHooks Function({bool tasksRefs, bool workNotesRefs})
+          PrefetchHooks Function({
+            bool clientId,
+            bool leadId,
+            bool freelanceLeadsRefs,
+            bool tasksRefs,
+            bool workNotesRefs,
+            bool freelancePaymentsRefs,
+          })
         > {
   $$ProjectsTableTableManager(_$AppDatabase db, $ProjectsTable table)
     : super(
@@ -8481,6 +13082,9 @@ class $$ProjectsTableTableManager
                 Value<String?> liveUrl = const Value.absent(),
                 Value<DateTime?> deadline = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
+                Value<String?> clientId = const Value.absent(),
+                Value<String?> leadId = const Value.absent(),
+                Value<bool> isFreelance = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -8495,6 +13099,9 @@ class $$ProjectsTableTableManager
                 liveUrl: liveUrl,
                 deadline: deadline,
                 notes: notes,
+                clientId: clientId,
+                leadId: leadId,
+                isFreelance: isFreelance,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 rowid: rowid,
@@ -8511,6 +13118,9 @@ class $$ProjectsTableTableManager
                 Value<String?> liveUrl = const Value.absent(),
                 Value<DateTime?> deadline = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
+                Value<String?> clientId = const Value.absent(),
+                Value<String?> leadId = const Value.absent(),
+                Value<bool> isFreelance = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -8525,6 +13135,9 @@ class $$ProjectsTableTableManager
                 liveUrl: liveUrl,
                 deadline: deadline,
                 notes: notes,
+                clientId: clientId,
+                leadId: leadId,
+                isFreelance: isFreelance,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 rowid: rowid,
@@ -8537,49 +13150,154 @@ class $$ProjectsTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({tasksRefs = false, workNotesRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [
-                if (tasksRefs) db.tasks,
-                if (workNotesRefs) db.workNotes,
-              ],
-              addJoins: null,
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (tasksRefs)
-                    await $_getPrefetchedData<Project, $ProjectsTable, Task>(
-                      currentTable: table,
-                      referencedTable: $$ProjectsTableReferences
-                          ._tasksRefsTable(db),
-                      managerFromTypedResult: (p0) =>
-                          $$ProjectsTableReferences(db, table, p0).tasksRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.projectId == item.id),
-                      typedResults: items,
-                    ),
-                  if (workNotesRefs)
-                    await $_getPrefetchedData<
-                      Project,
-                      $ProjectsTable,
-                      WorkNote
-                    >(
-                      currentTable: table,
-                      referencedTable: $$ProjectsTableReferences
-                          ._workNotesRefsTable(db),
-                      managerFromTypedResult: (p0) => $$ProjectsTableReferences(
-                        db,
-                        table,
-                        p0,
-                      ).workNotesRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.projectId == item.id),
-                      typedResults: items,
-                    ),
-                ];
+          prefetchHooksCallback:
+              ({
+                clientId = false,
+                leadId = false,
+                freelanceLeadsRefs = false,
+                tasksRefs = false,
+                workNotesRefs = false,
+                freelancePaymentsRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (freelanceLeadsRefs) db.freelanceLeads,
+                    if (tasksRefs) db.tasks,
+                    if (workNotesRefs) db.workNotes,
+                    if (freelancePaymentsRefs) db.freelancePayments,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (clientId) {
+                          state = state.withJoin(
+                            currentTable: table,
+                            currentColumn: table.clientId,
+                            referencedTable: $$ProjectsTableReferences
+                                ._clientIdTable(db),
+                            referencedColumn: $$ProjectsTableReferences
+                                ._clientIdTable(db)
+                                .id,
+                          ) as T;
+                        }
+                        if (leadId) {
+                          state = state.withJoin(
+                            currentTable: table,
+                            currentColumn: table.leadId,
+                            referencedTable: $$ProjectsTableReferences
+                                ._leadIdTable(db),
+                            referencedColumn: $$ProjectsTableReferences
+                                ._leadIdTable(db)
+                                .id,
+                          ) as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (freelanceLeadsRefs)
+                        await $_getPrefetchedData<
+                          Project,
+                          $ProjectsTable,
+                          FreelanceLead
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ProjectsTableReferences
+                              ._freelanceLeadsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ProjectsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).freelanceLeadsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.projectId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (tasksRefs)
+                        await $_getPrefetchedData<
+                          Project,
+                          $ProjectsTable,
+                          Task
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ProjectsTableReferences
+                              ._tasksRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ProjectsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).tasksRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.projectId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (workNotesRefs)
+                        await $_getPrefetchedData<
+                          Project,
+                          $ProjectsTable,
+                          WorkNote
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ProjectsTableReferences
+                              ._workNotesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ProjectsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).workNotesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.projectId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (freelancePaymentsRefs)
+                        await $_getPrefetchedData<
+                          Project,
+                          $ProjectsTable,
+                          FreelancePayment
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ProjectsTableReferences
+                              ._freelancePaymentsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ProjectsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).freelancePaymentsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.projectId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -8596,7 +13314,14 @@ typedef $$ProjectsTableProcessedTableManager =
       $$ProjectsTableUpdateCompanionBuilder,
       (Project, $$ProjectsTableReferences),
       Project,
-      PrefetchHooks Function({bool tasksRefs, bool workNotesRefs})
+      PrefetchHooks Function({
+        bool clientId,
+        bool leadId,
+        bool freelanceLeadsRefs,
+        bool tasksRefs,
+        bool workNotesRefs,
+        bool freelancePaymentsRefs,
+      })
     >;
 typedef $$TasksTableCreateCompanionBuilder = TasksCompanion Function({
   required String id,
@@ -11324,8 +16049,8 @@ typedef $$ThingsToAsksTableCreateCompanionBuilder =
       Value<String?> description,
       Value<String> priority,
       Value<String> status,
-      Value<DateTime> createdAt,
       Value<DateTime?> completedAt,
+      Value<DateTime> createdAt,
       Value<int> rowid,
     });
 typedef $$ThingsToAsksTableUpdateCompanionBuilder =
@@ -11335,8 +16060,8 @@ typedef $$ThingsToAsksTableUpdateCompanionBuilder =
       Value<String?> description,
       Value<String> priority,
       Value<String> status,
-      Value<DateTime> createdAt,
       Value<DateTime?> completedAt,
+      Value<DateTime> createdAt,
       Value<int> rowid,
     });
 
@@ -11374,13 +16099,13 @@ class $$ThingsToAsksTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<DateTime> get createdAt => $composableBuilder(
-    column: $table.createdAt,
+  ColumnFilters<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<DateTime> get completedAt => $composableBuilder(
-    column: $table.completedAt,
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -11419,13 +16144,13 @@ class $$ThingsToAsksTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
-    column: $table.createdAt,
+  ColumnOrderings<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<DateTime> get completedAt => $composableBuilder(
-    column: $table.completedAt,
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
   );
 }
@@ -11456,13 +16181,13 @@ class $$ThingsToAsksTableAnnotationComposer
   GeneratedColumn<String> get status =>
       $composableBuilder(column: $table.status, builder: (column) => column);
 
-  GeneratedColumn<DateTime> get createdAt =>
-      $composableBuilder(column: $table.createdAt, builder: (column) => column);
-
   GeneratedColumn<DateTime> get completedAt => $composableBuilder(
     column: $table.completedAt,
     builder: (column) => column,
   );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
 }
 
 class $$ThingsToAsksTableTableManager
@@ -11501,8 +16226,8 @@ class $$ThingsToAsksTableTableManager
                 Value<String?> description = const Value.absent(),
                 Value<String> priority = const Value.absent(),
                 Value<String> status = const Value.absent(),
-                Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime?> completedAt = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ThingsToAsksCompanion(
                 id: id,
@@ -11510,8 +16235,8 @@ class $$ThingsToAsksTableTableManager
                 description: description,
                 priority: priority,
                 status: status,
-                createdAt: createdAt,
                 completedAt: completedAt,
+                createdAt: createdAt,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -11521,8 +16246,8 @@ class $$ThingsToAsksTableTableManager
                 Value<String?> description = const Value.absent(),
                 Value<String> priority = const Value.absent(),
                 Value<String> status = const Value.absent(),
-                Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime?> completedAt = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ThingsToAsksCompanion.insert(
                 id: id,
@@ -11530,8 +16255,8 @@ class $$ThingsToAsksTableTableManager
                 description: description,
                 priority: priority,
                 status: status,
-                createdAt: createdAt,
                 completedAt: completedAt,
+                createdAt: createdAt,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -11982,12 +16707,547 @@ typedef $$WorkNotesTableProcessedTableManager =
       WorkNote,
       PrefetchHooks Function({bool projectId})
     >;
+typedef $$FreelancePaymentsTableCreateCompanionBuilder =
+    FreelancePaymentsCompanion Function({
+      required String id,
+      required String clientId,
+      Value<String?> projectId,
+      required double amount,
+      Value<String> currency,
+      required DateTime paymentDate,
+      Value<String> status,
+      Value<String?> description,
+      Value<String?> notes,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+typedef $$FreelancePaymentsTableUpdateCompanionBuilder =
+    FreelancePaymentsCompanion Function({
+      Value<String> id,
+      Value<String> clientId,
+      Value<String?> projectId,
+      Value<double> amount,
+      Value<String> currency,
+      Value<DateTime> paymentDate,
+      Value<String> status,
+      Value<String?> description,
+      Value<String?> notes,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+final class $$FreelancePaymentsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $FreelancePaymentsTable,
+          FreelancePayment
+        > {
+  $$FreelancePaymentsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $ClientsTable _clientIdTable(_$AppDatabase db) =>
+      db.clients.createAlias('freelance_payments__client_id__clients__id');
+
+  $$ClientsTableProcessedTableManager get clientId {
+    final $_column = $_itemColumn<String>('client_id')!;
+
+    final manager = $$ClientsTableTableManager(
+      $_db,
+      $_db.clients,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_clientIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $ProjectsTable _projectIdTable(_$AppDatabase db) =>
+      db.projects.createAlias('freelance_payments__project_id__projects__id');
+
+  $$ProjectsTableProcessedTableManager? get projectId {
+    final $_column = $_itemColumn<String>('project_id');
+    if ($_column == null) return null;
+    final manager = $$ProjectsTableTableManager(
+      $_db,
+      $_db.projects,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_projectIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$FreelancePaymentsTableFilterComposer
+    extends Composer<_$AppDatabase, $FreelancePaymentsTable> {
+  $$FreelancePaymentsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get amount => $composableBuilder(
+    column: $table.amount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get currency => $composableBuilder(
+    column: $table.currency,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get paymentDate => $composableBuilder(
+    column: $table.paymentDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$ClientsTableFilterComposer get clientId {
+    final $$ClientsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.clientId,
+      referencedTable: $db.clients,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientsTableFilterComposer(
+            $db: $db,
+            $table: $db.clients,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProjectsTableFilterComposer get projectId {
+    final $$ProjectsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.projectId,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableFilterComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$FreelancePaymentsTableOrderingComposer
+    extends Composer<_$AppDatabase, $FreelancePaymentsTable> {
+  $$FreelancePaymentsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get amount => $composableBuilder(
+    column: $table.amount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get currency => $composableBuilder(
+    column: $table.currency,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get paymentDate => $composableBuilder(
+    column: $table.paymentDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$ClientsTableOrderingComposer get clientId {
+    final $$ClientsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.clientId,
+      referencedTable: $db.clients,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientsTableOrderingComposer(
+            $db: $db,
+            $table: $db.clients,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProjectsTableOrderingComposer get projectId {
+    final $$ProjectsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.projectId,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableOrderingComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$FreelancePaymentsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $FreelancePaymentsTable> {
+  $$FreelancePaymentsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<double> get amount =>
+      $composableBuilder(column: $table.amount, builder: (column) => column);
+
+  GeneratedColumn<String> get currency =>
+      $composableBuilder(column: $table.currency, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get paymentDate => $composableBuilder(
+    column: $table.paymentDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  $$ClientsTableAnnotationComposer get clientId {
+    final $$ClientsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.clientId,
+      referencedTable: $db.clients,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.clients,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProjectsTableAnnotationComposer get projectId {
+    final $$ProjectsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.projectId,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$FreelancePaymentsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $FreelancePaymentsTable,
+          FreelancePayment,
+          $$FreelancePaymentsTableFilterComposer,
+          $$FreelancePaymentsTableOrderingComposer,
+          $$FreelancePaymentsTableAnnotationComposer,
+          $$FreelancePaymentsTableCreateCompanionBuilder,
+          $$FreelancePaymentsTableUpdateCompanionBuilder,
+          (FreelancePayment, $$FreelancePaymentsTableReferences),
+          FreelancePayment,
+          PrefetchHooks Function({bool clientId, bool projectId})
+        > {
+  $$FreelancePaymentsTableTableManager(
+    _$AppDatabase db,
+    $FreelancePaymentsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$FreelancePaymentsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$FreelancePaymentsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$FreelancePaymentsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> clientId = const Value.absent(),
+                Value<String?> projectId = const Value.absent(),
+                Value<double> amount = const Value.absent(),
+                Value<String> currency = const Value.absent(),
+                Value<DateTime> paymentDate = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> description = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => FreelancePaymentsCompanion(
+                id: id,
+                clientId: clientId,
+                projectId: projectId,
+                amount: amount,
+                currency: currency,
+                paymentDate: paymentDate,
+                status: status,
+                description: description,
+                notes: notes,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String clientId,
+                Value<String?> projectId = const Value.absent(),
+                required double amount,
+                Value<String> currency = const Value.absent(),
+                required DateTime paymentDate,
+                Value<String> status = const Value.absent(),
+                Value<String?> description = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => FreelancePaymentsCompanion.insert(
+                id: id,
+                clientId: clientId,
+                projectId: projectId,
+                amount: amount,
+                currency: currency,
+                paymentDate: paymentDate,
+                status: status,
+                description: description,
+                notes: notes,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$FreelancePaymentsTable, FreelancePayment>(table),
+                  $$FreelancePaymentsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({clientId = false, projectId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (clientId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.clientId,
+                        referencedTable: $$FreelancePaymentsTableReferences
+                            ._clientIdTable(db),
+                        referencedColumn: $$FreelancePaymentsTableReferences
+                            ._clientIdTable(db)
+                            .id,
+                      ) as T;
+                    }
+                    if (projectId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.projectId,
+                        referencedTable: $$FreelancePaymentsTableReferences
+                            ._projectIdTable(db),
+                        referencedColumn: $$FreelancePaymentsTableReferences
+                            ._projectIdTable(db)
+                            .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$FreelancePaymentsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $FreelancePaymentsTable,
+      FreelancePayment,
+      $$FreelancePaymentsTableFilterComposer,
+      $$FreelancePaymentsTableOrderingComposer,
+      $$FreelancePaymentsTableAnnotationComposer,
+      $$FreelancePaymentsTableCreateCompanionBuilder,
+      $$FreelancePaymentsTableUpdateCompanionBuilder,
+      (FreelancePayment, $$FreelancePaymentsTableReferences),
+      FreelancePayment,
+      PrefetchHooks Function({bool clientId, bool projectId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
   $$UserProfilesTableTableManager get userProfiles =>
       $$UserProfilesTableTableManager(_db, _db.userProfiles);
+  $$ClientsTableTableManager get clients =>
+      $$ClientsTableTableManager(_db, _db.clients);
+  $$FreelanceLeadsTableTableManager get freelanceLeads =>
+      $$FreelanceLeadsTableTableManager(_db, _db.freelanceLeads);
   $$ProjectsTableTableManager get projects =>
       $$ProjectsTableTableManager(_db, _db.projects);
   $$TasksTableTableManager get tasks =>
@@ -12005,4 +17265,6 @@ class $AppDatabaseManager {
       $$ThingsToAsksTableTableManager(_db, _db.thingsToAsks);
   $$WorkNotesTableTableManager get workNotes =>
       $$WorkNotesTableTableManager(_db, _db.workNotes);
+  $$FreelancePaymentsTableTableManager get freelancePayments =>
+      $$FreelancePaymentsTableTableManager(_db, _db.freelancePayments);
 }

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../career/presentation/add_edit_application_dialog.dart';
 import '../../../career/presentation/add_edit_job_dialog.dart';
-import '../../../career/presentation/add_edit_resume_dialog.dart';
+import '../../../freelance/presentation/add_edit_client_dialog.dart';
+import '../../../freelance/presentation/add_edit_lead_dialog.dart';
+import '../../../freelance/presentation/add_edit_payment_dialog.dart';
 import '../../../work/presentation/add_edit_eod_dialog.dart';
 import '../../../work/presentation/add_edit_project_dialog.dart';
 import '../../../work/presentation/add_edit_task_dialog.dart';
@@ -41,6 +43,36 @@ class QuickActionsBar extends ConsumerWidget {
               ),
               const SizedBox(width: 8),
               _buildActionButton(
+                icon: Icons.tune,
+                label: '+ Lead',
+                onTap: () => showDialog(
+                  context: context,
+                  builder: (_) => const AddEditLeadDialog(),
+                ),
+                theme: theme,
+              ),
+              const SizedBox(width: 8),
+              _buildActionButton(
+                icon: Icons.person_add_alt_1_outlined,
+                label: '+ Client',
+                onTap: () => showDialog(
+                  context: context,
+                  builder: (_) => const AddEditClientDialog(),
+                ),
+                theme: theme,
+              ),
+              const SizedBox(width: 8),
+              _buildActionButton(
+                icon: Icons.add_card,
+                label: '+ Payment',
+                onTap: () => showDialog(
+                  context: context,
+                  builder: (_) => const AddEditPaymentDialog(),
+                ),
+                theme: theme,
+              ),
+              const SizedBox(width: 8),
+              _buildActionButton(
                 icon: Icons.work_outline,
                 label: '+ Job',
                 onTap: () => showDialog(
@@ -56,16 +88,6 @@ class QuickActionsBar extends ConsumerWidget {
                 onTap: () => showDialog(
                   context: context,
                   builder: (_) => const AddEditApplicationDialog(),
-                ),
-                theme: theme,
-              ),
-              const SizedBox(width: 8),
-              _buildActionButton(
-                icon: Icons.picture_as_pdf_outlined,
-                label: '+ Resume',
-                onTap: () => showDialog(
-                  context: context,
-                  builder: (_) => const AddEditResumeDialog(),
                 ),
                 theme: theme,
               ),

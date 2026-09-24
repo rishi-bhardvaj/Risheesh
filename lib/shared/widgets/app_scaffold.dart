@@ -38,18 +38,17 @@ class AppScaffold extends StatelessWidget {
             label: 'Work',
           ),
           NavigationDestination(
+            icon: Icon(Icons.handshake_outlined),
+            selectedIcon: Icon(Icons.handshake),
+            label: 'Freelance',
+          ),
+          NavigationDestination(
             icon: Icon(Icons.insights_outlined),
             selectedIcon: Icon(Icons.insights),
             label: 'Track',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.auto_awesome_outlined),
-            selectedIcon: Icon(Icons.auto_awesome),
-            label: 'AI',
           ),
         ],
       ),
     );
   }
 }
-

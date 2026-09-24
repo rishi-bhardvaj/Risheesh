@@ -10,7 +10,7 @@ class UserProfiles extends Table {
   TextColumn get name => text().withLength(min: 1, max: 100)();
   TextColumn get currentRole => text().nullable()();
   RealColumn get experienceYears => real().withDefault(const Constant(0.0))();
-  TextColumn get skills => text().nullable()(); // Comma-separated or tags
+  TextColumn get skills => text().nullable()();
   TextColumn get programmingLanguages => text().nullable()();
   TextColumn get frameworks => text().nullable()();
   TextColumn get preferredRoles => text().nullable()();
@@ -28,7 +28,7 @@ class UserProfiles extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-// 2. Projects Table
+// 2. Projects Table (Phase 1 + Phase 3 + Phase 4 Freelance extension)
 class Projects extends Table {
   TextColumn get id => text()();
   TextColumn get name => text().withLength(min: 1, max: 150)();
@@ -40,6 +40,9 @@ class Projects extends Table {
   TextColumn get liveUrl => text().nullable()();
   DateTimeColumn get deadline => dateTime().nullable()();
   TextColumn get notes => text().nullable()();
+  TextColumn get clientId => text().nullable().references(Clients, #id, onDelete: KeyAction.setNull)();
+  TextColumn get leadId => text().nullable().references(FreelanceLeads, #id, onDelete: KeyAction.setNull)();
+  BoolColumn get isFreelance => boolean().withDefault(const Constant(false))();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
 
@@ -115,7 +118,7 @@ class JobApplications extends Table {
   TextColumn get salary => text().nullable()();
   TextColumn get location => text().nullable()();
   TextColumn get url => text().nullable()();
-  TextColumn get status => text().withDefault(const Constant('applied'))(); // saved, applying, applied, screening, interview, technical, hr, offer, rejected, withdrawn
+  TextColumn get status => text().withDefault(const Constant('applied'))();
   DateTimeColumn get appliedAt => dateTime().nullable()();
   DateTimeColumn get followUpDate => dateTime().nullable()();
   DateTimeColumn get interviewDate => dateTime().nullable()();
@@ -154,7 +157,7 @@ class SavedSearches extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-// 8. EOD Notes Table (Phase 3 Expanded)
+// 8. EOD Notes Table (Phase 3)
 class EODNotes extends Table {
   TextColumn get id => text()();
   DateTimeColumn get date => dateTime()();
@@ -173,27 +176,93 @@ class EODNotes extends Table {
 // 9. Things to Ask Table (Phase 3)
 class ThingsToAsks extends Table {
   TextColumn get id => text()();
-  TextColumn get title => text().withLength(min: 1, max: 250)();
+  TextColumn get title => text().withLength(min: 1, max: 200)();
   TextColumn get description => text().nullable()();
-  TextColumn get priority => text().withDefault(const Constant('medium'))(); // 'low', 'medium', 'high'
-  TextColumn get status => text().withDefault(const Constant('open'))(); // 'open', 'resolved'
-  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  TextColumn get priority => text().withDefault(const Constant('medium'))();
+  TextColumn get status => text().withDefault(const Constant('open'))();
   DateTimeColumn get completedAt => dateTime().nullable()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 
   @override
   Set<Column> get primaryKey => {id};
 }
 
-// 10. Work Notes & Meeting Notes Table (Phase 3)
+// 10. Work Notes Table (Phase 3)
 class WorkNotes extends Table {
   TextColumn get id => text()();
-  TextColumn get title => text().withLength(min: 1, max: 250)();
+  TextColumn get title => text().withLength(min: 1, max: 200)();
   TextColumn get content => text()();
-  TextColumn get noteType => text().withDefault(const Constant('general'))(); // 'general', 'meeting', 'technical', 'instruction', 'investigation'
+  TextColumn get noteType => text().withDefault(const Constant('scratchpad'))();
   TextColumn get projectId => text().nullable().references(Projects, #id, onDelete: KeyAction.setNull)();
   DateTimeColumn get meetingDate => dateTime().nullable()();
   TextColumn get participants => text().nullable()();
   TextColumn get actionItems => text().nullable()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+// 11. Clients Table (Phase 4 Freelance CRM)
+class Clients extends Table {
+  TextColumn get id => text()();
+  TextColumn get name => text().withLength(min: 1, max: 150)();
+  TextColumn get contactName => text().nullable()();
+  TextColumn get email => text().nullable()();
+  TextColumn get phone => text().nullable()();
+  TextColumn get platform => text().nullable()();
+  TextColumn get location => text().nullable()();
+  TextColumn get status => text().withDefault(const Constant('PROSPECT'))();
+  TextColumn get notes => text().nullable()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+// 12. FreelanceLeads Table (Phase 4 Freelance Opportunity Pipeline)
+class FreelanceLeads extends Table {
+  TextColumn get id => text()();
+  TextColumn get clientId => text().nullable().references(Clients, #id, onDelete: KeyAction.setNull)();
+  TextColumn get projectId => text().nullable().references(Projects, #id, onDelete: KeyAction.setNull)();
+  TextColumn get title => text().withLength(min: 1, max: 200)();
+  TextColumn get clientName => text().nullable()();
+  TextColumn get contactName => text().nullable()();
+  TextColumn get contactInfo => text().nullable()();
+  TextColumn get platform => text().nullable()();
+  TextColumn get description => text().nullable()();
+  TextColumn get skills => text().nullable()();
+  RealColumn get budget => real().nullable()();
+  TextColumn get currency => text().withDefault(const Constant('USD'))();
+  TextColumn get url => text().nullable()();
+  TextColumn get status => text().withDefault(const Constant('NEW_LEAD'))();
+  TextColumn get proposal => text().nullable()();
+  DateTimeColumn get deadline => dateTime().nullable()();
+  DateTimeColumn get followUpDate => dateTime().nullable()();
+  TextColumn get followUpNote => text().nullable()();
+  TextColumn get nextAction => text().nullable()();
+  TextColumn get notes => text().nullable()();
+  DateTimeColumn get leadDate => dateTime().nullable()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+// 13. FreelancePayments Table (Phase 4 Revenue & Payment Tracking)
+class FreelancePayments extends Table {
+  TextColumn get id => text()();
+  TextColumn get clientId => text().references(Clients, #id, onDelete: KeyAction.cascade)();
+  TextColumn get projectId => text().nullable().references(Projects, #id, onDelete: KeyAction.setNull)();
+  RealColumn get amount => real()();
+  TextColumn get currency => text().withDefault(const Constant('USD'))();
+  DateTimeColumn get paymentDate => dateTime()();
+  TextColumn get status => text().withDefault(const Constant('EXPECTED'))();
+  TextColumn get description => text().nullable()();
+  TextColumn get notes => text().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
 
@@ -213,12 +282,15 @@ class WorkNotes extends Table {
   EODNotes,
   ThingsToAsks,
   WorkNotes,
+  Clients,
+  FreelanceLeads,
+  FreelancePayments,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? impl.connect());
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration {
@@ -228,7 +300,6 @@ class AppDatabase extends _$AppDatabase {
       },
       onUpgrade: (Migrator m, int from, int to) async {
         if (from < 2) {
-          // Schema v2 migration (Resumes, SavedSearches, Jobs & Applications extra columns)
           await m.createTable(resumes);
           await m.createTable(savedSearches);
           await m.addColumn(userProfiles, userProfiles.programmingLanguages);
@@ -249,7 +320,6 @@ class AppDatabase extends _$AppDatabase {
           await m.addColumn(jobApplications, jobApplications.nextAction);
         }
         if (from < 3) {
-          // Schema v3 migration (Work Module tables & fields)
           await m.createTable(thingsToAsks);
           await m.createTable(workNotes);
           await m.addColumn(tasks, tasks.category);
@@ -260,9 +330,16 @@ class AppDatabase extends _$AppDatabase {
           await m.addColumn(eODNotes, eODNotes.notes);
           await m.addColumn(eODNotes, eODNotes.updatedAt);
         }
+        if (from < 4) {
+          await m.createTable(clients);
+          await m.createTable(freelanceLeads);
+          await m.createTable(freelancePayments);
+          await m.addColumn(projects, projects.clientId);
+          await m.addColumn(projects, projects.leadId);
+          await m.addColumn(projects, projects.isFreelance);
+        }
       },
       beforeOpen: (details) async {
-        // Enforce SQLite Foreign Keys
         await customStatement('PRAGMA foreign_keys = ON;');
       },
     );
@@ -408,6 +485,76 @@ class AppDatabase extends _$AppDatabase {
   Future<bool> updateWorkNote(WorkNotesCompanion note) => update(workNotes).replace(note);
   Future<int> deleteWorkNote(String id) =>
       (delete(workNotes)..where((w) => w.id.equals(id))).go();
+
+  // --- Client Queries (Phase 4 Freelance CRM) ---
+  Future<List<Client>> getAllClients() => select(clients).get();
+  Stream<List<Client>> watchAllClients() => select(clients).watch();
+  Future<Client?> getClientById(String id) =>
+      (select(clients)..where((c) => c.id.equals(id))).getSingleOrNull();
+  Future<int> insertClient(ClientsCompanion client) => into(clients).insert(client);
+  Future<bool> updateClient(ClientsCompanion client) => update(clients).replace(client);
+  Future<int> deleteClient(String id) =>
+      (delete(clients)..where((c) => c.id.equals(id))).go();
+
+  // --- Freelance Lead Queries (Phase 4) ---
+  Future<List<FreelanceLead>> getAllLeads() => select(freelanceLeads).get();
+  Stream<List<FreelanceLead>> watchAllLeads() => select(freelanceLeads).watch();
+  Future<FreelanceLead?> getLeadById(String id) =>
+      (select(freelanceLeads)..where((l) => l.id.equals(id))).getSingleOrNull();
+  Future<List<FreelanceLead>> getLeadsByClientId(String clientId) =>
+      (select(freelanceLeads)..where((l) => l.clientId.equals(clientId))).get();
+  Stream<List<FreelanceLead>> watchLeadsByClientId(String clientId) =>
+      (select(freelanceLeads)..where((l) => l.clientId.equals(clientId))).watch();
+  Future<int> insertLead(FreelanceLeadsCompanion lead) => into(freelanceLeads).insert(lead);
+  Future<bool> updateLead(FreelanceLeadsCompanion lead) => update(freelanceLeads).replace(lead);
+  Future<int> deleteLead(String id) =>
+      (delete(freelanceLeads)..where((l) => l.id.equals(id))).go();
+  Future<int> updateLeadStatus(String id, String status) {
+    return (update(freelanceLeads)..where((l) => l.id.equals(id))).write(
+      FreelanceLeadsCompanion(
+        status: Value(status),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+
+  // --- Freelance Payment Queries (Phase 4) ---
+  Future<List<FreelancePayment>> getAllPayments() => select(freelancePayments).get();
+  Stream<List<FreelancePayment>> watchAllPayments() => select(freelancePayments).watch();
+  Future<FreelancePayment?> getPaymentById(String id) =>
+      (select(freelancePayments)..where((p) => p.id.equals(id))).getSingleOrNull();
+  Future<List<FreelancePayment>> getPaymentsByClientId(String clientId) =>
+      (select(freelancePayments)..where((p) => p.clientId.equals(clientId))).get();
+  Stream<List<FreelancePayment>> watchPaymentsByClientId(String clientId) =>
+      (select(freelancePayments)..where((p) => p.clientId.equals(clientId))).watch();
+  Future<List<FreelancePayment>> getPaymentsByProjectId(String projectId) =>
+      (select(freelancePayments)..where((p) => p.projectId.equals(projectId))).get();
+  Stream<List<FreelancePayment>> watchPaymentsByProjectId(String projectId) =>
+      (select(freelancePayments)..where((p) => p.projectId.equals(projectId))).watch();
+  Future<int> insertPayment(FreelancePaymentsCompanion payment) =>
+      into(freelancePayments).insert(payment);
+  Future<bool> updatePayment(FreelancePaymentsCompanion payment) =>
+      update(freelancePayments).replace(payment);
+  Future<int> deletePayment(String id) =>
+      (delete(freelancePayments)..where((p) => p.id.equals(id))).go();
+  Future<int> updatePaymentStatus(String id, String status) {
+    return (update(freelancePayments)..where((p) => p.id.equals(id))).write(
+      FreelancePaymentsCompanion(
+        status: Value(status),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+
+  // --- Freelance Project Queries (Phase 4) ---
+  Future<List<Project>> getFreelanceProjects() =>
+      (select(projects)..where((p) => p.isFreelance.equals(true) | p.clientId.isNotNull())).get();
+  Stream<List<Project>> watchFreelanceProjects() =>
+      (select(projects)..where((p) => p.isFreelance.equals(true) | p.clientId.isNotNull())).watch();
+  Future<List<Project>> getProjectsByClientId(String clientId) =>
+      (select(projects)..where((p) => p.clientId.equals(clientId))).get();
+  Stream<List<Project>> watchProjectsByClientId(String clientId) =>
+      (select(projects)..where((p) => p.clientId.equals(clientId))).watch();
 }
 
 // Global Provider for AppDatabase instance

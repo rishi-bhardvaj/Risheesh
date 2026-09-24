@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import '../../features/career/presentation/add_edit_application_dialog.dart';
 import '../../features/career/presentation/add_edit_job_dialog.dart';
 import '../../features/career/presentation/add_edit_resume_dialog.dart';
+import '../../features/freelance/presentation/add_edit_client_dialog.dart';
+import '../../features/freelance/presentation/add_edit_lead_dialog.dart';
+import '../../features/freelance/presentation/add_edit_payment_dialog.dart';
 import '../../features/work/presentation/add_edit_eod_dialog.dart';
 import '../../features/work/presentation/add_edit_project_dialog.dart';
 import '../../features/work/presentation/add_edit_task_dialog.dart';
@@ -52,6 +55,39 @@ void showQuickAddModal(BuildContext context) {
                 onTap: () {
                   Navigator.pop(ctx);
                   showDialog(context: context, builder: (_) => const AddEditTaskDialog());
+                },
+              ),
+              const SizedBox(height: 10),
+              _buildQuickActionItem(
+                icon: Icons.tune,
+                title: 'Add Freelance Lead',
+                subtitle: 'Track incoming client opportunity, budget, and pitch',
+                color: Colors.deepPurple,
+                onTap: () {
+                  Navigator.pop(ctx);
+                  showDialog(context: context, builder: (_) => const AddEditLeadDialog());
+                },
+              ),
+              const SizedBox(height: 10),
+              _buildQuickActionItem(
+                icon: Icons.person_add_alt_1_outlined,
+                title: 'Add Freelance Client',
+                subtitle: 'Store client profile, contacts, and contract terms',
+                color: Colors.indigo,
+                onTap: () {
+                  Navigator.pop(ctx);
+                  showDialog(context: context, builder: (_) => const AddEditClientDialog());
+                },
+              ),
+              const SizedBox(height: 10),
+              _buildQuickActionItem(
+                icon: Icons.add_card,
+                title: 'Record Freelance Payment',
+                subtitle: 'Log milestone payment, invoice, or received amount',
+                color: Colors.green.shade700,
+                onTap: () {
+                  Navigator.pop(ctx);
+                  showDialog(context: context, builder: (_) => const AddEditPaymentDialog());
                 },
               ),
               const SizedBox(height: 10),

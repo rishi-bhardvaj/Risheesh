@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../features/ai/presentation/ai_screen.dart';
 import '../../features/career/presentation/application_details_screen.dart';
 import '../../features/career/presentation/career_profile_view.dart';
 import '../../features/career/presentation/career_screen.dart';
 import '../../features/career/presentation/job_details_screen.dart';
+import '../../features/freelance/presentation/client_details_screen.dart';
+import '../../features/freelance/presentation/freelance_screen.dart';
+import '../../features/freelance/presentation/lead_details_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/onboarding/presentation/onboarding_screen.dart';
 import '../../features/onboarding/providers/onboarding_provider.dart';
@@ -21,8 +23,8 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 final _homeNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'home');
 final _careerNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'career');
 final _workNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'work');
+final _freelanceNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'freelance');
 final _trackNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'track');
-final _aiNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'ai');
 
 final routerProvider = Provider<GoRouter>((ref) {
   final isOnboardingCompleted = ref.watch(onboardingCompletedProvider);
@@ -81,7 +83,17 @@ final routerProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
-          // Branch 4: Track
+          // Branch 4: Freelance
+          StatefulShellBranch(
+            navigatorKey: _freelanceNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/freelance',
+                builder: (context, state) => const FreelanceScreen(),
+              ),
+            ],
+          ),
+          // Branch 5: Track
           StatefulShellBranch(
             navigatorKey: _trackNavigatorKey,
             routes: [
@@ -91,20 +103,8 @@ final routerProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
-          // Branch 5: AI
-          StatefulShellBranch(
-            navigatorKey: _aiNavigatorKey,
-            routes: [
-              GoRoute(
-                path: '/ai',
-                builder: (context, state) => const AIScreen(),
-              ),
-            ],
-          ),
         ],
       ),
-      // Settings route (accessible from any screen's AppBar)
-      // Deep Sub-Routes with Root Navigator Key
       // Career Deep Routes
       GoRoute(
         path: '/career/job/:id',
@@ -127,7 +127,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => ProjectDetailsScreen(projectId: state.pathParameters['id']!),
       ),
-      // Settings route
       GoRoute(
         path: '/work/note/:id',
         parentNavigatorKey: _rootNavigatorKey,
@@ -138,6 +137,17 @@ final routerProvider = Provider<GoRouter>((ref) {
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const EODHistoryScreen(),
       ),
+      // Freelance Deep Routes
+      GoRoute(
+        path: '/freelance/lead/:id',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => LeadDetailsScreen(leadId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: '/freelance/client/:id',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => ClientDetailsScreen(clientId: state.pathParameters['id']!),
+      ),
       // Settings Route
       GoRoute(
         path: '/settings',
@@ -147,4 +157,3 @@ final routerProvider = Provider<GoRouter>((ref) {
     ],
   );
 });
-

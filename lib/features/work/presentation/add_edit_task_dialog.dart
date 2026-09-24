@@ -9,12 +9,16 @@ class AddEditTaskDialog extends ConsumerStatefulWidget {
   final Task? existingTask;
   final String? initialProjectId;
   final String? initialCategory;
+  final String? initialTitle;
+  final String? initialNotes;
 
   const AddEditTaskDialog({
     super.key,
     this.existingTask,
     this.initialProjectId,
     this.initialCategory,
+    this.initialTitle,
+    this.initialNotes,
   });
 
   @override
@@ -37,9 +41,9 @@ class _AddEditTaskDialogState extends ConsumerState<AddEditTaskDialog> {
   void initState() {
     super.initState();
     final t = widget.existingTask;
-    _titleController = TextEditingController(text: t?.title ?? '');
+    _titleController = TextEditingController(text: t?.title ?? widget.initialTitle ?? '');
     _descController = TextEditingController(text: t?.description ?? '');
-    _notesController = TextEditingController(text: t?.notes ?? '');
+    _notesController = TextEditingController(text: t?.notes ?? widget.initialNotes ?? '');
     _priority = TaskPriority.fromString(t?.priority);
     _status = TaskStatus.fromString(t?.status);
     _category = t?.category ?? widget.initialCategory ?? 'work';
