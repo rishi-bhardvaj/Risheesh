@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../career/presentation/add_edit_application_dialog.dart';
 import '../../../career/presentation/add_edit_job_dialog.dart';
+import '../../../career/presentation/add_edit_resume_dialog.dart';
 import '../../../freelance/presentation/add_edit_client_dialog.dart';
 import '../../../freelance/presentation/add_edit_lead_dialog.dart';
 import '../../../freelance/presentation/add_edit_payment_dialog.dart';
@@ -88,6 +89,16 @@ class QuickActionsBar extends ConsumerWidget {
                 onTap: () => showDialog(
                   context: context,
                   builder: (_) => const AddEditApplicationDialog(),
+                ),
+                theme: theme,
+              ),
+              const SizedBox(width: 8),
+              _buildActionButton(
+                icon: Icons.picture_as_pdf_outlined,
+                label: '+ Resume',
+                onTap: () => showDialog(
+                  context: context,
+                  builder: (_) => const AddEditResumeDialog(),
                 ),
                 theme: theme,
               ),

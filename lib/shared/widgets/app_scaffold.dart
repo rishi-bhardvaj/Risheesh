@@ -47,8 +47,14 @@ class AppScaffold extends StatelessWidget {
             selectedIcon: Icon(Icons.insights),
             label: 'Track',
           ),
+          NavigationDestination(
+            icon: Icon(Icons.auto_awesome_outlined),
+            selectedIcon: Icon(Icons.auto_awesome),
+            label: 'AI',
+          ),
         ],
       ),
     );
   }
 }
+

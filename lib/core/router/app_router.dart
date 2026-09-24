@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../features/ai/presentation/ai_screen.dart';
 import '../../features/career/presentation/application_details_screen.dart';
 import '../../features/career/presentation/career_profile_view.dart';
 import '../../features/career/presentation/career_screen.dart';
@@ -25,6 +26,7 @@ final _careerNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'career');
 final _workNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'work');
 final _freelanceNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'freelance');
 final _trackNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'track');
+final _aiNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'ai');
 
 final routerProvider = Provider<GoRouter>((ref) {
   final isOnboardingCompleted = ref.watch(onboardingCompletedProvider);
@@ -103,8 +105,20 @@ final routerProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
+          // Branch 6: AI
+          StatefulShellBranch(
+            navigatorKey: _aiNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/ai',
+                builder: (context, state) => const AIScreen(),
+              ),
+            ],
+          ),
         ],
       ),
+      // Settings route (accessible from any screen's AppBar)
+      // Deep Sub-Routes with Root Navigator Key
       // Career Deep Routes
       GoRoute(
         path: '/career/job/:id',
@@ -127,6 +141,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => ProjectDetailsScreen(projectId: state.pathParameters['id']!),
       ),
+      // Settings route
       GoRoute(
         path: '/work/note/:id',
         parentNavigatorKey: _rootNavigatorKey,
@@ -157,3 +172,4 @@ final routerProvider = Provider<GoRouter>((ref) {
     ],
   );
 });
+
