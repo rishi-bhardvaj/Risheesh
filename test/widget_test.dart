@@ -81,5 +81,47 @@ void main() {
       expect(currencies.contains('INR'), true);
       expect(currencies.contains('EUR'), true);
     });
+
+    test('Phase 5 Track Module enums and parsers work correctly', () {
+      // DSADifficulty
+      expect(DSADifficulty.fromString('EASY'), DSADifficulty.easy);
+      expect(DSADifficulty.fromString('MEDIUM'), DSADifficulty.medium);
+      expect(DSADifficulty.fromString('HARD'), DSADifficulty.hard);
+      expect(DSADifficulty.fromString('unknown'), DSADifficulty.medium);
+
+      // DSAStatus
+      expect(DSAStatus.fromString('TODO'), DSAStatus.todo);
+      expect(DSAStatus.fromString('ATTEMPTED'), DSAStatus.attempted);
+      expect(DSAStatus.fromString('SOLVED'), DSAStatus.solved);
+      expect(DSAStatus.fromString('NEEDS_REVISION'), DSAStatus.needsRevision);
+      expect(DSAStatus.fromString(null), DSAStatus.todo);
+
+      // SkillLevel
+      expect(SkillLevel.fromString('BEGINNER'), SkillLevel.beginner);
+      expect(SkillLevel.fromString('BASIC'), SkillLevel.basic);
+      expect(SkillLevel.fromString('INTERMEDIATE'), SkillLevel.intermediate);
+      expect(SkillLevel.fromString('ADVANCED'), SkillLevel.advanced);
+
+      // ResourceType
+      expect(ResourceType.fromString('BOOK'), ResourceType.book);
+      expect(ResourceType.fromString('COURSE'), ResourceType.course);
+      expect(ResourceType.fromString('VIDEO'), ResourceType.video);
+      expect(ResourceType.fromString('ARTICLE'), ResourceType.article);
+      expect(ResourceType.fromString('GITHUB'), ResourceType.github);
+      expect(ResourceType.fromString('DOCUMENTATION'), ResourceType.documentation);
+
+      // ResourceStatus
+      expect(ResourceStatus.fromString('TO_READ'), ResourceStatus.toRead);
+      expect(ResourceStatus.fromString('LEARNING'), ResourceStatus.learning);
+      expect(ResourceStatus.fromString('COMPLETED'), ResourceStatus.completed);
+      expect(ResourceStatus.fromString('REFERENCE'), ResourceStatus.reference);
+
+      // Lists
+      expect(dsaPlatforms.contains('LeetCode'), true);
+      expect(dsaTopics.contains('Dynamic Programming'), true);
+      expect(skillCategories.contains('System Design'), true);
+      expect(incomeCategories.contains('Salary'), true);
+      expect(expenseCategories.contains('Housing & Rent'), true);
+    });
   });
 }

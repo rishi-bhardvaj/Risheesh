@@ -270,6 +270,195 @@ class FreelancePayments extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+// 14. DSAProblems Table (Phase 5 DSA Problem Tracker)
+@DataClassName('DSAProblem')
+class DSAProblems extends Table {
+  TextColumn get id => text()();
+  TextColumn get title => text().withLength(min: 1, max: 200)();
+  TextColumn get platform => text().withDefault(const Constant('LeetCode'))();
+  TextColumn get url => text().nullable()();
+  TextColumn get topic => text().withDefault(const Constant('Arrays'))();
+  TextColumn get difficulty => text().withDefault(const Constant('MEDIUM'))();
+  TextColumn get status => text().withDefault(const Constant('TODO'))();
+  IntColumn get attempts => integer().withDefault(const Constant(0))();
+  DateTimeColumn get attemptedAt => dateTime().nullable()();
+  DateTimeColumn get solvedAt => dateTime().nullable()();
+  TextColumn get solution => text().nullable()();
+  TextColumn get notes => text().nullable()();
+  DateTimeColumn get revisionDate => dateTime().nullable()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+// 15. LearningSkills Table (Phase 5 Skill & Competency Tracker)
+@DataClassName('LearningSkill')
+class LearningSkills extends Table {
+  TextColumn get id => text()();
+  TextColumn get name => text().withLength(min: 1, max: 150)();
+  TextColumn get category => text().withDefault(const Constant('Technical'))();
+  TextColumn get currentLevel => text().withDefault(const Constant('BEGINNER'))();
+  TextColumn get targetLevel => text().withDefault(const Constant('ADVANCED'))();
+  TextColumn get notes => text().nullable()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+// 16. Resources Table (Phase 5 Reusable Learning Resources)
+@DataClassName('Resource')
+class Resources extends Table {
+  TextColumn get id => text()();
+  TextColumn get title => text().withLength(min: 1, max: 200)();
+  TextColumn get url => text().nullable()();
+  TextColumn get type => text().withDefault(const Constant('DOCUMENTATION'))();
+  TextColumn get category => text().nullable()();
+  TextColumn get tags => text().nullable()();
+  TextColumn get status => text().withDefault(const Constant('TO_READ'))();
+  TextColumn get notes => text().nullable()();
+  TextColumn get skillId => text().nullable().references(LearningSkills, #id, onDelete: KeyAction.setNull)();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+// 17. BodyWeights Table (Phase 5 Fitness Body Weight Tracker)
+@DataClassName('BodyWeight')
+class BodyWeights extends Table {
+  TextColumn get id => text()();
+  DateTimeColumn get date => dateTime()();
+  RealColumn get weight => real()();
+  TextColumn get note => text().nullable()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+// 18. Workouts Table (Phase 5 Fitness Workout Log)
+@DataClassName('Workout')
+class Workouts extends Table {
+  TextColumn get id => text()();
+  TextColumn get name => text().withLength(min: 1, max: 150)();
+  DateTimeColumn get date => dateTime()();
+  IntColumn get duration => integer().nullable()(); // duration in minutes
+  TextColumn get notes => text().nullable()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+// 19. WorkoutExercises Table (Phase 5 Fitness Exercises in Workout)
+@DataClassName('WorkoutExercise')
+class WorkoutExercises extends Table {
+  TextColumn get id => text()();
+  TextColumn get workoutId => text().references(Workouts, #id, onDelete: KeyAction.cascade)();
+  TextColumn get exerciseName => text().withLength(min: 1, max: 150)();
+  IntColumn get sets => integer().withDefault(const Constant(3))();
+  IntColumn get reps => integer().withDefault(const Constant(10))();
+  RealColumn get weight => real().withDefault(const Constant(0.0))();
+  TextColumn get notes => text().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+// 20. WorkoutTemplates Table (Phase 5 Fitness Reusable Templates)
+@DataClassName('WorkoutTemplate')
+class WorkoutTemplates extends Table {
+  TextColumn get id => text()();
+  TextColumn get name => text().withLength(min: 1, max: 150)();
+  TextColumn get notes => text().nullable()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+// 21. Incomes Table (Phase 5 Finance Income Tracker)
+@DataClassName('Income')
+class Incomes extends Table {
+  TextColumn get id => text()();
+  RealColumn get amount => real()();
+  DateTimeColumn get date => dateTime()();
+  TextColumn get source => text().withLength(min: 1, max: 150)();
+  TextColumn get category => text().withDefault(const Constant('Salary'))();
+  TextColumn get notes => text().nullable()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+// 22. Expenses Table (Phase 5 Finance Expense Tracker)
+@DataClassName('Expense')
+class Expenses extends Table {
+  TextColumn get id => text()();
+  RealColumn get amount => real()();
+  DateTimeColumn get date => dateTime()();
+  TextColumn get category => text().withDefault(const Constant('Food & Dining'))();
+  TextColumn get description => text().withLength(min: 1, max: 200)();
+  TextColumn get notes => text().nullable()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+// 23. AI Conversations Table (Phase 6 AI Assistant)
+@DataClassName('AIConversation')
+class AIConversations extends Table {
+  TextColumn get id => text()();
+  TextColumn get title => text().withLength(min: 1, max: 200)();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+// 24. AI Messages Table (Phase 6 AI Assistant)
+@DataClassName('AIMessage')
+class AIMessages extends Table {
+  TextColumn get id => text()();
+  TextColumn get conversationId => text().references(AIConversations, #id, onDelete: KeyAction.cascade)();
+  TextColumn get role => text()(); // 'user', 'assistant', 'system'
+  TextColumn get content => text()();
+  TextColumn get contextSummary => text().nullable()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+// 25. AI Actions Table (Phase 6 AI Assistant Structured Actions)
+@DataClassName('AIAction')
+class AIActions extends Table {
+  TextColumn get id => text()();
+  TextColumn get conversationId => text().references(AIConversations, #id, onDelete: KeyAction.cascade)();
+  TextColumn get messageId => text().nullable().references(AIMessages, #id, onDelete: KeyAction.cascade)();
+  TextColumn get actionType => text()();
+  TextColumn get payload => text()(); // JSON serialized payload
+  TextColumn get status => text().withDefault(const Constant('PROPOSED'))(); // 'PROPOSED', 'CONFIRMED', 'CANCELLED', 'EXECUTED', 'FAILED'
+  TextColumn get errorMessage => text().nullable()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get executedAt => dateTime().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 // --- Main App Database ---
 @DriftDatabase(tables: [
   UserProfiles,
@@ -285,12 +474,24 @@ class FreelancePayments extends Table {
   Clients,
   FreelanceLeads,
   FreelancePayments,
+  DSAProblems,
+  LearningSkills,
+  Resources,
+  BodyWeights,
+  Workouts,
+  WorkoutExercises,
+  WorkoutTemplates,
+  Incomes,
+  Expenses,
+  AIConversations,
+  AIMessages,
+  AIActions,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? impl.connect());
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration {
@@ -338,6 +539,22 @@ class AppDatabase extends _$AppDatabase {
           await m.addColumn(projects, projects.leadId);
           await m.addColumn(projects, projects.isFreelance);
         }
+        if (from < 5) {
+          await m.createTable(dSAProblems);
+          await m.createTable(learningSkills);
+          await m.createTable(resources);
+          await m.createTable(bodyWeights);
+          await m.createTable(workouts);
+          await m.createTable(workoutExercises);
+          await m.createTable(workoutTemplates);
+          await m.createTable(incomes);
+          await m.createTable(expenses);
+        }
+        if (from < 6) {
+          await m.createTable(aIConversations);
+          await m.createTable(aIMessages);
+          await m.createTable(aIActions);
+        }
       },
       beforeOpen: (details) async {
         await customStatement('PRAGMA foreign_keys = ON;');
@@ -364,6 +581,14 @@ class AppDatabase extends _$AppDatabase {
   Future<bool> updateTask(TasksCompanion task) => update(tasks).replace(task);
   Future<int> deleteTask(String id) =>
       (delete(tasks)..where((t) => t.id.equals(id))).go();
+  Future<int> updateTaskStatus(String id, String status) {
+    return (update(tasks)..where((t) => t.id.equals(id))).write(
+      TasksCompanion(
+        status: Value(status),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
 
   // --- Project Queries ---
   Future<List<Project>> getAllProjects() => select(projects).get();
@@ -425,6 +650,16 @@ class AppDatabase extends _$AppDatabase {
       update(jobApplications).replace(app);
   Future<int> deleteApplication(String id) =>
       (delete(jobApplications)..where((a) => a.id.equals(id))).go();
+  Future<int> updateApplicationStatus(String id, String status) {
+    return (update(jobApplications)..where((a) => a.id.equals(id))).write(
+      JobApplicationsCompanion(
+        status: Value(status),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+  Future<List<JobApplication>> getAllJobApplications() => getAllApplications();
+  Stream<List<JobApplication>> watchAllJobApplications() => watchAllApplications();
 
   // --- Saved Searches Queries (Phase 2) ---
   Future<List<SavedSearch>> getAllSavedSearches() => select(savedSearches).get();
@@ -555,6 +790,196 @@ class AppDatabase extends _$AppDatabase {
       (select(projects)..where((p) => p.clientId.equals(clientId))).get();
   Stream<List<Project>> watchProjectsByClientId(String clientId) =>
       (select(projects)..where((p) => p.clientId.equals(clientId))).watch();
+
+  // --- Phase 5: DSA Queries ---
+  Future<List<DSAProblem>> getAllDSAProblems() => select(dSAProblems).get();
+  Stream<List<DSAProblem>> watchAllDSAProblems() => select(dSAProblems).watch();
+  Future<DSAProblem?> getDSAProblemById(String id) =>
+      (select(dSAProblems)..where((p) => p.id.equals(id))).getSingleOrNull();
+  Future<int> insertDSAProblem(DSAProblemsCompanion problem) => into(dSAProblems).insert(problem);
+  Future<bool> updateDSAProblem(DSAProblemsCompanion problem) => update(dSAProblems).replace(problem);
+  Future<int> deleteDSAProblem(String id) =>
+      (delete(dSAProblems)..where((p) => p.id.equals(id))).go();
+  Future<int> updateDSAStatus(String id, String status) {
+    return (update(dSAProblems)..where((p) => p.id.equals(id))).write(
+      DSAProblemsCompanion(
+        status: Value(status),
+        solvedAt: Value(status.toUpperCase() == 'SOLVED' ? DateTime.now() : null),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+  Future<int> updateDSARevisionDate(String id, DateTime? revisionDate) {
+    return (update(dSAProblems)..where((p) => p.id.equals(id))).write(
+      DSAProblemsCompanion(
+        revisionDate: Value(revisionDate),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+  Future<int> setDSARevisionDate(String id, DateTime date) => updateDSARevisionDate(id, date);
+
+  // Freelance Aliases
+  Future<List<FreelanceLead>> getAllFreelanceLeads() => getAllLeads();
+  Stream<List<FreelanceLead>> watchAllFreelanceLeads() => watchAllLeads();
+  Future<List<FreelancePayment>> getAllFreelancePayments() => getAllPayments();
+  Stream<List<FreelancePayment>> watchAllFreelancePayments() => watchAllPayments();
+
+  // --- Phase 5: Learning Skills Queries ---
+  Future<List<LearningSkill>> getAllSkills() => select(learningSkills).get();
+  Stream<List<LearningSkill>> watchAllSkills() => select(learningSkills).watch();
+  Future<LearningSkill?> getSkillById(String id) =>
+      (select(learningSkills)..where((s) => s.id.equals(id))).getSingleOrNull();
+  Future<int> insertSkill(LearningSkillsCompanion skill) => into(learningSkills).insert(skill);
+  Future<bool> updateSkill(LearningSkillsCompanion skill) => update(learningSkills).replace(skill);
+  Future<int> deleteSkill(String id) =>
+      (delete(learningSkills)..where((s) => s.id.equals(id))).go();
+
+  // --- Phase 5: Resources Queries ---
+  Future<List<Resource>> getAllResources() => select(resources).get();
+  Stream<List<Resource>> watchAllResources() => select(resources).watch();
+  Future<Resource?> getResourceById(String id) =>
+      (select(resources)..where((r) => r.id.equals(id))).getSingleOrNull();
+  Future<List<Resource>> getResourcesBySkillId(String skillId) =>
+      (select(resources)..where((r) => r.skillId.equals(skillId))).get();
+  Stream<List<Resource>> watchResourcesBySkillId(String skillId) =>
+      (select(resources)..where((r) => r.skillId.equals(skillId))).watch();
+  Future<int> insertResource(ResourcesCompanion resource) => into(resources).insert(resource);
+  Future<bool> updateResource(ResourcesCompanion resource) => update(resources).replace(resource);
+  Future<int> deleteResource(String id) =>
+      (delete(resources)..where((r) => r.id.equals(id))).go();
+  Future<int> updateResourceStatus(String id, String status) {
+    return (update(resources)..where((r) => r.id.equals(id))).write(
+      ResourcesCompanion(
+        status: Value(status),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+
+  // --- Phase 5: Fitness Body Weight Queries ---
+  Future<List<BodyWeight>> getAllBodyWeights() =>
+      (select(bodyWeights)..orderBy([(w) => OrderingTerm.desc(w.date)])).get();
+  Stream<List<BodyWeight>> watchAllBodyWeights() =>
+      (select(bodyWeights)..orderBy([(w) => OrderingTerm.desc(w.date)])).watch();
+  Future<BodyWeight?> getLatestBodyWeight() =>
+      (select(bodyWeights)..orderBy([(w) => OrderingTerm.desc(w.date)])..limit(1)).getSingleOrNull();
+  Future<int> insertBodyWeight(BodyWeightsCompanion weight) => into(bodyWeights).insert(weight);
+  Future<int> deleteBodyWeight(String id) =>
+      (delete(bodyWeights)..where((w) => w.id.equals(id))).go();
+
+  // --- Phase 5: Fitness Workout Queries ---
+  Future<List<Workout>> getAllWorkouts() =>
+      (select(workouts)..orderBy([(w) => OrderingTerm.desc(w.date)])).get();
+  Stream<List<Workout>> watchAllWorkouts() =>
+      (select(workouts)..orderBy([(w) => OrderingTerm.desc(w.date)])).watch();
+  Future<Workout?> getWorkoutById(String id) =>
+      (select(workouts)..where((w) => w.id.equals(id))).getSingleOrNull();
+  Future<int> insertWorkout(WorkoutsCompanion workout) => into(workouts).insert(workout);
+  Future<bool> updateWorkout(WorkoutsCompanion workout) => update(workouts).replace(workout);
+  Future<int> deleteWorkout(String id) =>
+      (delete(workouts)..where((w) => w.id.equals(id))).go();
+
+  // --- Phase 5: Workout Exercise Queries ---
+  Future<List<WorkoutExercise>> getExercisesForWorkout(String workoutId) =>
+      (select(workoutExercises)..where((e) => e.workoutId.equals(workoutId))).get();
+  Stream<List<WorkoutExercise>> watchExercisesForWorkout(String workoutId) =>
+      (select(workoutExercises)..where((e) => e.workoutId.equals(workoutId))).watch();
+  Future<int> insertWorkoutExercise(WorkoutExercisesCompanion exercise) =>
+      into(workoutExercises).insert(exercise);
+  Future<int> deleteWorkoutExercise(String id) =>
+      (delete(workoutExercises)..where((e) => e.id.equals(id))).go();
+  Future<int> deleteExercisesForWorkout(String workoutId) =>
+      (delete(workoutExercises)..where((e) => e.workoutId.equals(workoutId))).go();
+
+  // --- Phase 5: Workout Template Queries ---
+  Future<List<WorkoutTemplate>> getAllWorkoutTemplates() => select(workoutTemplates).get();
+  Stream<List<WorkoutTemplate>> watchAllWorkoutTemplates() => select(workoutTemplates).watch();
+  Future<int> insertWorkoutTemplate(WorkoutTemplatesCompanion template) =>
+      into(workoutTemplates).insert(template);
+  Future<bool> updateWorkoutTemplate(WorkoutTemplatesCompanion template) =>
+      update(workoutTemplates).replace(template);
+  Future<int> deleteWorkoutTemplate(String id) =>
+      (delete(workoutTemplates)..where((t) => t.id.equals(id))).go();
+
+  // --- Phase 5: Finance Income Queries ---
+  Future<List<Income>> getAllIncomes() =>
+      (select(incomes)..orderBy([(i) => OrderingTerm.desc(i.date)])).get();
+  Stream<List<Income>> watchAllIncomes() =>
+      (select(incomes)..orderBy([(i) => OrderingTerm.desc(i.date)])).watch();
+  Future<Income?> getIncomeById(String id) =>
+      (select(incomes)..where((i) => i.id.equals(id))).getSingleOrNull();
+  Future<int> insertIncome(IncomesCompanion income) => into(incomes).insert(income);
+  Future<bool> updateIncome(IncomesCompanion income) => update(incomes).replace(income);
+  Future<int> deleteIncome(String id) =>
+      (delete(incomes)..where((i) => i.id.equals(id))).go();
+
+  // --- Phase 5: Finance Expense Queries ---
+  Future<List<Expense>> getAllExpenses() =>
+      (select(expenses)..orderBy([(e) => OrderingTerm.desc(e.date)])).get();
+  Stream<List<Expense>> watchAllExpenses() =>
+      (select(expenses)..orderBy([(e) => OrderingTerm.desc(e.date)])).watch();
+  Future<Expense?> getExpenseById(String id) =>
+      (select(expenses)..where((e) => e.id.equals(id))).getSingleOrNull();
+  Future<int> insertExpense(ExpensesCompanion expense) => into(expenses).insert(expense);
+  Future<bool> updateExpense(ExpensesCompanion expense) => update(expenses).replace(expense);
+  Future<int> deleteExpense(String id) =>
+      (delete(expenses)..where((e) => e.id.equals(id))).go();
+
+  // --- Phase 6: AI Conversations Queries ---
+  Future<List<AIConversation>> getAllAIConversations() =>
+      (select(aIConversations)..orderBy([(c) => OrderingTerm.desc(c.updatedAt)])).get();
+  Stream<List<AIConversation>> watchAllAIConversations() =>
+      (select(aIConversations)..orderBy([(c) => OrderingTerm.desc(c.updatedAt)])).watch();
+  Future<AIConversation?> getAIConversationById(String id) =>
+      (select(aIConversations)..where((c) => c.id.equals(id))).getSingleOrNull();
+  Future<int> insertAIConversation(AIConversationsCompanion conversation) =>
+      into(aIConversations).insert(conversation);
+  Future<bool> updateAIConversation(AIConversationsCompanion conversation) =>
+      update(aIConversations).replace(conversation);
+  Future<int> deleteAIConversation(String id) =>
+      (delete(aIConversations)..where((c) => c.id.equals(id))).go();
+
+  // --- Phase 6: AI Messages Queries ---
+  Future<List<AIMessage>> getAIMessagesForConversation(String conversationId) =>
+      (select(aIMessages)
+        ..where((m) => m.conversationId.equals(conversationId))
+        ..orderBy([(m) => OrderingTerm.asc(m.createdAt)])).get();
+  Stream<List<AIMessage>> watchAIMessagesForConversation(String conversationId) =>
+      (select(aIMessages)
+        ..where((m) => m.conversationId.equals(conversationId))
+        ..orderBy([(m) => OrderingTerm.asc(m.createdAt)])).watch();
+  Future<int> insertAIMessage(AIMessagesCompanion message) =>
+      into(aIMessages).insert(message);
+  Future<int> deleteAIMessage(String id) =>
+      (delete(aIMessages)..where((m) => m.id.equals(id))).go();
+
+  // --- Phase 6: AI Actions Queries ---
+  Future<List<AIAction>> getAIActionsForConversation(String conversationId) =>
+      (select(aIActions)
+        ..where((a) => a.conversationId.equals(conversationId))
+        ..orderBy([(a) => OrderingTerm.asc(a.createdAt)])).get();
+  Stream<List<AIAction>> watchAIActionsForConversation(String conversationId) =>
+      (select(aIActions)
+        ..where((a) => a.conversationId.equals(conversationId))
+        ..orderBy([(a) => OrderingTerm.asc(a.createdAt)])).watch();
+  Future<AIAction?> getAIActionById(String id) =>
+      (select(aIActions)..where((a) => a.id.equals(id))).getSingleOrNull();
+  Future<int> insertAIAction(AIActionsCompanion action) =>
+      into(aIActions).insert(action);
+  Future<bool> updateAIAction(AIActionsCompanion action) =>
+      update(aIActions).replace(action);
+  Future<int> updateAIActionStatus(String id, String status, {String? errorMessage, DateTime? executedAt}) {
+    return (update(aIActions)..where((a) => a.id.equals(id))).write(
+      AIActionsCompanion(
+        status: Value(status),
+        errorMessage: Value(errorMessage),
+        executedAt: Value(executedAt),
+      ),
+    );
+  }
+  Future<int> deleteAIAction(String id) =>
+      (delete(aIActions)..where((a) => a.id.equals(id))).go();
 }
 
 // Global Provider for AppDatabase instance

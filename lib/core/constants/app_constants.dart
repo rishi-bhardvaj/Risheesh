@@ -208,3 +208,182 @@ const List<String> currencies = [
   'AUD',
   'SGD',
 ];
+
+// --- Phase 5: DSA Enums & Constants ---
+enum DSADifficulty {
+  easy('EASY', 'Easy'),
+  medium('MEDIUM', 'Medium'),
+  hard('HARD', 'Hard');
+
+  final String value;
+  final String label;
+  const DSADifficulty(this.value, this.label);
+
+  static DSADifficulty fromString(String? val) {
+    if (val == null) return DSADifficulty.medium;
+    final normalized = val.toUpperCase().replaceAll(' ', '_');
+    return DSADifficulty.values.firstWhere(
+      (e) => e.value == normalized || e.name.toUpperCase() == normalized,
+      orElse: () => DSADifficulty.medium,
+    );
+  }
+}
+
+enum DSAStatus {
+  todo('TODO', 'To Do'),
+  attempted('ATTEMPTED', 'Attempted'),
+  solved('SOLVED', 'Solved'),
+  needsRevision('NEEDS_REVISION', 'Needs Revision');
+
+  final String value;
+  final String label;
+  const DSAStatus(this.value, this.label);
+
+  static DSAStatus fromString(String? val) {
+    if (val == null) return DSAStatus.todo;
+    final normalized = val.toUpperCase().replaceAll(' ', '_');
+    return DSAStatus.values.firstWhere(
+      (e) => e.value == normalized || e.name.toUpperCase() == normalized,
+      orElse: () => DSAStatus.todo,
+    );
+  }
+}
+
+const List<String> dsaPlatforms = [
+  'LeetCode',
+  'Codeforces',
+  'HackerRank',
+  'GeeksforGeeks',
+  'InterviewBit',
+  'CodeChef',
+  'Other',
+];
+
+const List<String> dsaTopics = [
+  'Arrays',
+  'Strings',
+  'Linked Lists',
+  'Stacks',
+  'Queues',
+  'Hashing',
+  'Trees',
+  'Graphs',
+  'Heaps',
+  'Sorting',
+  'Searching',
+  'Recursion',
+  'Dynamic Programming',
+  'Greedy',
+  'Backtracking',
+  'Bit Manipulation',
+  'Two Pointers',
+  'Sliding Window',
+  'Trie',
+  'Math',
+  'Other',
+];
+
+// --- Phase 5: Learning & Resources Enums ---
+enum SkillLevel {
+  beginner('BEGINNER', 'Beginner'),
+  basic('BASIC', 'Basic'),
+  intermediate('INTERMEDIATE', 'Intermediate'),
+  advanced('ADVANCED', 'Advanced');
+
+  final String value;
+  final String label;
+  const SkillLevel(this.value, this.label);
+
+  static SkillLevel fromString(String? val) {
+    if (val == null) return SkillLevel.beginner;
+    final normalized = val.toUpperCase().replaceAll(' ', '_');
+    return SkillLevel.values.firstWhere(
+      (e) => e.value == normalized || e.name.toUpperCase() == normalized,
+      orElse: () => SkillLevel.beginner,
+    );
+  }
+}
+
+enum ResourceType {
+  course('COURSE', 'Course'),
+  documentation('DOCUMENTATION', 'Documentation'),
+  github('GITHUB', 'GitHub Repo'),
+  video('VIDEO', 'Video / Playlist'),
+  article('ARTICLE', 'Article / Blog'),
+  book('BOOK', 'Book'),
+  tutorial('TUTORIAL', 'Tutorial'),
+  other('OTHER', 'Other');
+
+  final String value;
+  final String label;
+  const ResourceType(this.value, this.label);
+
+  static ResourceType fromString(String? val) {
+    if (val == null) return ResourceType.documentation;
+    final normalized = val.toUpperCase().replaceAll(' ', '_');
+    return ResourceType.values.firstWhere(
+      (e) => e.value == normalized || e.name.toUpperCase() == normalized,
+      orElse: () => ResourceType.documentation,
+    );
+  }
+}
+
+enum ResourceStatus {
+  toRead('TO_READ', 'To Read / Watch'),
+  learning('LEARNING', 'In Progress'),
+  completed('COMPLETED', 'Completed'),
+  reference('REFERENCE', 'Reference');
+
+  final String value;
+  final String label;
+  const ResourceStatus(this.value, this.label);
+
+  static ResourceStatus fromString(String? val) {
+    if (val == null) return ResourceStatus.toRead;
+    final normalized = val.toUpperCase().replaceAll(' ', '_');
+    return ResourceStatus.values.firstWhere(
+      (e) => e.value == normalized || e.name.toUpperCase() == normalized,
+      orElse: () => ResourceStatus.toRead,
+    );
+  }
+}
+
+const List<String> skillCategories = [
+  'Language',
+  'Framework',
+  'Backend',
+  'Frontend',
+  'Mobile',
+  'DevOps & Cloud',
+  'System Design',
+  'DSA & Algorithms',
+  'Database',
+  'AI / ML',
+  'Soft Skills',
+  'Other',
+];
+
+// --- Phase 5: Finance Categories ---
+const List<String> expenseCategories = [
+  'Food & Dining',
+  'Transport',
+  'Shopping',
+  'Subscriptions',
+  'Bills & Utilities',
+  'Entertainment',
+  'Health & Fitness',
+  'Education',
+  'Housing & Rent',
+  'Investment',
+  'Other',
+];
+
+const List<String> incomeCategories = [
+  'Salary',
+  'Freelance / Client',
+  'Investment',
+  'Bonus',
+  'Rental',
+  'Gift',
+  'Other',
+];

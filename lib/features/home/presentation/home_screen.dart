@@ -9,6 +9,7 @@ import 'widgets/projects_snapshot_section.dart';
 import 'widgets/quick_actions_bar.dart';
 import 'widgets/today_overview_card.dart';
 import 'widgets/today_tasks_section.dart';
+import 'widgets/track_snapshot_section.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -48,6 +49,8 @@ class HomeScreen extends ConsumerWidget {
               CareerSnapshotSection(),
               SizedBox(height: 20),
               FreelanceSnapshotSection(),
+              SizedBox(height: 20),
+              TrackSnapshotSection(),
               SizedBox(height: 20),
               ProjectsSnapshotSection(),
               SizedBox(height: 32),

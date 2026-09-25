@@ -41,8 +41,10 @@ class _AddEditTaskDialogState extends ConsumerState<AddEditTaskDialog> {
   void initState() {
     super.initState();
     final t = widget.existingTask;
+    _titleController = TextEditingController(text: t?.title ?? '');
     _titleController = TextEditingController(text: t?.title ?? widget.initialTitle ?? '');
     _descController = TextEditingController(text: t?.description ?? '');
+    _notesController = TextEditingController(text: t?.notes ?? '');
     _notesController = TextEditingController(text: t?.notes ?? widget.initialNotes ?? '');
     _priority = TaskPriority.fromString(t?.priority);
     _status = TaskStatus.fromString(t?.status);

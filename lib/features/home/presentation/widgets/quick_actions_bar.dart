@@ -6,6 +6,13 @@ import '../../../career/presentation/add_edit_resume_dialog.dart';
 import '../../../freelance/presentation/add_edit_client_dialog.dart';
 import '../../../freelance/presentation/add_edit_lead_dialog.dart';
 import '../../../freelance/presentation/add_edit_payment_dialog.dart';
+import '../../../track/presentation/add_edit_dsa_dialog.dart';
+import '../../../track/presentation/add_edit_expense_dialog.dart';
+import '../../../track/presentation/add_edit_income_dialog.dart';
+import '../../../track/presentation/add_edit_resource_dialog.dart';
+import '../../../track/presentation/add_edit_skill_dialog.dart';
+import '../../../track/presentation/add_edit_weight_dialog.dart';
+import '../../../track/presentation/add_edit_workout_dialog.dart';
 import '../../../work/presentation/add_edit_eod_dialog.dart';
 import '../../../work/presentation/add_edit_project_dialog.dart';
 import '../../../work/presentation/add_edit_task_dialog.dart';
@@ -39,6 +46,76 @@ class QuickActionsBar extends ConsumerWidget {
                 onTap: () => showDialog(
                   context: context,
                   builder: (_) => const AddEditTaskDialog(initialCategory: 'work'),
+                ),
+                theme: theme,
+              ),
+              const SizedBox(width: 8),
+              _buildActionButton(
+                icon: Icons.code,
+                label: '+ DSA',
+                onTap: () => showDialog(
+                  context: context,
+                  builder: (_) => const AddEditDSADialog(),
+                ),
+                theme: theme,
+              ),
+              const SizedBox(width: 8),
+              _buildActionButton(
+                icon: Icons.fitness_center,
+                label: '+ Workout',
+                onTap: () => showDialog(
+                  context: context,
+                  builder: (_) => const AddEditWorkoutDialog(),
+                ),
+                theme: theme,
+              ),
+              const SizedBox(width: 8),
+              _buildActionButton(
+                icon: Icons.monitor_weight_outlined,
+                label: '+ Weight',
+                onTap: () => showDialog(
+                  context: context,
+                  builder: (_) => const AddEditWeightDialog(),
+                ),
+                theme: theme,
+              ),
+              const SizedBox(width: 8),
+              _buildActionButton(
+                icon: Icons.shopping_cart_outlined,
+                label: '+ Expense',
+                onTap: () => showDialog(
+                  context: context,
+                  builder: (_) => const AddEditExpenseDialog(),
+                ),
+                theme: theme,
+              ),
+              const SizedBox(width: 8),
+              _buildActionButton(
+                icon: Icons.attach_money,
+                label: '+ Income',
+                onTap: () => showDialog(
+                  context: context,
+                  builder: (_) => const AddEditIncomeDialog(),
+                ),
+                theme: theme,
+              ),
+              const SizedBox(width: 8),
+              _buildActionButton(
+                icon: Icons.stars_outlined,
+                label: '+ Skill',
+                onTap: () => showDialog(
+                  context: context,
+                  builder: (_) => const AddEditSkillDialog(),
+                ),
+                theme: theme,
+              ),
+              const SizedBox(width: 8),
+              _buildActionButton(
+                icon: Icons.menu_book_outlined,
+                label: '+ Resource',
+                onTap: () => showDialog(
+                  context: context,
+                  builder: (_) => const AddEditResourceDialog(),
                 ),
                 theme: theme,
               ),

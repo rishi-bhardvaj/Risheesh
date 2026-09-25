@@ -721,4 +721,292 @@ void main() {
       expect(payments.first.id, 'pay-1');
     });
   });
+
+  group('Phase 5 Tracking Module Database & Logic Tests', () {
+    test('DSA Tracker problem creation, attempts increment, revision date, and topic queries', () async {
+      final now = DateTime.now();
+
+      final problem1 = DSAProblemsCompanion(
+        id: const Value('dsa-1'),
+        title: const Value('Trapping Rain Water'),
+        platform: const Value('LeetCode'),
+        topic: const Value('Two Pointers'),
+        difficulty: const Value('HARD'),
+        status: const Value('ATTEMPTED'),
+        solution: const Value('Use two pointers with leftMax and rightMax to compute trapped water in O(N) time and O(1) space.'),
+        attempts: const Value(2),
+        url: const Value('https://leetcode.com/problems/trapping-rain-water/'),
+        attemptedAt: Value(now),
+        revisionDate: Value(now.add(const Duration(days: 3))),
+        createdAt: Value(now),
+        updatedAt: Value(now),
+      );
+
+      final problem2 = DSAProblemsCompanion(
+        id: const Value('dsa-2'),
+        title: const Value('Lowest Common Ancestor in Binary Tree'),
+        platform: const Value('LeetCode'),
+        topic: const Value('Trees'),
+        difficulty: const Value('MEDIUM'),
+        status: const Value('SOLVED'),
+        solution: const Value('Recursive post-order traversal returning matched node or null.'),
+        attempts: const Value(1),
+        url: const Value('https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/'),
+        attemptedAt: Value(now),
+        createdAt: Value(now),
+        updatedAt: Value(now),
+      );
+
+      await db.insertDSAProblem(problem1);
+      await db.insertDSAProblem(problem2);
+
+      var allProblems = await db.getAllDSAProblems();
+      expect(allProblems.length, 2);
+
+      final p1 = await db.getDSAProblemById('dsa-1');
+      expect(p1 != null, true);
+      expect(p1!.title, 'Trapping Rain Water');
+      expect(p1.difficulty, 'HARD');
+      expect(p1.attempts, 2);
+      expect(p1.revisionDate != null, true);
+
+      // Increment attempt and mark as SOLVED
+      await db.updateDSAProblem(problem1.copyWith(
+        attempts: const Value(3),
+        status: const Value('SOLVED'),
+        updatedAt: Value(DateTime.now()),
+      ));
+
+      final updatedP1 = await db.getDSAProblemById('dsa-1');
+      expect(updatedP1!.attempts, 3);
+      expect(updatedP1.status, 'SOLVED');
+
+      // Delete problem 2
+      await db.deleteDSAProblem('dsa-2');
+      allProblems = await db.getAllDSAProblems();
+      expect(allProblems.length, 1);
+      expect(allProblems.first.id, 'dsa-1');
+    });
+
+    test('Learning Skills & Resources management with linking and status progression', () async {
+      final now = DateTime.now();
+
+      final skill = LearningSkillsCompanion(
+        id: const Value('skill-1'),
+        name: const Value('Distributed Systems'),
+        category: const Value('System Design'),
+        targetLevel: const Value('ADVANCED'),
+        currentLevel: const Value('INTERMEDIATE'),
+        notes: const Value('Focusing on consensus algorithms (Raft, Paxos) and event sourcing'),
+        createdAt: Value(now),
+        updatedAt: Value(now),
+      );
+
+      await db.insertSkill(skill);
+
+      final s = await db.getSkillById('skill-1');
+      expect(s != null, true);
+      expect(s!.name, 'Distributed Systems');
+      expect(s.currentLevel, 'INTERMEDIATE');
+
+      // Add Resource linked to skill
+      final resource1 = ResourcesCompanion(
+        id: const Value('res-101'),
+        title: const Value('Designing Data-Intensive Applications (DDIA)'),
+        type: const Value('BOOK'),
+        url: const Value('https://dataintensive.net'),
+        status: const Value('LEARNING'),
+        skillId: const Value('skill-1'),
+        notes: const Value('Currently on Chapter 5: Replication'),
+        createdAt: Value(now),
+        updatedAt: Value(now),
+      );
+
+      final resource2 = ResourcesCompanion(
+        id: const Value('res-102'),
+        title: const Value('MIT 6.824: Distributed Systems Lectures'),
+        type: const Value('COURSE'),
+        url: const Value('https://pdos.csail.mit.edu/6.824/'),
+        status: const Value('TO_READ'),
+        skillId: const Value('skill-1'),
+        createdAt: Value(now),
+        updatedAt: Value(now),
+      );
+
+      await db.insertResource(resource1);
+      await db.insertResource(resource2);
+
+      final skillResources = await db.getResourcesBySkillId('skill-1');
+      expect(skillResources.length, 2);
+
+      // Advance resource 1 to COMPLETED
+      await db.updateResource(resource1.copyWith(
+        status: const Value('COMPLETED'),
+        updatedAt: Value(DateTime.now()),
+      ));
+
+      final updatedRes1 = await db.getResourceById('res-101');
+      expect(updatedRes1!.status, 'COMPLETED');
+
+      // Update skill competency level
+      await db.updateSkill(skill.copyWith(
+        currentLevel: const Value('ADVANCED'),
+        updatedAt: Value(DateTime.now()),
+      ));
+
+      final updatedSkill = await db.getSkillById('skill-1');
+      expect(updatedSkill!.currentLevel, 'ADVANCED');
+    });
+
+    test('Fitness Tracker: Body weight history, workouts with dynamic exercises, and templates', () async {
+      final now = DateTime.now();
+
+      // Body weight logs
+      final bw1 = BodyWeightsCompanion(
+        id: const Value('bw-1'),
+        weight: const Value(75.5),
+        date: Value(now.subtract(const Duration(days: 7))),
+        note: const Value('Morning weigh-in fasting'),
+        createdAt: Value(now.subtract(const Duration(days: 7))),
+      );
+
+      final bw2 = BodyWeightsCompanion(
+        id: const Value('bw-2'),
+        weight: const Value(74.8),
+        date: Value(now),
+        note: const Value('Good progression after cardio cycle'),
+        createdAt: Value(now),
+      );
+
+      await db.insertBodyWeight(bw1);
+      await db.insertBodyWeight(bw2);
+
+      final weights = await db.getAllBodyWeights();
+      expect(weights.length, 2);
+      expect(weights.first.weight, 74.8); // Latest first
+
+      // Workout with Exercises
+      final workoutComp = WorkoutsCompanion(
+        id: const Value('w-1'),
+        name: const Value('Push Day: Chest & Shoulders'),
+        date: Value(now),
+        duration: const Value(55),
+        notes: const Value('Solid energy, increased bench press weight'),
+        createdAt: Value(now),
+        updatedAt: Value(now),
+      );
+      await db.insertWorkout(workoutComp);
+
+      const ex1 = WorkoutExercisesCompanion(
+        id: Value('ex-1'),
+        workoutId: Value('w-1'),
+        exerciseName: Value('Barbell Bench Press'),
+        sets: Value(4),
+        reps: Value(8),
+        weight: Value(80.0),
+        notes: Value('Clean form on last set'),
+      );
+
+      const ex2 = WorkoutExercisesCompanion(
+        id: Value('ex-2'),
+        workoutId: Value('w-1'),
+        exerciseName: Value('Overhead Dumbbell Press'),
+        sets: Value(3),
+        reps: Value(12),
+        weight: Value(24.0),
+      );
+
+      await db.insertWorkoutExercise(ex1);
+      await db.insertWorkoutExercise(ex2);
+
+      final exercises = await db.getExercisesForWorkout('w-1');
+      expect(exercises.length, 2);
+      expect(exercises.first.exerciseName, 'Barbell Bench Press');
+      expect(exercises.first.sets, 4);
+      expect(exercises.first.weight, 80.0);
+
+      // Workout Template
+      final templateComp = WorkoutTemplatesCompanion(
+        id: const Value('tmpl-1'),
+        name: const Value('Standard Push Day'),
+        notes: const Value('Standard 4-exercise push routine'),
+        createdAt: Value(now),
+      );
+      await db.insertWorkoutTemplate(templateComp);
+
+      final templates = await db.getAllWorkoutTemplates();
+      expect(templates.length, 1);
+      expect(templates.first.name, 'Standard Push Day');
+    });
+
+    test('Finance Tracker: Income, Expense, and Monthly Net Savings', () async {
+      final now = DateTime.now();
+
+      // Insert Incomes
+      final inc1 = IncomesCompanion(
+        id: const Value('inc-1'),
+        source: const Value('Salary - Primary Employment'),
+        amount: const Value(250000.0),
+        category: const Value('Salary'),
+        date: Value(now),
+        notes: const Value('Monthly direct bank transfer'),
+        createdAt: Value(now),
+        updatedAt: Value(now),
+      );
+
+      final inc2 = IncomesCompanion(
+        id: const Value('inc-2'),
+        source: const Value('Freelance Milestone (Apex Fintech)'),
+        amount: const Value(120000.0),
+        category: const Value('Freelance / Client'),
+        date: Value(now),
+        createdAt: Value(now),
+        updatedAt: Value(now),
+      );
+
+      await db.insertIncome(inc1);
+      await db.insertIncome(inc2);
+
+      // Insert Expenses
+      final exp1 = ExpensesCompanion(
+        id: const Value('exp-1'),
+        description: const Value('Apartment Rent'),
+        amount: const Value(45000.0),
+        category: const Value('Housing & Rent'),
+        date: Value(now),
+        createdAt: Value(now),
+        updatedAt: Value(now),
+      );
+
+      final exp2 = ExpensesCompanion(
+        id: const Value('exp-2'),
+        description: const Value('AWS Cloud & Domain Hosting'),
+        amount: const Value(6500.0),
+        category: const Value('Subscriptions'),
+        date: Value(now),
+        notes: const Value('Personal staging server and RDS instance'),
+        createdAt: Value(now),
+        updatedAt: Value(now),
+      );
+
+      await db.insertExpense(exp1);
+      await db.insertExpense(exp2);
+
+      final allIncomes = await db.getAllIncomes();
+      final allExpenses = await db.getAllExpenses();
+
+      expect(allIncomes.length, 2);
+      expect(allExpenses.length, 2);
+
+      final totalIncome = allIncomes.fold<double>(0.0, (sum, i) => sum + i.amount);
+      final totalExpense = allExpenses.fold<double>(0.0, (sum, e) => sum + e.amount);
+      final netSavings = totalIncome - totalExpense;
+
+      expect(totalIncome, 370000.0);
+      expect(totalExpense, 51500.0);
+      expect(netSavings, 318500.0);
+      expect(netSavings > 0, true);
+    });
+  });
 }
+

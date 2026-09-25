@@ -5,6 +5,13 @@ import '../../features/career/presentation/add_edit_resume_dialog.dart';
 import '../../features/freelance/presentation/add_edit_client_dialog.dart';
 import '../../features/freelance/presentation/add_edit_lead_dialog.dart';
 import '../../features/freelance/presentation/add_edit_payment_dialog.dart';
+import '../../features/track/presentation/add_edit_dsa_dialog.dart';
+import '../../features/track/presentation/add_edit_expense_dialog.dart';
+import '../../features/track/presentation/add_edit_income_dialog.dart';
+import '../../features/track/presentation/add_edit_resource_dialog.dart';
+import '../../features/track/presentation/add_edit_skill_dialog.dart';
+import '../../features/track/presentation/add_edit_weight_dialog.dart';
+import '../../features/track/presentation/add_edit_workout_dialog.dart';
 import '../../features/work/presentation/add_edit_eod_dialog.dart';
 import '../../features/work/presentation/add_edit_project_dialog.dart';
 import '../../features/work/presentation/add_edit_task_dialog.dart';
@@ -55,6 +62,83 @@ void showQuickAddModal(BuildContext context) {
                 onTap: () {
                   Navigator.pop(ctx);
                   showDialog(context: context, builder: (_) => const AddEditTaskDialog());
+                },
+              ),
+              const SizedBox(height: 10),
+              _buildQuickActionItem(
+                icon: Icons.code,
+                title: 'Log DSA Problem',
+                subtitle: 'Record solved or attempted algorithmic question',
+                color: Colors.green.shade700,
+                onTap: () {
+                  Navigator.pop(ctx);
+                  showDialog(context: context, builder: (_) => const AddEditDSADialog());
+                },
+              ),
+              const SizedBox(height: 10),
+              _buildQuickActionItem(
+                icon: Icons.fitness_center,
+                title: 'Log Workout Session',
+                subtitle: 'Record exercises, sets, reps, and weights',
+                color: Colors.deepOrange,
+                onTap: () {
+                  Navigator.pop(ctx);
+                  showDialog(context: context, builder: (_) => const AddEditWorkoutDialog());
+                },
+              ),
+              const SizedBox(height: 10),
+              _buildQuickActionItem(
+                icon: Icons.monitor_weight_outlined,
+                title: 'Log Body Weight',
+                subtitle: 'Track body mass progression over time',
+                color: Colors.purple,
+                onTap: () {
+                  Navigator.pop(ctx);
+                  showDialog(context: context, builder: (_) => const AddEditWeightDialog());
+                },
+              ),
+              const SizedBox(height: 10),
+              _buildQuickActionItem(
+                icon: Icons.shopping_cart_outlined,
+                title: 'Log Expense',
+                subtitle: 'Record spending with category and amount',
+                color: Colors.red,
+                onTap: () {
+                  Navigator.pop(ctx);
+                  showDialog(context: context, builder: (_) => const AddEditExpenseDialog());
+                },
+              ),
+              const SizedBox(height: 10),
+              _buildQuickActionItem(
+                icon: Icons.attach_money,
+                title: 'Record Income',
+                subtitle: 'Log salary, freelance earnings, or dividends',
+                color: Colors.teal,
+                onTap: () {
+                  Navigator.pop(ctx);
+                  showDialog(context: context, builder: (_) => const AddEditIncomeDialog());
+                },
+              ),
+              const SizedBox(height: 10),
+              _buildQuickActionItem(
+                icon: Icons.stars_outlined,
+                title: 'Add Learning Skill',
+                subtitle: 'Set target competency level for a new technology',
+                color: Colors.blue,
+                onTap: () {
+                  Navigator.pop(ctx);
+                  showDialog(context: context, builder: (_) => const AddEditSkillDialog());
+                },
+              ),
+              const SizedBox(height: 10),
+              _buildQuickActionItem(
+                icon: Icons.menu_book_outlined,
+                title: 'Add Learning Resource',
+                subtitle: 'Save documentation, course, book, or repo',
+                color: Colors.amber.shade800,
+                onTap: () {
+                  Navigator.pop(ctx);
+                  showDialog(context: context, builder: (_) => const AddEditResourceDialog());
                 },
               ),
               const SizedBox(height: 10),

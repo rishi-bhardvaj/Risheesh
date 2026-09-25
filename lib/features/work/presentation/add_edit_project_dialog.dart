@@ -45,6 +45,7 @@ class _AddEditProjectDialogState extends ConsumerState<AddEditProjectDialog> {
     _techStackController = TextEditingController(text: p?.techStack ?? '');
     _githubController = TextEditingController(text: p?.githubUrl ?? '');
     _liveUrlController = TextEditingController(text: p?.liveUrl ?? '');
+    _notesController = TextEditingController(text: p?.notes ?? '');
     _notesController = TextEditingController(text: p?.notes ?? widget.initialNotes ?? '');
     _status = ProjectStatus.fromString(p?.status);
     _progress = p?.progress ?? 0.2;

@@ -13,7 +13,9 @@ import '../../features/home/presentation/home_screen.dart';
 import '../../features/onboarding/presentation/onboarding_screen.dart';
 import '../../features/onboarding/providers/onboarding_provider.dart';
 import '../../features/settings/presentation/settings_screen.dart';
+import '../../features/track/presentation/dsa_problem_details_screen.dart';
 import '../../features/track/presentation/track_screen.dart';
+import '../../features/track/presentation/workout_details_screen.dart';
 import '../../features/work/presentation/eod_history_screen.dart';
 import '../../features/work/presentation/project_details_screen.dart';
 import '../../features/work/presentation/work_note_details_screen.dart';
@@ -55,7 +57,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           return AppScaffold(navigationShell: navigationShell);
         },
         branches: [
-          // Branch 1: Home
+          // Branch 0: Home
           StatefulShellBranch(
             navigatorKey: _homeNavigatorKey,
             routes: [
@@ -65,7 +67,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
-          // Branch 2: Career
+          // Branch 1: Career
           StatefulShellBranch(
             navigatorKey: _careerNavigatorKey,
             routes: [
@@ -75,7 +77,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
-          // Branch 3: Work
+          // Branch 2: Work
           StatefulShellBranch(
             navigatorKey: _workNavigatorKey,
             routes: [
@@ -85,7 +87,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
-          // Branch 4: Freelance
+          // Branch 3: Freelance
           StatefulShellBranch(
             navigatorKey: _freelanceNavigatorKey,
             routes: [
@@ -95,7 +97,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
-          // Branch 5: Track
+          // Branch 4: Track
           StatefulShellBranch(
             navigatorKey: _trackNavigatorKey,
             routes: [
@@ -105,7 +107,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
-          // Branch 6: AI
+          // Branch 5: AI
           StatefulShellBranch(
             navigatorKey: _aiNavigatorKey,
             routes: [
@@ -117,7 +119,6 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
         ],
       ),
-      // Settings route (accessible from any screen's AppBar)
       // Deep Sub-Routes with Root Navigator Key
       // Career Deep Routes
       GoRoute(
@@ -141,7 +142,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => ProjectDetailsScreen(projectId: state.pathParameters['id']!),
       ),
-      // Settings route
       GoRoute(
         path: '/work/note/:id',
         parentNavigatorKey: _rootNavigatorKey,
@@ -163,6 +163,17 @@ final routerProvider = Provider<GoRouter>((ref) {
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => ClientDetailsScreen(clientId: state.pathParameters['id']!),
       ),
+      // Track Deep Routes
+      GoRoute(
+        path: '/track/dsa/:id',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => DSAProblemDetailsScreen(problemId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: '/track/workout/:id',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => WorkoutDetailsScreen(workoutId: state.pathParameters['id']!),
+      ),
       // Settings Route
       GoRoute(
         path: '/settings',
@@ -172,4 +183,3 @@ final routerProvider = Provider<GoRouter>((ref) {
     ],
   );
 });
-
