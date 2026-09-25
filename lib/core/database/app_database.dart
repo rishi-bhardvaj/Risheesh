@@ -459,6 +459,96 @@ class AIActions extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+// 26. AutomationRules Table (Phase 7 Automation & Intelligence)
+@DataClassName('AutomationRule')
+class AutomationRules extends Table {
+  TextColumn get id => text()();
+  TextColumn get name => text().withLength(min: 1, max: 200)();
+  TextColumn get description => text().nullable()();
+  TextColumn get type => text()(); // JOB_SEARCH, JOB_MATCHING, APPLICATION_FOLLOWUP, WORK_DEADLINE, EOD_REMINDER, DSA_REVISION, FREELANCE_FOLLOWUP, PROJECT_DEADLINE, WEEKLY_SUMMARY
+  BoolColumn get enabled => boolean().withDefault(const Constant(true))();
+  TextColumn get schedule => text().withDefault(const Constant('DAILY_MORNING'))();
+  DateTimeColumn get lastRun => dateTime().nullable()();
+  DateTimeColumn get nextRun => dateTime().nullable()();
+  TextColumn get status => text().withDefault(const Constant('IDLE'))();
+  TextColumn get configJson => text().nullable()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+// 27. AutomationRuns Table (Phase 7 Automation Logs)
+@DataClassName('AutomationRun')
+class AutomationRuns extends Table {
+  TextColumn get id => text()();
+  TextColumn get automationId => text().references(AutomationRules, #id, onDelete: KeyAction.cascade)();
+  DateTimeColumn get startedAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get finishedAt => dateTime().nullable()();
+  TextColumn get status => text().withDefault(const Constant('SUCCESS'))(); // SUCCESS, PARTIAL, FAILED
+  IntColumn get itemsProcessed => integer().withDefault(const Constant(0))();
+  IntColumn get itemsCreated => integer().withDefault(const Constant(0))();
+  TextColumn get errorMessage => text().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+// 28. AutomationActions Table (Phase 7 Needs Attention Queue)
+@DataClassName('AutomationAction')
+class AutomationActions extends Table {
+  TextColumn get id => text()();
+  TextColumn get automationId => text().nullable().references(AutomationRules, #id, onDelete: KeyAction.setNull)();
+  TextColumn get entityType => text()(); // JOB, APPLICATION, TASK, PROJECT, DSA, FREELANCE_LEAD, EOD, WEEKLY_SUMMARY
+  TextColumn get entityId => text().nullable()();
+  TextColumn get actionType => text()(); // FOLLOW_UP_DUE, DEADLINE_DUE, REVISION_DUE, EOD_MISSING, NEW_MATCHING_JOB, WEEKLY_SUMMARY_READY
+  TextColumn get title => text().withLength(min: 1, max: 200)();
+  TextColumn get description => text()();
+  TextColumn get status => text().withDefault(const Constant('PENDING'))(); // PENDING, COMPLETED, DISMISSED
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get completedAt => dateTime().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+// 29. NotificationSettings Table (Phase 7 Notification Controls)
+@DataClassName('NotificationSetting')
+class NotificationSettings extends Table {
+  TextColumn get id => text()();
+  BoolColumn get careerEnabled => boolean().withDefault(const Constant(true))();
+  BoolColumn get workEnabled => boolean().withDefault(const Constant(true))();
+  BoolColumn get dsaEnabled => boolean().withDefault(const Constant(true))();
+  BoolColumn get freelanceEnabled => boolean().withDefault(const Constant(true))();
+  BoolColumn get projectsEnabled => boolean().withDefault(const Constant(true))();
+  BoolColumn get weeklyReportsEnabled => boolean().withDefault(const Constant(true))();
+  TextColumn get eodReminderTime => text().withDefault(const Constant('18:00'))();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+// 30. JobSourceConfigs Table (Phase 7 Job Providers)
+@DataClassName('JobSourceConfig')
+class JobSourceConfigs extends Table {
+  TextColumn get id => text()();
+  TextColumn get name => text().withLength(min: 1, max: 150)();
+  TextColumn get providerType => text().withDefault(const Constant('RSS_FEED'))(); // RSS_FEED, PUBLIC_API, MOCK
+  TextColumn get feedUrl => text().nullable()();
+  BoolColumn get enabled => boolean().withDefault(const Constant(true))();
+  DateTimeColumn get lastRun => dateTime().nullable()();
+  DateTimeColumn get lastSuccess => dateTime().nullable()();
+  TextColumn get lastError => text().nullable()();
+  IntColumn get rateLimitMinutes => integer().withDefault(const Constant(60))();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 // --- Main App Database ---
 @DriftDatabase(tables: [
   UserProfiles,
@@ -486,12 +576,17 @@ class AIActions extends Table {
   AIConversations,
   AIMessages,
   AIActions,
+  AutomationRules,
+  AutomationRuns,
+  AutomationActions,
+  NotificationSettings,
+  JobSourceConfigs,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? impl.connect());
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration {
@@ -555,6 +650,13 @@ class AppDatabase extends _$AppDatabase {
           await m.createTable(aIMessages);
           await m.createTable(aIActions);
         }
+        if (from < 7) {
+          await m.createTable(automationRules);
+          await m.createTable(automationRuns);
+          await m.createTable(automationActions);
+          await m.createTable(notificationSettings);
+          await m.createTable(jobSourceConfigs);
+        }
       },
       beforeOpen: (details) async {
         await customStatement('PRAGMA foreign_keys = ON;');
@@ -564,6 +666,7 @@ class AppDatabase extends _$AppDatabase {
 
   // --- Profile Queries ---
   Future<UserProfile?> getProfile() => select(userProfiles).getSingleOrNull();
+  Future<UserProfile?> getUserProfile() => getProfile();
   Stream<UserProfile?> watchProfile() => select(userProfiles).watchSingleOrNull();
   Future<int> upsertProfile(UserProfilesCompanion profile) =>
       into(userProfiles).insertOnConflictUpdate(profile);
@@ -980,6 +1083,124 @@ class AppDatabase extends _$AppDatabase {
   }
   Future<int> deleteAIAction(String id) =>
       (delete(aIActions)..where((a) => a.id.equals(id))).go();
+
+  // --- Phase 7: Automation Rules Queries ---
+  Future<List<AutomationRule>> getAllAutomationRules() => select(automationRules).get();
+  Stream<List<AutomationRule>> watchAllAutomationRules() => select(automationRules).watch();
+  Future<AutomationRule?> getAutomationRuleById(String id) =>
+      (select(automationRules)..where((r) => r.id.equals(id))).getSingleOrNull();
+  Future<int> insertAutomationRule(AutomationRulesCompanion rule) =>
+      into(automationRules).insertOnConflictUpdate(rule);
+  Future<bool> updateAutomationRule(AutomationRulesCompanion rule) =>
+      update(automationRules).replace(rule);
+  Future<int> toggleAutomationRuleEnabled(String id, bool enabled) {
+    return (update(automationRules)..where((r) => r.id.equals(id))).write(
+      AutomationRulesCompanion(
+        enabled: Value(enabled),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+  Future<int> updateAutomationRuleRun(String id, {required String status, DateTime? lastRun, DateTime? nextRun}) {
+    return (update(automationRules)..where((r) => r.id.equals(id))).write(
+      AutomationRulesCompanion(
+        status: Value(status),
+        lastRun: Value(lastRun),
+        nextRun: Value(nextRun),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+
+  // --- Phase 7: Automation Runs Queries ---
+  Future<List<AutomationRun>> getRunsForAutomation(String automationId) =>
+      (select(automationRuns)
+        ..where((r) => r.automationId.equals(automationId))
+        ..orderBy([(r) => OrderingTerm.desc(r.startedAt)])).get();
+  Stream<List<AutomationRun>> watchRunsForAutomation(String automationId) =>
+      (select(automationRuns)
+        ..where((r) => r.automationId.equals(automationId))
+        ..orderBy([(r) => OrderingTerm.desc(r.startedAt)])).watch();
+  Future<List<AutomationRun>> getRecentRuns({int limit = 20}) =>
+      (select(automationRuns)
+        ..orderBy([(r) => OrderingTerm.desc(r.startedAt)])
+        ..limit(limit)).get();
+  Stream<List<AutomationRun>> watchRecentRuns({int limit = 20}) =>
+      (select(automationRuns)
+        ..orderBy([(r) => OrderingTerm.desc(r.startedAt)])
+        ..limit(limit)).watch();
+  Future<int> insertAutomationRun(AutomationRunsCompanion run) =>
+      into(automationRuns).insert(run);
+
+  // --- Phase 7: Automation Actions (Needs Attention Queue) Queries ---
+  Future<List<AutomationAction>> getAllPendingActions() =>
+      (select(automationActions)
+        ..where((a) => a.status.equals('PENDING'))
+        ..orderBy([(a) => OrderingTerm.desc(a.createdAt)])).get();
+  Stream<List<AutomationAction>> watchAllPendingActions() =>
+      (select(automationActions)
+        ..where((a) => a.status.equals('PENDING'))
+        ..orderBy([(a) => OrderingTerm.desc(a.createdAt)])).watch();
+  Future<AutomationAction?> getAutomationActionById(String id) =>
+      (select(automationActions)..where((a) => a.id.equals(id))).getSingleOrNull();
+  Future<int> insertAutomationAction(AutomationActionsCompanion action) =>
+      into(automationActions).insert(action);
+  Future<int> updateAutomationActionStatus(String id, String status, {DateTime? completedAt}) {
+    return (update(automationActions)..where((a) => a.id.equals(id))).write(
+      AutomationActionsCompanion(
+        status: Value(status),
+        completedAt: Value(completedAt ?? DateTime.now()),
+      ),
+    );
+  }
+  Future<int> deleteAutomationAction(String id) =>
+      (delete(automationActions)..where((a) => a.id.equals(id))).go();
+  Future<bool> isActionDuplicate(String entityType, String? entityId, String actionType) async {
+    if (entityId == null) return false;
+    final existing = await (select(automationActions)
+      ..where((a) =>
+          a.entityType.equals(entityType) &
+          a.entityId.equals(entityId) &
+          a.actionType.equals(actionType) &
+          a.status.equals('PENDING'))).get();
+    return existing.isNotEmpty;
+  }
+
+  // --- Phase 7: Notification Settings Queries ---
+  Future<NotificationSetting?> getNotificationSettings() =>
+      (select(notificationSettings)..where((s) => s.id.equals('default'))).getSingleOrNull();
+  Stream<NotificationSetting?> watchNotificationSettings() =>
+      (select(notificationSettings)..where((s) => s.id.equals('default'))).watchSingleOrNull();
+  Future<int> upsertNotificationSettings(NotificationSettingsCompanion settings) =>
+      into(notificationSettings).insertOnConflictUpdate(settings);
+
+  // --- Phase 7: Job Source Configs Queries ---
+  Future<List<JobSourceConfig>> getAllJobSources() => select(jobSourceConfigs).get();
+  Stream<List<JobSourceConfig>> watchAllJobSources() => select(jobSourceConfigs).watch();
+  Future<JobSourceConfig?> getJobSourceById(String id) =>
+      (select(jobSourceConfigs)..where((s) => s.id.equals(id))).getSingleOrNull();
+  Future<int> insertJobSource(JobSourceConfigsCompanion source) =>
+      into(jobSourceConfigs).insertOnConflictUpdate(source);
+  Future<bool> updateJobSource(JobSourceConfigsCompanion source) =>
+      update(jobSourceConfigs).replace(source);
+  Future<int> toggleJobSourceEnabled(String id, bool enabled) {
+    return (update(jobSourceConfigs)..where((s) => s.id.equals(id))).write(
+      JobSourceConfigsCompanion(
+        enabled: Value(enabled),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+  Future<int> updateJobSourceRunResult(String id, {DateTime? lastRun, DateTime? lastSuccess, String? lastError}) {
+    return (update(jobSourceConfigs)..where((s) => s.id.equals(id))).write(
+      JobSourceConfigsCompanion(
+        lastRun: Value(lastRun),
+        lastSuccess: Value(lastSuccess),
+        lastError: Value(lastError),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
 }
 
 // Global Provider for AppDatabase instance

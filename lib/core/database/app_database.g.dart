@@ -16224,6 +16224,3141 @@ class AIActionsCompanion extends UpdateCompanion<AIAction> {
   }
 }
 
+class $AutomationRulesTable extends AutomationRules
+    with TableInfo<$AutomationRulesTable, AutomationRule> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AutomationRulesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 1,
+      maxTextLength: 200,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _descriptionMeta = const VerificationMeta(
+    'description',
+  );
+  @override
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+    'description',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _typeMeta = const VerificationMeta('type');
+  @override
+  late final GeneratedColumn<String> type = GeneratedColumn<String>(
+    'type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _enabledMeta = const VerificationMeta(
+    'enabled',
+  );
+  @override
+  late final GeneratedColumn<bool> enabled = GeneratedColumn<bool>(
+    'enabled',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("enabled" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _scheduleMeta = const VerificationMeta(
+    'schedule',
+  );
+  @override
+  late final GeneratedColumn<String> schedule = GeneratedColumn<String>(
+    'schedule',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('DAILY_MORNING'),
+  );
+  static const VerificationMeta _lastRunMeta = const VerificationMeta(
+    'lastRun',
+  );
+  @override
+  late final GeneratedColumn<DateTime> lastRun = GeneratedColumn<DateTime>(
+    'last_run',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _nextRunMeta = const VerificationMeta(
+    'nextRun',
+  );
+  @override
+  late final GeneratedColumn<DateTime> nextRun = GeneratedColumn<DateTime>(
+    'next_run',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('IDLE'),
+  );
+  static const VerificationMeta _configJsonMeta = const VerificationMeta(
+    'configJson',
+  );
+  @override
+  late final GeneratedColumn<String> configJson = GeneratedColumn<String>(
+    'config_json',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    name,
+    description,
+    type,
+    enabled,
+    schedule,
+    lastRun,
+    nextRun,
+    status,
+    configJson,
+    createdAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'automation_rules';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<AutomationRule> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('description')) {
+      context.handle(
+        _descriptionMeta,
+        description.isAcceptableOrUnknown(
+          data['description']!,
+          _descriptionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('type')) {
+      context.handle(
+        _typeMeta,
+        type.isAcceptableOrUnknown(data['type']!, _typeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_typeMeta);
+    }
+    if (data.containsKey('enabled')) {
+      context.handle(
+        _enabledMeta,
+        enabled.isAcceptableOrUnknown(data['enabled']!, _enabledMeta),
+      );
+    }
+    if (data.containsKey('schedule')) {
+      context.handle(
+        _scheduleMeta,
+        schedule.isAcceptableOrUnknown(data['schedule']!, _scheduleMeta),
+      );
+    }
+    if (data.containsKey('last_run')) {
+      context.handle(
+        _lastRunMeta,
+        lastRun.isAcceptableOrUnknown(data['last_run']!, _lastRunMeta),
+      );
+    }
+    if (data.containsKey('next_run')) {
+      context.handle(
+        _nextRunMeta,
+        nextRun.isAcceptableOrUnknown(data['next_run']!, _nextRunMeta),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    if (data.containsKey('config_json')) {
+      context.handle(
+        _configJsonMeta,
+        configJson.isAcceptableOrUnknown(data['config_json']!, _configJsonMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  AutomationRule map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AutomationRule(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      description: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}description'],
+      ),
+      type: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}type'],
+      )!,
+      enabled: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}enabled'],
+      )!,
+      schedule: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}schedule'],
+      )!,
+      lastRun: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_run'],
+      ),
+      nextRun: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}next_run'],
+      ),
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      configJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}config_json'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $AutomationRulesTable createAlias(String alias) {
+    return $AutomationRulesTable(attachedDatabase, alias);
+  }
+}
+
+class AutomationRule extends DataClass implements Insertable<AutomationRule> {
+  final String id;
+  final String name;
+  final String? description;
+  final String type;
+  final bool enabled;
+  final String schedule;
+  final DateTime? lastRun;
+  final DateTime? nextRun;
+  final String status;
+  final String? configJson;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const AutomationRule({
+    required this.id,
+    required this.name,
+    this.description,
+    required this.type,
+    required this.enabled,
+    required this.schedule,
+    this.lastRun,
+    this.nextRun,
+    required this.status,
+    this.configJson,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['name'] = Variable<String>(name);
+    if (!nullToAbsent || description != null) {
+      map['description'] = Variable<String>(description);
+    }
+    map['type'] = Variable<String>(type);
+    map['enabled'] = Variable<bool>(enabled);
+    map['schedule'] = Variable<String>(schedule);
+    if (!nullToAbsent || lastRun != null) {
+      map['last_run'] = Variable<DateTime>(lastRun);
+    }
+    if (!nullToAbsent || nextRun != null) {
+      map['next_run'] = Variable<DateTime>(nextRun);
+    }
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || configJson != null) {
+      map['config_json'] = Variable<String>(configJson);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  AutomationRulesCompanion toCompanion(bool nullToAbsent) {
+    return AutomationRulesCompanion(
+      id: Value(id),
+      name: Value(name),
+      description: description == null && nullToAbsent
+          ? const Value.absent()
+          : Value(description),
+      type: Value(type),
+      enabled: Value(enabled),
+      schedule: Value(schedule),
+      lastRun: lastRun == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastRun),
+      nextRun: nextRun == null && nullToAbsent
+          ? const Value.absent()
+          : Value(nextRun),
+      status: Value(status),
+      configJson: configJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(configJson),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory AutomationRule.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AutomationRule(
+      id: serializer.fromJson<String>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      description: serializer.fromJson<String?>(json['description']),
+      type: serializer.fromJson<String>(json['type']),
+      enabled: serializer.fromJson<bool>(json['enabled']),
+      schedule: serializer.fromJson<String>(json['schedule']),
+      lastRun: serializer.fromJson<DateTime?>(json['lastRun']),
+      nextRun: serializer.fromJson<DateTime?>(json['nextRun']),
+      status: serializer.fromJson<String>(json['status']),
+      configJson: serializer.fromJson<String?>(json['configJson']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'name': serializer.toJson<String>(name),
+      'description': serializer.toJson<String?>(description),
+      'type': serializer.toJson<String>(type),
+      'enabled': serializer.toJson<bool>(enabled),
+      'schedule': serializer.toJson<String>(schedule),
+      'lastRun': serializer.toJson<DateTime?>(lastRun),
+      'nextRun': serializer.toJson<DateTime?>(nextRun),
+      'status': serializer.toJson<String>(status),
+      'configJson': serializer.toJson<String?>(configJson),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  AutomationRule copyWith({
+    String? id,
+    String? name,
+    Value<String?> description = const Value.absent(),
+    String? type,
+    bool? enabled,
+    String? schedule,
+    Value<DateTime?> lastRun = const Value.absent(),
+    Value<DateTime?> nextRun = const Value.absent(),
+    String? status,
+    Value<String?> configJson = const Value.absent(),
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => AutomationRule(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    description: description.present ? description.value : this.description,
+    type: type ?? this.type,
+    enabled: enabled ?? this.enabled,
+    schedule: schedule ?? this.schedule,
+    lastRun: lastRun.present ? lastRun.value : this.lastRun,
+    nextRun: nextRun.present ? nextRun.value : this.nextRun,
+    status: status ?? this.status,
+    configJson: configJson.present ? configJson.value : this.configJson,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  AutomationRule copyWithCompanion(AutomationRulesCompanion data) {
+    return AutomationRule(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      description: data.description.present
+          ? data.description.value
+          : this.description,
+      type: data.type.present ? data.type.value : this.type,
+      enabled: data.enabled.present ? data.enabled.value : this.enabled,
+      schedule: data.schedule.present ? data.schedule.value : this.schedule,
+      lastRun: data.lastRun.present ? data.lastRun.value : this.lastRun,
+      nextRun: data.nextRun.present ? data.nextRun.value : this.nextRun,
+      status: data.status.present ? data.status.value : this.status,
+      configJson: data.configJson.present
+          ? data.configJson.value
+          : this.configJson,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AutomationRule(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('description: $description, ')
+          ..write('type: $type, ')
+          ..write('enabled: $enabled, ')
+          ..write('schedule: $schedule, ')
+          ..write('lastRun: $lastRun, ')
+          ..write('nextRun: $nextRun, ')
+          ..write('status: $status, ')
+          ..write('configJson: $configJson, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    name,
+    description,
+    type,
+    enabled,
+    schedule,
+    lastRun,
+    nextRun,
+    status,
+    configJson,
+    createdAt,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AutomationRule &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.description == this.description &&
+          other.type == this.type &&
+          other.enabled == this.enabled &&
+          other.schedule == this.schedule &&
+          other.lastRun == this.lastRun &&
+          other.nextRun == this.nextRun &&
+          other.status == this.status &&
+          other.configJson == this.configJson &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class AutomationRulesCompanion extends UpdateCompanion<AutomationRule> {
+  final Value<String> id;
+  final Value<String> name;
+  final Value<String?> description;
+  final Value<String> type;
+  final Value<bool> enabled;
+  final Value<String> schedule;
+  final Value<DateTime?> lastRun;
+  final Value<DateTime?> nextRun;
+  final Value<String> status;
+  final Value<String?> configJson;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const AutomationRulesCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.description = const Value.absent(),
+    this.type = const Value.absent(),
+    this.enabled = const Value.absent(),
+    this.schedule = const Value.absent(),
+    this.lastRun = const Value.absent(),
+    this.nextRun = const Value.absent(),
+    this.status = const Value.absent(),
+    this.configJson = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  AutomationRulesCompanion.insert({
+    required String id,
+    required String name,
+    this.description = const Value.absent(),
+    required String type,
+    this.enabled = const Value.absent(),
+    this.schedule = const Value.absent(),
+    this.lastRun = const Value.absent(),
+    this.nextRun = const Value.absent(),
+    this.status = const Value.absent(),
+    this.configJson = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       name = Value(name),
+       type = Value(type);
+  static Insertable<AutomationRule> custom({
+    Expression<String>? id,
+    Expression<String>? name,
+    Expression<String>? description,
+    Expression<String>? type,
+    Expression<bool>? enabled,
+    Expression<String>? schedule,
+    Expression<DateTime>? lastRun,
+    Expression<DateTime>? nextRun,
+    Expression<String>? status,
+    Expression<String>? configJson,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (description != null) 'description': description,
+      if (type != null) 'type': type,
+      if (enabled != null) 'enabled': enabled,
+      if (schedule != null) 'schedule': schedule,
+      if (lastRun != null) 'last_run': lastRun,
+      if (nextRun != null) 'next_run': nextRun,
+      if (status != null) 'status': status,
+      if (configJson != null) 'config_json': configJson,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  AutomationRulesCompanion copyWith({
+    Value<String>? id,
+    Value<String>? name,
+    Value<String?>? description,
+    Value<String>? type,
+    Value<bool>? enabled,
+    Value<String>? schedule,
+    Value<DateTime?>? lastRun,
+    Value<DateTime?>? nextRun,
+    Value<String>? status,
+    Value<String?>? configJson,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return AutomationRulesCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      type: type ?? this.type,
+      enabled: enabled ?? this.enabled,
+      schedule: schedule ?? this.schedule,
+      lastRun: lastRun ?? this.lastRun,
+      nextRun: nextRun ?? this.nextRun,
+      status: status ?? this.status,
+      configJson: configJson ?? this.configJson,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
+    }
+    if (type.present) {
+      map['type'] = Variable<String>(type.value);
+    }
+    if (enabled.present) {
+      map['enabled'] = Variable<bool>(enabled.value);
+    }
+    if (schedule.present) {
+      map['schedule'] = Variable<String>(schedule.value);
+    }
+    if (lastRun.present) {
+      map['last_run'] = Variable<DateTime>(lastRun.value);
+    }
+    if (nextRun.present) {
+      map['next_run'] = Variable<DateTime>(nextRun.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (configJson.present) {
+      map['config_json'] = Variable<String>(configJson.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AutomationRulesCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('description: $description, ')
+          ..write('type: $type, ')
+          ..write('enabled: $enabled, ')
+          ..write('schedule: $schedule, ')
+          ..write('lastRun: $lastRun, ')
+          ..write('nextRun: $nextRun, ')
+          ..write('status: $status, ')
+          ..write('configJson: $configJson, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $AutomationRunsTable extends AutomationRuns
+    with TableInfo<$AutomationRunsTable, AutomationRun> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AutomationRunsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _automationIdMeta = const VerificationMeta(
+    'automationId',
+  );
+  @override
+  late final GeneratedColumn<String> automationId = GeneratedColumn<String>(
+    'automation_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES automation_rules (id) ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _startedAtMeta = const VerificationMeta(
+    'startedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> startedAt = GeneratedColumn<DateTime>(
+    'started_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _finishedAtMeta = const VerificationMeta(
+    'finishedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> finishedAt = GeneratedColumn<DateTime>(
+    'finished_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('SUCCESS'),
+  );
+  static const VerificationMeta _itemsProcessedMeta = const VerificationMeta(
+    'itemsProcessed',
+  );
+  @override
+  late final GeneratedColumn<int> itemsProcessed = GeneratedColumn<int>(
+    'items_processed',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _itemsCreatedMeta = const VerificationMeta(
+    'itemsCreated',
+  );
+  @override
+  late final GeneratedColumn<int> itemsCreated = GeneratedColumn<int>(
+    'items_created',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _errorMessageMeta = const VerificationMeta(
+    'errorMessage',
+  );
+  @override
+  late final GeneratedColumn<String> errorMessage = GeneratedColumn<String>(
+    'error_message',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    automationId,
+    startedAt,
+    finishedAt,
+    status,
+    itemsProcessed,
+    itemsCreated,
+    errorMessage,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'automation_runs';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<AutomationRun> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('automation_id')) {
+      context.handle(
+        _automationIdMeta,
+        automationId.isAcceptableOrUnknown(
+          data['automation_id']!,
+          _automationIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_automationIdMeta);
+    }
+    if (data.containsKey('started_at')) {
+      context.handle(
+        _startedAtMeta,
+        startedAt.isAcceptableOrUnknown(data['started_at']!, _startedAtMeta),
+      );
+    }
+    if (data.containsKey('finished_at')) {
+      context.handle(
+        _finishedAtMeta,
+        finishedAt.isAcceptableOrUnknown(data['finished_at']!, _finishedAtMeta),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    if (data.containsKey('items_processed')) {
+      context.handle(
+        _itemsProcessedMeta,
+        itemsProcessed.isAcceptableOrUnknown(
+          data['items_processed']!,
+          _itemsProcessedMeta,
+        ),
+      );
+    }
+    if (data.containsKey('items_created')) {
+      context.handle(
+        _itemsCreatedMeta,
+        itemsCreated.isAcceptableOrUnknown(
+          data['items_created']!,
+          _itemsCreatedMeta,
+        ),
+      );
+    }
+    if (data.containsKey('error_message')) {
+      context.handle(
+        _errorMessageMeta,
+        errorMessage.isAcceptableOrUnknown(
+          data['error_message']!,
+          _errorMessageMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  AutomationRun map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AutomationRun(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      automationId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}automation_id'],
+      )!,
+      startedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}started_at'],
+      )!,
+      finishedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}finished_at'],
+      ),
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      itemsProcessed: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}items_processed'],
+      )!,
+      itemsCreated: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}items_created'],
+      )!,
+      errorMessage: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}error_message'],
+      ),
+    );
+  }
+
+  @override
+  $AutomationRunsTable createAlias(String alias) {
+    return $AutomationRunsTable(attachedDatabase, alias);
+  }
+}
+
+class AutomationRun extends DataClass implements Insertable<AutomationRun> {
+  final String id;
+  final String automationId;
+  final DateTime startedAt;
+  final DateTime? finishedAt;
+  final String status;
+  final int itemsProcessed;
+  final int itemsCreated;
+  final String? errorMessage;
+  const AutomationRun({
+    required this.id,
+    required this.automationId,
+    required this.startedAt,
+    this.finishedAt,
+    required this.status,
+    required this.itemsProcessed,
+    required this.itemsCreated,
+    this.errorMessage,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['automation_id'] = Variable<String>(automationId);
+    map['started_at'] = Variable<DateTime>(startedAt);
+    if (!nullToAbsent || finishedAt != null) {
+      map['finished_at'] = Variable<DateTime>(finishedAt);
+    }
+    map['status'] = Variable<String>(status);
+    map['items_processed'] = Variable<int>(itemsProcessed);
+    map['items_created'] = Variable<int>(itemsCreated);
+    if (!nullToAbsent || errorMessage != null) {
+      map['error_message'] = Variable<String>(errorMessage);
+    }
+    return map;
+  }
+
+  AutomationRunsCompanion toCompanion(bool nullToAbsent) {
+    return AutomationRunsCompanion(
+      id: Value(id),
+      automationId: Value(automationId),
+      startedAt: Value(startedAt),
+      finishedAt: finishedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(finishedAt),
+      status: Value(status),
+      itemsProcessed: Value(itemsProcessed),
+      itemsCreated: Value(itemsCreated),
+      errorMessage: errorMessage == null && nullToAbsent
+          ? const Value.absent()
+          : Value(errorMessage),
+    );
+  }
+
+  factory AutomationRun.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AutomationRun(
+      id: serializer.fromJson<String>(json['id']),
+      automationId: serializer.fromJson<String>(json['automationId']),
+      startedAt: serializer.fromJson<DateTime>(json['startedAt']),
+      finishedAt: serializer.fromJson<DateTime?>(json['finishedAt']),
+      status: serializer.fromJson<String>(json['status']),
+      itemsProcessed: serializer.fromJson<int>(json['itemsProcessed']),
+      itemsCreated: serializer.fromJson<int>(json['itemsCreated']),
+      errorMessage: serializer.fromJson<String?>(json['errorMessage']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'automationId': serializer.toJson<String>(automationId),
+      'startedAt': serializer.toJson<DateTime>(startedAt),
+      'finishedAt': serializer.toJson<DateTime?>(finishedAt),
+      'status': serializer.toJson<String>(status),
+      'itemsProcessed': serializer.toJson<int>(itemsProcessed),
+      'itemsCreated': serializer.toJson<int>(itemsCreated),
+      'errorMessage': serializer.toJson<String?>(errorMessage),
+    };
+  }
+
+  AutomationRun copyWith({
+    String? id,
+    String? automationId,
+    DateTime? startedAt,
+    Value<DateTime?> finishedAt = const Value.absent(),
+    String? status,
+    int? itemsProcessed,
+    int? itemsCreated,
+    Value<String?> errorMessage = const Value.absent(),
+  }) => AutomationRun(
+    id: id ?? this.id,
+    automationId: automationId ?? this.automationId,
+    startedAt: startedAt ?? this.startedAt,
+    finishedAt: finishedAt.present ? finishedAt.value : this.finishedAt,
+    status: status ?? this.status,
+    itemsProcessed: itemsProcessed ?? this.itemsProcessed,
+    itemsCreated: itemsCreated ?? this.itemsCreated,
+    errorMessage: errorMessage.present ? errorMessage.value : this.errorMessage,
+  );
+  AutomationRun copyWithCompanion(AutomationRunsCompanion data) {
+    return AutomationRun(
+      id: data.id.present ? data.id.value : this.id,
+      automationId: data.automationId.present
+          ? data.automationId.value
+          : this.automationId,
+      startedAt: data.startedAt.present ? data.startedAt.value : this.startedAt,
+      finishedAt: data.finishedAt.present
+          ? data.finishedAt.value
+          : this.finishedAt,
+      status: data.status.present ? data.status.value : this.status,
+      itemsProcessed: data.itemsProcessed.present
+          ? data.itemsProcessed.value
+          : this.itemsProcessed,
+      itemsCreated: data.itemsCreated.present
+          ? data.itemsCreated.value
+          : this.itemsCreated,
+      errorMessage: data.errorMessage.present
+          ? data.errorMessage.value
+          : this.errorMessage,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AutomationRun(')
+          ..write('id: $id, ')
+          ..write('automationId: $automationId, ')
+          ..write('startedAt: $startedAt, ')
+          ..write('finishedAt: $finishedAt, ')
+          ..write('status: $status, ')
+          ..write('itemsProcessed: $itemsProcessed, ')
+          ..write('itemsCreated: $itemsCreated, ')
+          ..write('errorMessage: $errorMessage')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    automationId,
+    startedAt,
+    finishedAt,
+    status,
+    itemsProcessed,
+    itemsCreated,
+    errorMessage,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AutomationRun &&
+          other.id == this.id &&
+          other.automationId == this.automationId &&
+          other.startedAt == this.startedAt &&
+          other.finishedAt == this.finishedAt &&
+          other.status == this.status &&
+          other.itemsProcessed == this.itemsProcessed &&
+          other.itemsCreated == this.itemsCreated &&
+          other.errorMessage == this.errorMessage);
+}
+
+class AutomationRunsCompanion extends UpdateCompanion<AutomationRun> {
+  final Value<String> id;
+  final Value<String> automationId;
+  final Value<DateTime> startedAt;
+  final Value<DateTime?> finishedAt;
+  final Value<String> status;
+  final Value<int> itemsProcessed;
+  final Value<int> itemsCreated;
+  final Value<String?> errorMessage;
+  final Value<int> rowid;
+  const AutomationRunsCompanion({
+    this.id = const Value.absent(),
+    this.automationId = const Value.absent(),
+    this.startedAt = const Value.absent(),
+    this.finishedAt = const Value.absent(),
+    this.status = const Value.absent(),
+    this.itemsProcessed = const Value.absent(),
+    this.itemsCreated = const Value.absent(),
+    this.errorMessage = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  AutomationRunsCompanion.insert({
+    required String id,
+    required String automationId,
+    this.startedAt = const Value.absent(),
+    this.finishedAt = const Value.absent(),
+    this.status = const Value.absent(),
+    this.itemsProcessed = const Value.absent(),
+    this.itemsCreated = const Value.absent(),
+    this.errorMessage = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       automationId = Value(automationId);
+  static Insertable<AutomationRun> custom({
+    Expression<String>? id,
+    Expression<String>? automationId,
+    Expression<DateTime>? startedAt,
+    Expression<DateTime>? finishedAt,
+    Expression<String>? status,
+    Expression<int>? itemsProcessed,
+    Expression<int>? itemsCreated,
+    Expression<String>? errorMessage,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (automationId != null) 'automation_id': automationId,
+      if (startedAt != null) 'started_at': startedAt,
+      if (finishedAt != null) 'finished_at': finishedAt,
+      if (status != null) 'status': status,
+      if (itemsProcessed != null) 'items_processed': itemsProcessed,
+      if (itemsCreated != null) 'items_created': itemsCreated,
+      if (errorMessage != null) 'error_message': errorMessage,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  AutomationRunsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? automationId,
+    Value<DateTime>? startedAt,
+    Value<DateTime?>? finishedAt,
+    Value<String>? status,
+    Value<int>? itemsProcessed,
+    Value<int>? itemsCreated,
+    Value<String?>? errorMessage,
+    Value<int>? rowid,
+  }) {
+    return AutomationRunsCompanion(
+      id: id ?? this.id,
+      automationId: automationId ?? this.automationId,
+      startedAt: startedAt ?? this.startedAt,
+      finishedAt: finishedAt ?? this.finishedAt,
+      status: status ?? this.status,
+      itemsProcessed: itemsProcessed ?? this.itemsProcessed,
+      itemsCreated: itemsCreated ?? this.itemsCreated,
+      errorMessage: errorMessage ?? this.errorMessage,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (automationId.present) {
+      map['automation_id'] = Variable<String>(automationId.value);
+    }
+    if (startedAt.present) {
+      map['started_at'] = Variable<DateTime>(startedAt.value);
+    }
+    if (finishedAt.present) {
+      map['finished_at'] = Variable<DateTime>(finishedAt.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (itemsProcessed.present) {
+      map['items_processed'] = Variable<int>(itemsProcessed.value);
+    }
+    if (itemsCreated.present) {
+      map['items_created'] = Variable<int>(itemsCreated.value);
+    }
+    if (errorMessage.present) {
+      map['error_message'] = Variable<String>(errorMessage.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AutomationRunsCompanion(')
+          ..write('id: $id, ')
+          ..write('automationId: $automationId, ')
+          ..write('startedAt: $startedAt, ')
+          ..write('finishedAt: $finishedAt, ')
+          ..write('status: $status, ')
+          ..write('itemsProcessed: $itemsProcessed, ')
+          ..write('itemsCreated: $itemsCreated, ')
+          ..write('errorMessage: $errorMessage, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $AutomationActionsTable extends AutomationActions
+    with TableInfo<$AutomationActionsTable, AutomationAction> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AutomationActionsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _automationIdMeta = const VerificationMeta(
+    'automationId',
+  );
+  @override
+  late final GeneratedColumn<String> automationId = GeneratedColumn<String>(
+    'automation_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES automation_rules (id) ON DELETE SET NULL',
+    ),
+  );
+  static const VerificationMeta _entityTypeMeta = const VerificationMeta(
+    'entityType',
+  );
+  @override
+  late final GeneratedColumn<String> entityType = GeneratedColumn<String>(
+    'entity_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _entityIdMeta = const VerificationMeta(
+    'entityId',
+  );
+  @override
+  late final GeneratedColumn<String> entityId = GeneratedColumn<String>(
+    'entity_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _actionTypeMeta = const VerificationMeta(
+    'actionType',
+  );
+  @override
+  late final GeneratedColumn<String> actionType = GeneratedColumn<String>(
+    'action_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 1,
+      maxTextLength: 200,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _descriptionMeta = const VerificationMeta(
+    'description',
+  );
+  @override
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+    'description',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('PENDING'),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _completedAtMeta = const VerificationMeta(
+    'completedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> completedAt = GeneratedColumn<DateTime>(
+    'completed_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    automationId,
+    entityType,
+    entityId,
+    actionType,
+    title,
+    description,
+    status,
+    createdAt,
+    completedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'automation_actions';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<AutomationAction> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('automation_id')) {
+      context.handle(
+        _automationIdMeta,
+        automationId.isAcceptableOrUnknown(
+          data['automation_id']!,
+          _automationIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('entity_type')) {
+      context.handle(
+        _entityTypeMeta,
+        entityType.isAcceptableOrUnknown(data['entity_type']!, _entityTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_entityTypeMeta);
+    }
+    if (data.containsKey('entity_id')) {
+      context.handle(
+        _entityIdMeta,
+        entityId.isAcceptableOrUnknown(data['entity_id']!, _entityIdMeta),
+      );
+    }
+    if (data.containsKey('action_type')) {
+      context.handle(
+        _actionTypeMeta,
+        actionType.isAcceptableOrUnknown(data['action_type']!, _actionTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_actionTypeMeta);
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+        _titleMeta,
+        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('description')) {
+      context.handle(
+        _descriptionMeta,
+        description.isAcceptableOrUnknown(
+          data['description']!,
+          _descriptionMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_descriptionMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('completed_at')) {
+      context.handle(
+        _completedAtMeta,
+        completedAt.isAcceptableOrUnknown(
+          data['completed_at']!,
+          _completedAtMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  AutomationAction map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AutomationAction(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      automationId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}automation_id'],
+      ),
+      entityType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}entity_type'],
+      )!,
+      entityId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}entity_id'],
+      ),
+      actionType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}action_type'],
+      )!,
+      title: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title'],
+      )!,
+      description: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}description'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      completedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}completed_at'],
+      ),
+    );
+  }
+
+  @override
+  $AutomationActionsTable createAlias(String alias) {
+    return $AutomationActionsTable(attachedDatabase, alias);
+  }
+}
+
+class AutomationAction extends DataClass
+    implements Insertable<AutomationAction> {
+  final String id;
+  final String? automationId;
+  final String entityType;
+  final String? entityId;
+  final String actionType;
+  final String title;
+  final String description;
+  final String status;
+  final DateTime createdAt;
+  final DateTime? completedAt;
+  const AutomationAction({
+    required this.id,
+    this.automationId,
+    required this.entityType,
+    this.entityId,
+    required this.actionType,
+    required this.title,
+    required this.description,
+    required this.status,
+    required this.createdAt,
+    this.completedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    if (!nullToAbsent || automationId != null) {
+      map['automation_id'] = Variable<String>(automationId);
+    }
+    map['entity_type'] = Variable<String>(entityType);
+    if (!nullToAbsent || entityId != null) {
+      map['entity_id'] = Variable<String>(entityId);
+    }
+    map['action_type'] = Variable<String>(actionType);
+    map['title'] = Variable<String>(title);
+    map['description'] = Variable<String>(description);
+    map['status'] = Variable<String>(status);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    if (!nullToAbsent || completedAt != null) {
+      map['completed_at'] = Variable<DateTime>(completedAt);
+    }
+    return map;
+  }
+
+  AutomationActionsCompanion toCompanion(bool nullToAbsent) {
+    return AutomationActionsCompanion(
+      id: Value(id),
+      automationId: automationId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(automationId),
+      entityType: Value(entityType),
+      entityId: entityId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(entityId),
+      actionType: Value(actionType),
+      title: Value(title),
+      description: Value(description),
+      status: Value(status),
+      createdAt: Value(createdAt),
+      completedAt: completedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(completedAt),
+    );
+  }
+
+  factory AutomationAction.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AutomationAction(
+      id: serializer.fromJson<String>(json['id']),
+      automationId: serializer.fromJson<String?>(json['automationId']),
+      entityType: serializer.fromJson<String>(json['entityType']),
+      entityId: serializer.fromJson<String?>(json['entityId']),
+      actionType: serializer.fromJson<String>(json['actionType']),
+      title: serializer.fromJson<String>(json['title']),
+      description: serializer.fromJson<String>(json['description']),
+      status: serializer.fromJson<String>(json['status']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      completedAt: serializer.fromJson<DateTime?>(json['completedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'automationId': serializer.toJson<String?>(automationId),
+      'entityType': serializer.toJson<String>(entityType),
+      'entityId': serializer.toJson<String?>(entityId),
+      'actionType': serializer.toJson<String>(actionType),
+      'title': serializer.toJson<String>(title),
+      'description': serializer.toJson<String>(description),
+      'status': serializer.toJson<String>(status),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'completedAt': serializer.toJson<DateTime?>(completedAt),
+    };
+  }
+
+  AutomationAction copyWith({
+    String? id,
+    Value<String?> automationId = const Value.absent(),
+    String? entityType,
+    Value<String?> entityId = const Value.absent(),
+    String? actionType,
+    String? title,
+    String? description,
+    String? status,
+    DateTime? createdAt,
+    Value<DateTime?> completedAt = const Value.absent(),
+  }) => AutomationAction(
+    id: id ?? this.id,
+    automationId: automationId.present ? automationId.value : this.automationId,
+    entityType: entityType ?? this.entityType,
+    entityId: entityId.present ? entityId.value : this.entityId,
+    actionType: actionType ?? this.actionType,
+    title: title ?? this.title,
+    description: description ?? this.description,
+    status: status ?? this.status,
+    createdAt: createdAt ?? this.createdAt,
+    completedAt: completedAt.present ? completedAt.value : this.completedAt,
+  );
+  AutomationAction copyWithCompanion(AutomationActionsCompanion data) {
+    return AutomationAction(
+      id: data.id.present ? data.id.value : this.id,
+      automationId: data.automationId.present
+          ? data.automationId.value
+          : this.automationId,
+      entityType: data.entityType.present
+          ? data.entityType.value
+          : this.entityType,
+      entityId: data.entityId.present ? data.entityId.value : this.entityId,
+      actionType: data.actionType.present
+          ? data.actionType.value
+          : this.actionType,
+      title: data.title.present ? data.title.value : this.title,
+      description: data.description.present
+          ? data.description.value
+          : this.description,
+      status: data.status.present ? data.status.value : this.status,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      completedAt: data.completedAt.present
+          ? data.completedAt.value
+          : this.completedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AutomationAction(')
+          ..write('id: $id, ')
+          ..write('automationId: $automationId, ')
+          ..write('entityType: $entityType, ')
+          ..write('entityId: $entityId, ')
+          ..write('actionType: $actionType, ')
+          ..write('title: $title, ')
+          ..write('description: $description, ')
+          ..write('status: $status, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('completedAt: $completedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    automationId,
+    entityType,
+    entityId,
+    actionType,
+    title,
+    description,
+    status,
+    createdAt,
+    completedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AutomationAction &&
+          other.id == this.id &&
+          other.automationId == this.automationId &&
+          other.entityType == this.entityType &&
+          other.entityId == this.entityId &&
+          other.actionType == this.actionType &&
+          other.title == this.title &&
+          other.description == this.description &&
+          other.status == this.status &&
+          other.createdAt == this.createdAt &&
+          other.completedAt == this.completedAt);
+}
+
+class AutomationActionsCompanion extends UpdateCompanion<AutomationAction> {
+  final Value<String> id;
+  final Value<String?> automationId;
+  final Value<String> entityType;
+  final Value<String?> entityId;
+  final Value<String> actionType;
+  final Value<String> title;
+  final Value<String> description;
+  final Value<String> status;
+  final Value<DateTime> createdAt;
+  final Value<DateTime?> completedAt;
+  final Value<int> rowid;
+  const AutomationActionsCompanion({
+    this.id = const Value.absent(),
+    this.automationId = const Value.absent(),
+    this.entityType = const Value.absent(),
+    this.entityId = const Value.absent(),
+    this.actionType = const Value.absent(),
+    this.title = const Value.absent(),
+    this.description = const Value.absent(),
+    this.status = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.completedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  AutomationActionsCompanion.insert({
+    required String id,
+    this.automationId = const Value.absent(),
+    required String entityType,
+    this.entityId = const Value.absent(),
+    required String actionType,
+    required String title,
+    required String description,
+    this.status = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.completedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       entityType = Value(entityType),
+       actionType = Value(actionType),
+       title = Value(title),
+       description = Value(description);
+  static Insertable<AutomationAction> custom({
+    Expression<String>? id,
+    Expression<String>? automationId,
+    Expression<String>? entityType,
+    Expression<String>? entityId,
+    Expression<String>? actionType,
+    Expression<String>? title,
+    Expression<String>? description,
+    Expression<String>? status,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? completedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (automationId != null) 'automation_id': automationId,
+      if (entityType != null) 'entity_type': entityType,
+      if (entityId != null) 'entity_id': entityId,
+      if (actionType != null) 'action_type': actionType,
+      if (title != null) 'title': title,
+      if (description != null) 'description': description,
+      if (status != null) 'status': status,
+      if (createdAt != null) 'created_at': createdAt,
+      if (completedAt != null) 'completed_at': completedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  AutomationActionsCompanion copyWith({
+    Value<String>? id,
+    Value<String?>? automationId,
+    Value<String>? entityType,
+    Value<String?>? entityId,
+    Value<String>? actionType,
+    Value<String>? title,
+    Value<String>? description,
+    Value<String>? status,
+    Value<DateTime>? createdAt,
+    Value<DateTime?>? completedAt,
+    Value<int>? rowid,
+  }) {
+    return AutomationActionsCompanion(
+      id: id ?? this.id,
+      automationId: automationId ?? this.automationId,
+      entityType: entityType ?? this.entityType,
+      entityId: entityId ?? this.entityId,
+      actionType: actionType ?? this.actionType,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      status: status ?? this.status,
+      createdAt: createdAt ?? this.createdAt,
+      completedAt: completedAt ?? this.completedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (automationId.present) {
+      map['automation_id'] = Variable<String>(automationId.value);
+    }
+    if (entityType.present) {
+      map['entity_type'] = Variable<String>(entityType.value);
+    }
+    if (entityId.present) {
+      map['entity_id'] = Variable<String>(entityId.value);
+    }
+    if (actionType.present) {
+      map['action_type'] = Variable<String>(actionType.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (completedAt.present) {
+      map['completed_at'] = Variable<DateTime>(completedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AutomationActionsCompanion(')
+          ..write('id: $id, ')
+          ..write('automationId: $automationId, ')
+          ..write('entityType: $entityType, ')
+          ..write('entityId: $entityId, ')
+          ..write('actionType: $actionType, ')
+          ..write('title: $title, ')
+          ..write('description: $description, ')
+          ..write('status: $status, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('completedAt: $completedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $NotificationSettingsTable extends NotificationSettings
+    with TableInfo<$NotificationSettingsTable, NotificationSetting> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $NotificationSettingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _careerEnabledMeta = const VerificationMeta(
+    'careerEnabled',
+  );
+  @override
+  late final GeneratedColumn<bool> careerEnabled = GeneratedColumn<bool>(
+    'career_enabled',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("career_enabled" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _workEnabledMeta = const VerificationMeta(
+    'workEnabled',
+  );
+  @override
+  late final GeneratedColumn<bool> workEnabled = GeneratedColumn<bool>(
+    'work_enabled',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("work_enabled" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _dsaEnabledMeta = const VerificationMeta(
+    'dsaEnabled',
+  );
+  @override
+  late final GeneratedColumn<bool> dsaEnabled = GeneratedColumn<bool>(
+    'dsa_enabled',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("dsa_enabled" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _freelanceEnabledMeta = const VerificationMeta(
+    'freelanceEnabled',
+  );
+  @override
+  late final GeneratedColumn<bool> freelanceEnabled = GeneratedColumn<bool>(
+    'freelance_enabled',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("freelance_enabled" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _projectsEnabledMeta = const VerificationMeta(
+    'projectsEnabled',
+  );
+  @override
+  late final GeneratedColumn<bool> projectsEnabled = GeneratedColumn<bool>(
+    'projects_enabled',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("projects_enabled" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _weeklyReportsEnabledMeta =
+      const VerificationMeta('weeklyReportsEnabled');
+  @override
+  late final GeneratedColumn<bool> weeklyReportsEnabled = GeneratedColumn<bool>(
+    'weekly_reports_enabled',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("weekly_reports_enabled" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _eodReminderTimeMeta = const VerificationMeta(
+    'eodReminderTime',
+  );
+  @override
+  late final GeneratedColumn<String> eodReminderTime = GeneratedColumn<String>(
+    'eod_reminder_time',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('18:00'),
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    careerEnabled,
+    workEnabled,
+    dsaEnabled,
+    freelanceEnabled,
+    projectsEnabled,
+    weeklyReportsEnabled,
+    eodReminderTime,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'notification_settings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<NotificationSetting> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('career_enabled')) {
+      context.handle(
+        _careerEnabledMeta,
+        careerEnabled.isAcceptableOrUnknown(
+          data['career_enabled']!,
+          _careerEnabledMeta,
+        ),
+      );
+    }
+    if (data.containsKey('work_enabled')) {
+      context.handle(
+        _workEnabledMeta,
+        workEnabled.isAcceptableOrUnknown(
+          data['work_enabled']!,
+          _workEnabledMeta,
+        ),
+      );
+    }
+    if (data.containsKey('dsa_enabled')) {
+      context.handle(
+        _dsaEnabledMeta,
+        dsaEnabled.isAcceptableOrUnknown(data['dsa_enabled']!, _dsaEnabledMeta),
+      );
+    }
+    if (data.containsKey('freelance_enabled')) {
+      context.handle(
+        _freelanceEnabledMeta,
+        freelanceEnabled.isAcceptableOrUnknown(
+          data['freelance_enabled']!,
+          _freelanceEnabledMeta,
+        ),
+      );
+    }
+    if (data.containsKey('projects_enabled')) {
+      context.handle(
+        _projectsEnabledMeta,
+        projectsEnabled.isAcceptableOrUnknown(
+          data['projects_enabled']!,
+          _projectsEnabledMeta,
+        ),
+      );
+    }
+    if (data.containsKey('weekly_reports_enabled')) {
+      context.handle(
+        _weeklyReportsEnabledMeta,
+        weeklyReportsEnabled.isAcceptableOrUnknown(
+          data['weekly_reports_enabled']!,
+          _weeklyReportsEnabledMeta,
+        ),
+      );
+    }
+    if (data.containsKey('eod_reminder_time')) {
+      context.handle(
+        _eodReminderTimeMeta,
+        eodReminderTime.isAcceptableOrUnknown(
+          data['eod_reminder_time']!,
+          _eodReminderTimeMeta,
+        ),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  NotificationSetting map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return NotificationSetting(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      careerEnabled: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}career_enabled'],
+      )!,
+      workEnabled: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}work_enabled'],
+      )!,
+      dsaEnabled: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}dsa_enabled'],
+      )!,
+      freelanceEnabled: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}freelance_enabled'],
+      )!,
+      projectsEnabled: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}projects_enabled'],
+      )!,
+      weeklyReportsEnabled: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}weekly_reports_enabled'],
+      )!,
+      eodReminderTime: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}eod_reminder_time'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $NotificationSettingsTable createAlias(String alias) {
+    return $NotificationSettingsTable(attachedDatabase, alias);
+  }
+}
+
+class NotificationSetting extends DataClass
+    implements Insertable<NotificationSetting> {
+  final String id;
+  final bool careerEnabled;
+  final bool workEnabled;
+  final bool dsaEnabled;
+  final bool freelanceEnabled;
+  final bool projectsEnabled;
+  final bool weeklyReportsEnabled;
+  final String eodReminderTime;
+  final DateTime updatedAt;
+  const NotificationSetting({
+    required this.id,
+    required this.careerEnabled,
+    required this.workEnabled,
+    required this.dsaEnabled,
+    required this.freelanceEnabled,
+    required this.projectsEnabled,
+    required this.weeklyReportsEnabled,
+    required this.eodReminderTime,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['career_enabled'] = Variable<bool>(careerEnabled);
+    map['work_enabled'] = Variable<bool>(workEnabled);
+    map['dsa_enabled'] = Variable<bool>(dsaEnabled);
+    map['freelance_enabled'] = Variable<bool>(freelanceEnabled);
+    map['projects_enabled'] = Variable<bool>(projectsEnabled);
+    map['weekly_reports_enabled'] = Variable<bool>(weeklyReportsEnabled);
+    map['eod_reminder_time'] = Variable<String>(eodReminderTime);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  NotificationSettingsCompanion toCompanion(bool nullToAbsent) {
+    return NotificationSettingsCompanion(
+      id: Value(id),
+      careerEnabled: Value(careerEnabled),
+      workEnabled: Value(workEnabled),
+      dsaEnabled: Value(dsaEnabled),
+      freelanceEnabled: Value(freelanceEnabled),
+      projectsEnabled: Value(projectsEnabled),
+      weeklyReportsEnabled: Value(weeklyReportsEnabled),
+      eodReminderTime: Value(eodReminderTime),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory NotificationSetting.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return NotificationSetting(
+      id: serializer.fromJson<String>(json['id']),
+      careerEnabled: serializer.fromJson<bool>(json['careerEnabled']),
+      workEnabled: serializer.fromJson<bool>(json['workEnabled']),
+      dsaEnabled: serializer.fromJson<bool>(json['dsaEnabled']),
+      freelanceEnabled: serializer.fromJson<bool>(json['freelanceEnabled']),
+      projectsEnabled: serializer.fromJson<bool>(json['projectsEnabled']),
+      weeklyReportsEnabled: serializer.fromJson<bool>(
+        json['weeklyReportsEnabled'],
+      ),
+      eodReminderTime: serializer.fromJson<String>(json['eodReminderTime']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'careerEnabled': serializer.toJson<bool>(careerEnabled),
+      'workEnabled': serializer.toJson<bool>(workEnabled),
+      'dsaEnabled': serializer.toJson<bool>(dsaEnabled),
+      'freelanceEnabled': serializer.toJson<bool>(freelanceEnabled),
+      'projectsEnabled': serializer.toJson<bool>(projectsEnabled),
+      'weeklyReportsEnabled': serializer.toJson<bool>(weeklyReportsEnabled),
+      'eodReminderTime': serializer.toJson<String>(eodReminderTime),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  NotificationSetting copyWith({
+    String? id,
+    bool? careerEnabled,
+    bool? workEnabled,
+    bool? dsaEnabled,
+    bool? freelanceEnabled,
+    bool? projectsEnabled,
+    bool? weeklyReportsEnabled,
+    String? eodReminderTime,
+    DateTime? updatedAt,
+  }) => NotificationSetting(
+    id: id ?? this.id,
+    careerEnabled: careerEnabled ?? this.careerEnabled,
+    workEnabled: workEnabled ?? this.workEnabled,
+    dsaEnabled: dsaEnabled ?? this.dsaEnabled,
+    freelanceEnabled: freelanceEnabled ?? this.freelanceEnabled,
+    projectsEnabled: projectsEnabled ?? this.projectsEnabled,
+    weeklyReportsEnabled: weeklyReportsEnabled ?? this.weeklyReportsEnabled,
+    eodReminderTime: eodReminderTime ?? this.eodReminderTime,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  NotificationSetting copyWithCompanion(NotificationSettingsCompanion data) {
+    return NotificationSetting(
+      id: data.id.present ? data.id.value : this.id,
+      careerEnabled: data.careerEnabled.present
+          ? data.careerEnabled.value
+          : this.careerEnabled,
+      workEnabled: data.workEnabled.present
+          ? data.workEnabled.value
+          : this.workEnabled,
+      dsaEnabled: data.dsaEnabled.present
+          ? data.dsaEnabled.value
+          : this.dsaEnabled,
+      freelanceEnabled: data.freelanceEnabled.present
+          ? data.freelanceEnabled.value
+          : this.freelanceEnabled,
+      projectsEnabled: data.projectsEnabled.present
+          ? data.projectsEnabled.value
+          : this.projectsEnabled,
+      weeklyReportsEnabled: data.weeklyReportsEnabled.present
+          ? data.weeklyReportsEnabled.value
+          : this.weeklyReportsEnabled,
+      eodReminderTime: data.eodReminderTime.present
+          ? data.eodReminderTime.value
+          : this.eodReminderTime,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('NotificationSetting(')
+          ..write('id: $id, ')
+          ..write('careerEnabled: $careerEnabled, ')
+          ..write('workEnabled: $workEnabled, ')
+          ..write('dsaEnabled: $dsaEnabled, ')
+          ..write('freelanceEnabled: $freelanceEnabled, ')
+          ..write('projectsEnabled: $projectsEnabled, ')
+          ..write('weeklyReportsEnabled: $weeklyReportsEnabled, ')
+          ..write('eodReminderTime: $eodReminderTime, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    careerEnabled,
+    workEnabled,
+    dsaEnabled,
+    freelanceEnabled,
+    projectsEnabled,
+    weeklyReportsEnabled,
+    eodReminderTime,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is NotificationSetting &&
+          other.id == this.id &&
+          other.careerEnabled == this.careerEnabled &&
+          other.workEnabled == this.workEnabled &&
+          other.dsaEnabled == this.dsaEnabled &&
+          other.freelanceEnabled == this.freelanceEnabled &&
+          other.projectsEnabled == this.projectsEnabled &&
+          other.weeklyReportsEnabled == this.weeklyReportsEnabled &&
+          other.eodReminderTime == this.eodReminderTime &&
+          other.updatedAt == this.updatedAt);
+}
+
+class NotificationSettingsCompanion
+    extends UpdateCompanion<NotificationSetting> {
+  final Value<String> id;
+  final Value<bool> careerEnabled;
+  final Value<bool> workEnabled;
+  final Value<bool> dsaEnabled;
+  final Value<bool> freelanceEnabled;
+  final Value<bool> projectsEnabled;
+  final Value<bool> weeklyReportsEnabled;
+  final Value<String> eodReminderTime;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const NotificationSettingsCompanion({
+    this.id = const Value.absent(),
+    this.careerEnabled = const Value.absent(),
+    this.workEnabled = const Value.absent(),
+    this.dsaEnabled = const Value.absent(),
+    this.freelanceEnabled = const Value.absent(),
+    this.projectsEnabled = const Value.absent(),
+    this.weeklyReportsEnabled = const Value.absent(),
+    this.eodReminderTime = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  NotificationSettingsCompanion.insert({
+    required String id,
+    this.careerEnabled = const Value.absent(),
+    this.workEnabled = const Value.absent(),
+    this.dsaEnabled = const Value.absent(),
+    this.freelanceEnabled = const Value.absent(),
+    this.projectsEnabled = const Value.absent(),
+    this.weeklyReportsEnabled = const Value.absent(),
+    this.eodReminderTime = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id);
+  static Insertable<NotificationSetting> custom({
+    Expression<String>? id,
+    Expression<bool>? careerEnabled,
+    Expression<bool>? workEnabled,
+    Expression<bool>? dsaEnabled,
+    Expression<bool>? freelanceEnabled,
+    Expression<bool>? projectsEnabled,
+    Expression<bool>? weeklyReportsEnabled,
+    Expression<String>? eodReminderTime,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (careerEnabled != null) 'career_enabled': careerEnabled,
+      if (workEnabled != null) 'work_enabled': workEnabled,
+      if (dsaEnabled != null) 'dsa_enabled': dsaEnabled,
+      if (freelanceEnabled != null) 'freelance_enabled': freelanceEnabled,
+      if (projectsEnabled != null) 'projects_enabled': projectsEnabled,
+      if (weeklyReportsEnabled != null)
+        'weekly_reports_enabled': weeklyReportsEnabled,
+      if (eodReminderTime != null) 'eod_reminder_time': eodReminderTime,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  NotificationSettingsCompanion copyWith({
+    Value<String>? id,
+    Value<bool>? careerEnabled,
+    Value<bool>? workEnabled,
+    Value<bool>? dsaEnabled,
+    Value<bool>? freelanceEnabled,
+    Value<bool>? projectsEnabled,
+    Value<bool>? weeklyReportsEnabled,
+    Value<String>? eodReminderTime,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return NotificationSettingsCompanion(
+      id: id ?? this.id,
+      careerEnabled: careerEnabled ?? this.careerEnabled,
+      workEnabled: workEnabled ?? this.workEnabled,
+      dsaEnabled: dsaEnabled ?? this.dsaEnabled,
+      freelanceEnabled: freelanceEnabled ?? this.freelanceEnabled,
+      projectsEnabled: projectsEnabled ?? this.projectsEnabled,
+      weeklyReportsEnabled: weeklyReportsEnabled ?? this.weeklyReportsEnabled,
+      eodReminderTime: eodReminderTime ?? this.eodReminderTime,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (careerEnabled.present) {
+      map['career_enabled'] = Variable<bool>(careerEnabled.value);
+    }
+    if (workEnabled.present) {
+      map['work_enabled'] = Variable<bool>(workEnabled.value);
+    }
+    if (dsaEnabled.present) {
+      map['dsa_enabled'] = Variable<bool>(dsaEnabled.value);
+    }
+    if (freelanceEnabled.present) {
+      map['freelance_enabled'] = Variable<bool>(freelanceEnabled.value);
+    }
+    if (projectsEnabled.present) {
+      map['projects_enabled'] = Variable<bool>(projectsEnabled.value);
+    }
+    if (weeklyReportsEnabled.present) {
+      map['weekly_reports_enabled'] = Variable<bool>(
+        weeklyReportsEnabled.value,
+      );
+    }
+    if (eodReminderTime.present) {
+      map['eod_reminder_time'] = Variable<String>(eodReminderTime.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('NotificationSettingsCompanion(')
+          ..write('id: $id, ')
+          ..write('careerEnabled: $careerEnabled, ')
+          ..write('workEnabled: $workEnabled, ')
+          ..write('dsaEnabled: $dsaEnabled, ')
+          ..write('freelanceEnabled: $freelanceEnabled, ')
+          ..write('projectsEnabled: $projectsEnabled, ')
+          ..write('weeklyReportsEnabled: $weeklyReportsEnabled, ')
+          ..write('eodReminderTime: $eodReminderTime, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $JobSourceConfigsTable extends JobSourceConfigs
+    with TableInfo<$JobSourceConfigsTable, JobSourceConfig> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $JobSourceConfigsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 1,
+      maxTextLength: 150,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _providerTypeMeta = const VerificationMeta(
+    'providerType',
+  );
+  @override
+  late final GeneratedColumn<String> providerType = GeneratedColumn<String>(
+    'provider_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('RSS_FEED'),
+  );
+  static const VerificationMeta _feedUrlMeta = const VerificationMeta(
+    'feedUrl',
+  );
+  @override
+  late final GeneratedColumn<String> feedUrl = GeneratedColumn<String>(
+    'feed_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _enabledMeta = const VerificationMeta(
+    'enabled',
+  );
+  @override
+  late final GeneratedColumn<bool> enabled = GeneratedColumn<bool>(
+    'enabled',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("enabled" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _lastRunMeta = const VerificationMeta(
+    'lastRun',
+  );
+  @override
+  late final GeneratedColumn<DateTime> lastRun = GeneratedColumn<DateTime>(
+    'last_run',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _lastSuccessMeta = const VerificationMeta(
+    'lastSuccess',
+  );
+  @override
+  late final GeneratedColumn<DateTime> lastSuccess = GeneratedColumn<DateTime>(
+    'last_success',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _lastErrorMeta = const VerificationMeta(
+    'lastError',
+  );
+  @override
+  late final GeneratedColumn<String> lastError = GeneratedColumn<String>(
+    'last_error',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _rateLimitMinutesMeta = const VerificationMeta(
+    'rateLimitMinutes',
+  );
+  @override
+  late final GeneratedColumn<int> rateLimitMinutes = GeneratedColumn<int>(
+    'rate_limit_minutes',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(60),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    name,
+    providerType,
+    feedUrl,
+    enabled,
+    lastRun,
+    lastSuccess,
+    lastError,
+    rateLimitMinutes,
+    createdAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'job_source_configs';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<JobSourceConfig> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('provider_type')) {
+      context.handle(
+        _providerTypeMeta,
+        providerType.isAcceptableOrUnknown(
+          data['provider_type']!,
+          _providerTypeMeta,
+        ),
+      );
+    }
+    if (data.containsKey('feed_url')) {
+      context.handle(
+        _feedUrlMeta,
+        feedUrl.isAcceptableOrUnknown(data['feed_url']!, _feedUrlMeta),
+      );
+    }
+    if (data.containsKey('enabled')) {
+      context.handle(
+        _enabledMeta,
+        enabled.isAcceptableOrUnknown(data['enabled']!, _enabledMeta),
+      );
+    }
+    if (data.containsKey('last_run')) {
+      context.handle(
+        _lastRunMeta,
+        lastRun.isAcceptableOrUnknown(data['last_run']!, _lastRunMeta),
+      );
+    }
+    if (data.containsKey('last_success')) {
+      context.handle(
+        _lastSuccessMeta,
+        lastSuccess.isAcceptableOrUnknown(
+          data['last_success']!,
+          _lastSuccessMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_error')) {
+      context.handle(
+        _lastErrorMeta,
+        lastError.isAcceptableOrUnknown(data['last_error']!, _lastErrorMeta),
+      );
+    }
+    if (data.containsKey('rate_limit_minutes')) {
+      context.handle(
+        _rateLimitMinutesMeta,
+        rateLimitMinutes.isAcceptableOrUnknown(
+          data['rate_limit_minutes']!,
+          _rateLimitMinutesMeta,
+        ),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  JobSourceConfig map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return JobSourceConfig(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      providerType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}provider_type'],
+      )!,
+      feedUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}feed_url'],
+      ),
+      enabled: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}enabled'],
+      )!,
+      lastRun: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_run'],
+      ),
+      lastSuccess: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_success'],
+      ),
+      lastError: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_error'],
+      ),
+      rateLimitMinutes: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rate_limit_minutes'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $JobSourceConfigsTable createAlias(String alias) {
+    return $JobSourceConfigsTable(attachedDatabase, alias);
+  }
+}
+
+class JobSourceConfig extends DataClass implements Insertable<JobSourceConfig> {
+  final String id;
+  final String name;
+  final String providerType;
+  final String? feedUrl;
+  final bool enabled;
+  final DateTime? lastRun;
+  final DateTime? lastSuccess;
+  final String? lastError;
+  final int rateLimitMinutes;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const JobSourceConfig({
+    required this.id,
+    required this.name,
+    required this.providerType,
+    this.feedUrl,
+    required this.enabled,
+    this.lastRun,
+    this.lastSuccess,
+    this.lastError,
+    required this.rateLimitMinutes,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['name'] = Variable<String>(name);
+    map['provider_type'] = Variable<String>(providerType);
+    if (!nullToAbsent || feedUrl != null) {
+      map['feed_url'] = Variable<String>(feedUrl);
+    }
+    map['enabled'] = Variable<bool>(enabled);
+    if (!nullToAbsent || lastRun != null) {
+      map['last_run'] = Variable<DateTime>(lastRun);
+    }
+    if (!nullToAbsent || lastSuccess != null) {
+      map['last_success'] = Variable<DateTime>(lastSuccess);
+    }
+    if (!nullToAbsent || lastError != null) {
+      map['last_error'] = Variable<String>(lastError);
+    }
+    map['rate_limit_minutes'] = Variable<int>(rateLimitMinutes);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  JobSourceConfigsCompanion toCompanion(bool nullToAbsent) {
+    return JobSourceConfigsCompanion(
+      id: Value(id),
+      name: Value(name),
+      providerType: Value(providerType),
+      feedUrl: feedUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(feedUrl),
+      enabled: Value(enabled),
+      lastRun: lastRun == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastRun),
+      lastSuccess: lastSuccess == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastSuccess),
+      lastError: lastError == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastError),
+      rateLimitMinutes: Value(rateLimitMinutes),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory JobSourceConfig.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return JobSourceConfig(
+      id: serializer.fromJson<String>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      providerType: serializer.fromJson<String>(json['providerType']),
+      feedUrl: serializer.fromJson<String?>(json['feedUrl']),
+      enabled: serializer.fromJson<bool>(json['enabled']),
+      lastRun: serializer.fromJson<DateTime?>(json['lastRun']),
+      lastSuccess: serializer.fromJson<DateTime?>(json['lastSuccess']),
+      lastError: serializer.fromJson<String?>(json['lastError']),
+      rateLimitMinutes: serializer.fromJson<int>(json['rateLimitMinutes']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'name': serializer.toJson<String>(name),
+      'providerType': serializer.toJson<String>(providerType),
+      'feedUrl': serializer.toJson<String?>(feedUrl),
+      'enabled': serializer.toJson<bool>(enabled),
+      'lastRun': serializer.toJson<DateTime?>(lastRun),
+      'lastSuccess': serializer.toJson<DateTime?>(lastSuccess),
+      'lastError': serializer.toJson<String?>(lastError),
+      'rateLimitMinutes': serializer.toJson<int>(rateLimitMinutes),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  JobSourceConfig copyWith({
+    String? id,
+    String? name,
+    String? providerType,
+    Value<String?> feedUrl = const Value.absent(),
+    bool? enabled,
+    Value<DateTime?> lastRun = const Value.absent(),
+    Value<DateTime?> lastSuccess = const Value.absent(),
+    Value<String?> lastError = const Value.absent(),
+    int? rateLimitMinutes,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => JobSourceConfig(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    providerType: providerType ?? this.providerType,
+    feedUrl: feedUrl.present ? feedUrl.value : this.feedUrl,
+    enabled: enabled ?? this.enabled,
+    lastRun: lastRun.present ? lastRun.value : this.lastRun,
+    lastSuccess: lastSuccess.present ? lastSuccess.value : this.lastSuccess,
+    lastError: lastError.present ? lastError.value : this.lastError,
+    rateLimitMinutes: rateLimitMinutes ?? this.rateLimitMinutes,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  JobSourceConfig copyWithCompanion(JobSourceConfigsCompanion data) {
+    return JobSourceConfig(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      providerType: data.providerType.present
+          ? data.providerType.value
+          : this.providerType,
+      feedUrl: data.feedUrl.present ? data.feedUrl.value : this.feedUrl,
+      enabled: data.enabled.present ? data.enabled.value : this.enabled,
+      lastRun: data.lastRun.present ? data.lastRun.value : this.lastRun,
+      lastSuccess: data.lastSuccess.present
+          ? data.lastSuccess.value
+          : this.lastSuccess,
+      lastError: data.lastError.present ? data.lastError.value : this.lastError,
+      rateLimitMinutes: data.rateLimitMinutes.present
+          ? data.rateLimitMinutes.value
+          : this.rateLimitMinutes,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('JobSourceConfig(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('providerType: $providerType, ')
+          ..write('feedUrl: $feedUrl, ')
+          ..write('enabled: $enabled, ')
+          ..write('lastRun: $lastRun, ')
+          ..write('lastSuccess: $lastSuccess, ')
+          ..write('lastError: $lastError, ')
+          ..write('rateLimitMinutes: $rateLimitMinutes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    name,
+    providerType,
+    feedUrl,
+    enabled,
+    lastRun,
+    lastSuccess,
+    lastError,
+    rateLimitMinutes,
+    createdAt,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is JobSourceConfig &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.providerType == this.providerType &&
+          other.feedUrl == this.feedUrl &&
+          other.enabled == this.enabled &&
+          other.lastRun == this.lastRun &&
+          other.lastSuccess == this.lastSuccess &&
+          other.lastError == this.lastError &&
+          other.rateLimitMinutes == this.rateLimitMinutes &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class JobSourceConfigsCompanion extends UpdateCompanion<JobSourceConfig> {
+  final Value<String> id;
+  final Value<String> name;
+  final Value<String> providerType;
+  final Value<String?> feedUrl;
+  final Value<bool> enabled;
+  final Value<DateTime?> lastRun;
+  final Value<DateTime?> lastSuccess;
+  final Value<String?> lastError;
+  final Value<int> rateLimitMinutes;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const JobSourceConfigsCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.providerType = const Value.absent(),
+    this.feedUrl = const Value.absent(),
+    this.enabled = const Value.absent(),
+    this.lastRun = const Value.absent(),
+    this.lastSuccess = const Value.absent(),
+    this.lastError = const Value.absent(),
+    this.rateLimitMinutes = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  JobSourceConfigsCompanion.insert({
+    required String id,
+    required String name,
+    this.providerType = const Value.absent(),
+    this.feedUrl = const Value.absent(),
+    this.enabled = const Value.absent(),
+    this.lastRun = const Value.absent(),
+    this.lastSuccess = const Value.absent(),
+    this.lastError = const Value.absent(),
+    this.rateLimitMinutes = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       name = Value(name);
+  static Insertable<JobSourceConfig> custom({
+    Expression<String>? id,
+    Expression<String>? name,
+    Expression<String>? providerType,
+    Expression<String>? feedUrl,
+    Expression<bool>? enabled,
+    Expression<DateTime>? lastRun,
+    Expression<DateTime>? lastSuccess,
+    Expression<String>? lastError,
+    Expression<int>? rateLimitMinutes,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (providerType != null) 'provider_type': providerType,
+      if (feedUrl != null) 'feed_url': feedUrl,
+      if (enabled != null) 'enabled': enabled,
+      if (lastRun != null) 'last_run': lastRun,
+      if (lastSuccess != null) 'last_success': lastSuccess,
+      if (lastError != null) 'last_error': lastError,
+      if (rateLimitMinutes != null) 'rate_limit_minutes': rateLimitMinutes,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  JobSourceConfigsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? name,
+    Value<String>? providerType,
+    Value<String?>? feedUrl,
+    Value<bool>? enabled,
+    Value<DateTime?>? lastRun,
+    Value<DateTime?>? lastSuccess,
+    Value<String?>? lastError,
+    Value<int>? rateLimitMinutes,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return JobSourceConfigsCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      providerType: providerType ?? this.providerType,
+      feedUrl: feedUrl ?? this.feedUrl,
+      enabled: enabled ?? this.enabled,
+      lastRun: lastRun ?? this.lastRun,
+      lastSuccess: lastSuccess ?? this.lastSuccess,
+      lastError: lastError ?? this.lastError,
+      rateLimitMinutes: rateLimitMinutes ?? this.rateLimitMinutes,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (providerType.present) {
+      map['provider_type'] = Variable<String>(providerType.value);
+    }
+    if (feedUrl.present) {
+      map['feed_url'] = Variable<String>(feedUrl.value);
+    }
+    if (enabled.present) {
+      map['enabled'] = Variable<bool>(enabled.value);
+    }
+    if (lastRun.present) {
+      map['last_run'] = Variable<DateTime>(lastRun.value);
+    }
+    if (lastSuccess.present) {
+      map['last_success'] = Variable<DateTime>(lastSuccess.value);
+    }
+    if (lastError.present) {
+      map['last_error'] = Variable<String>(lastError.value);
+    }
+    if (rateLimitMinutes.present) {
+      map['rate_limit_minutes'] = Variable<int>(rateLimitMinutes.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('JobSourceConfigsCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('providerType: $providerType, ')
+          ..write('feedUrl: $feedUrl, ')
+          ..write('enabled: $enabled, ')
+          ..write('lastRun: $lastRun, ')
+          ..write('lastSuccess: $lastSuccess, ')
+          ..write('lastError: $lastError, ')
+          ..write('rateLimitMinutes: $rateLimitMinutes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -16261,6 +19396,17 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   );
   late final $AIMessagesTable aIMessages = $AIMessagesTable(this);
   late final $AIActionsTable aIActions = $AIActionsTable(this);
+  late final $AutomationRulesTable automationRules = $AutomationRulesTable(
+    this,
+  );
+  late final $AutomationRunsTable automationRuns = $AutomationRunsTable(this);
+  late final $AutomationActionsTable automationActions =
+      $AutomationActionsTable(this);
+  late final $NotificationSettingsTable notificationSettings =
+      $NotificationSettingsTable(this);
+  late final $JobSourceConfigsTable jobSourceConfigs = $JobSourceConfigsTable(
+    this,
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -16291,6 +19437,11 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     aIConversations,
     aIMessages,
     aIActions,
+    automationRules,
+    automationRuns,
+    automationActions,
+    notificationSettings,
+    jobSourceConfigs,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -16398,6 +19549,20 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('a_i_actions', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'automation_rules',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('automation_runs', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'automation_rules',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('automation_actions', kind: UpdateKind.update)],
     ),
   ]);
 }
@@ -27364,6 +30529,2028 @@ typedef $$AIActionsTableProcessedTableManager =
       AIAction,
       PrefetchHooks Function({bool conversationId, bool messageId})
     >;
+typedef $$AutomationRulesTableCreateCompanionBuilder =
+    AutomationRulesCompanion Function({
+      required String id,
+      required String name,
+      Value<String?> description,
+      required String type,
+      Value<bool> enabled,
+      Value<String> schedule,
+      Value<DateTime?> lastRun,
+      Value<DateTime?> nextRun,
+      Value<String> status,
+      Value<String?> configJson,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+typedef $$AutomationRulesTableUpdateCompanionBuilder =
+    AutomationRulesCompanion Function({
+      Value<String> id,
+      Value<String> name,
+      Value<String?> description,
+      Value<String> type,
+      Value<bool> enabled,
+      Value<String> schedule,
+      Value<DateTime?> lastRun,
+      Value<DateTime?> nextRun,
+      Value<String> status,
+      Value<String?> configJson,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+final class $$AutomationRulesTableReferences
+    extends
+        BaseReferences<_$AppDatabase, $AutomationRulesTable, AutomationRule> {
+  $$AutomationRulesTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static MultiTypedResultKey<$AutomationRunsTable, List<AutomationRun>>
+  _automationRunsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.automationRuns,
+    aliasName: 'automation_rules__id__automation_runs__automation_id',
+  );
+
+  $$AutomationRunsTableProcessedTableManager get automationRunsRefs {
+    final manager = $$AutomationRunsTableTableManager(
+      $_db,
+      $_db.automationRuns,
+    ).filter((f) => f.automationId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_automationRunsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$AutomationActionsTable, List<AutomationAction>>
+  _automationActionsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.automationActions,
+        aliasName: 'automation_rules__id__automation_actions__automation_id',
+      );
+
+  $$AutomationActionsTableProcessedTableManager get automationActionsRefs {
+    final manager = $$AutomationActionsTableTableManager(
+      $_db,
+      $_db.automationActions,
+    ).filter((f) => f.automationId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _automationActionsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$AutomationRulesTableFilterComposer
+    extends Composer<_$AppDatabase, $AutomationRulesTable> {
+  $$AutomationRulesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get enabled => $composableBuilder(
+    column: $table.enabled,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get schedule => $composableBuilder(
+    column: $table.schedule,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastRun => $composableBuilder(
+    column: $table.lastRun,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get nextRun => $composableBuilder(
+    column: $table.nextRun,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get configJson => $composableBuilder(
+    column: $table.configJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> automationRunsRefs(
+    Expression<bool> Function($$AutomationRunsTableFilterComposer f) f,
+  ) {
+    final $$AutomationRunsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.automationRuns,
+      getReferencedColumn: (t) => t.automationId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AutomationRunsTableFilterComposer(
+            $db: $db,
+            $table: $db.automationRuns,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> automationActionsRefs(
+    Expression<bool> Function($$AutomationActionsTableFilterComposer f) f,
+  ) {
+    final $$AutomationActionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.automationActions,
+      getReferencedColumn: (t) => t.automationId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AutomationActionsTableFilterComposer(
+            $db: $db,
+            $table: $db.automationActions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$AutomationRulesTableOrderingComposer
+    extends Composer<_$AppDatabase, $AutomationRulesTable> {
+  $$AutomationRulesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get enabled => $composableBuilder(
+    column: $table.enabled,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get schedule => $composableBuilder(
+    column: $table.schedule,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastRun => $composableBuilder(
+    column: $table.lastRun,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get nextRun => $composableBuilder(
+    column: $table.nextRun,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get configJson => $composableBuilder(
+    column: $table.configJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$AutomationRulesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $AutomationRulesTable> {
+  $$AutomationRulesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => column);
+
+  GeneratedColumn<bool> get enabled =>
+      $composableBuilder(column: $table.enabled, builder: (column) => column);
+
+  GeneratedColumn<String> get schedule =>
+      $composableBuilder(column: $table.schedule, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get lastRun =>
+      $composableBuilder(column: $table.lastRun, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get nextRun =>
+      $composableBuilder(column: $table.nextRun, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get configJson => $composableBuilder(
+    column: $table.configJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  Expression<T> automationRunsRefs<T extends Object>(
+    Expression<T> Function($$AutomationRunsTableAnnotationComposer a) f,
+  ) {
+    final $$AutomationRunsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.automationRuns,
+      getReferencedColumn: (t) => t.automationId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AutomationRunsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.automationRuns,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> automationActionsRefs<T extends Object>(
+    Expression<T> Function($$AutomationActionsTableAnnotationComposer a) f,
+  ) {
+    final $$AutomationActionsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.automationActions,
+          getReferencedColumn: (t) => t.automationId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$AutomationActionsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.automationActions,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+}
+
+class $$AutomationRulesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AutomationRulesTable,
+          AutomationRule,
+          $$AutomationRulesTableFilterComposer,
+          $$AutomationRulesTableOrderingComposer,
+          $$AutomationRulesTableAnnotationComposer,
+          $$AutomationRulesTableCreateCompanionBuilder,
+          $$AutomationRulesTableUpdateCompanionBuilder,
+          (AutomationRule, $$AutomationRulesTableReferences),
+          AutomationRule,
+          PrefetchHooks Function({
+            bool automationRunsRefs,
+            bool automationActionsRefs,
+          })
+        > {
+  $$AutomationRulesTableTableManager(
+    _$AppDatabase db,
+    $AutomationRulesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$AutomationRulesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$AutomationRulesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$AutomationRulesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String?> description = const Value.absent(),
+                Value<String> type = const Value.absent(),
+                Value<bool> enabled = const Value.absent(),
+                Value<String> schedule = const Value.absent(),
+                Value<DateTime?> lastRun = const Value.absent(),
+                Value<DateTime?> nextRun = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> configJson = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => AutomationRulesCompanion(
+                id: id,
+                name: name,
+                description: description,
+                type: type,
+                enabled: enabled,
+                schedule: schedule,
+                lastRun: lastRun,
+                nextRun: nextRun,
+                status: status,
+                configJson: configJson,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String name,
+                Value<String?> description = const Value.absent(),
+                required String type,
+                Value<bool> enabled = const Value.absent(),
+                Value<String> schedule = const Value.absent(),
+                Value<DateTime?> lastRun = const Value.absent(),
+                Value<DateTime?> nextRun = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> configJson = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => AutomationRulesCompanion.insert(
+                id: id,
+                name: name,
+                description: description,
+                type: type,
+                enabled: enabled,
+                schedule: schedule,
+                lastRun: lastRun,
+                nextRun: nextRun,
+                status: status,
+                configJson: configJson,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$AutomationRulesTable, AutomationRule>(table),
+                  $$AutomationRulesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({automationRunsRefs = false, automationActionsRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (automationRunsRefs) db.automationRuns,
+                    if (automationActionsRefs) db.automationActions,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (automationRunsRefs)
+                        await $_getPrefetchedData<
+                          AutomationRule,
+                          $AutomationRulesTable,
+                          AutomationRun
+                        >(
+                          currentTable: table,
+                          referencedTable: $$AutomationRulesTableReferences
+                              ._automationRunsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$AutomationRulesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).automationRunsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.automationId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (automationActionsRefs)
+                        await $_getPrefetchedData<
+                          AutomationRule,
+                          $AutomationRulesTable,
+                          AutomationAction
+                        >(
+                          currentTable: table,
+                          referencedTable: $$AutomationRulesTableReferences
+                              ._automationActionsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$AutomationRulesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).automationActionsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.automationId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$AutomationRulesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $AutomationRulesTable,
+      AutomationRule,
+      $$AutomationRulesTableFilterComposer,
+      $$AutomationRulesTableOrderingComposer,
+      $$AutomationRulesTableAnnotationComposer,
+      $$AutomationRulesTableCreateCompanionBuilder,
+      $$AutomationRulesTableUpdateCompanionBuilder,
+      (AutomationRule, $$AutomationRulesTableReferences),
+      AutomationRule,
+      PrefetchHooks Function({
+        bool automationRunsRefs,
+        bool automationActionsRefs,
+      })
+    >;
+typedef $$AutomationRunsTableCreateCompanionBuilder =
+    AutomationRunsCompanion Function({
+      required String id,
+      required String automationId,
+      Value<DateTime> startedAt,
+      Value<DateTime?> finishedAt,
+      Value<String> status,
+      Value<int> itemsProcessed,
+      Value<int> itemsCreated,
+      Value<String?> errorMessage,
+      Value<int> rowid,
+    });
+typedef $$AutomationRunsTableUpdateCompanionBuilder =
+    AutomationRunsCompanion Function({
+      Value<String> id,
+      Value<String> automationId,
+      Value<DateTime> startedAt,
+      Value<DateTime?> finishedAt,
+      Value<String> status,
+      Value<int> itemsProcessed,
+      Value<int> itemsCreated,
+      Value<String?> errorMessage,
+      Value<int> rowid,
+    });
+
+final class $$AutomationRunsTableReferences
+    extends BaseReferences<_$AppDatabase, $AutomationRunsTable, AutomationRun> {
+  $$AutomationRunsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $AutomationRulesTable _automationIdTable(_$AppDatabase db) => db
+      .automationRules
+      .createAlias('automation_runs__automation_id__automation_rules__id');
+
+  $$AutomationRulesTableProcessedTableManager get automationId {
+    final $_column = $_itemColumn<String>('automation_id')!;
+
+    final manager = $$AutomationRulesTableTableManager(
+      $_db,
+      $_db.automationRules,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_automationIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$AutomationRunsTableFilterComposer
+    extends Composer<_$AppDatabase, $AutomationRunsTable> {
+  $$AutomationRunsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get startedAt => $composableBuilder(
+    column: $table.startedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get finishedAt => $composableBuilder(
+    column: $table.finishedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get itemsProcessed => $composableBuilder(
+    column: $table.itemsProcessed,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get itemsCreated => $composableBuilder(
+    column: $table.itemsCreated,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get errorMessage => $composableBuilder(
+    column: $table.errorMessage,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$AutomationRulesTableFilterComposer get automationId {
+    final $$AutomationRulesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.automationId,
+      referencedTable: $db.automationRules,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AutomationRulesTableFilterComposer(
+            $db: $db,
+            $table: $db.automationRules,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$AutomationRunsTableOrderingComposer
+    extends Composer<_$AppDatabase, $AutomationRunsTable> {
+  $$AutomationRunsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get startedAt => $composableBuilder(
+    column: $table.startedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get finishedAt => $composableBuilder(
+    column: $table.finishedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get itemsProcessed => $composableBuilder(
+    column: $table.itemsProcessed,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get itemsCreated => $composableBuilder(
+    column: $table.itemsCreated,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get errorMessage => $composableBuilder(
+    column: $table.errorMessage,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$AutomationRulesTableOrderingComposer get automationId {
+    final $$AutomationRulesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.automationId,
+      referencedTable: $db.automationRules,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AutomationRulesTableOrderingComposer(
+            $db: $db,
+            $table: $db.automationRules,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$AutomationRunsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $AutomationRunsTable> {
+  $$AutomationRunsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get startedAt =>
+      $composableBuilder(column: $table.startedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get finishedAt => $composableBuilder(
+    column: $table.finishedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<int> get itemsProcessed => $composableBuilder(
+    column: $table.itemsProcessed,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get itemsCreated => $composableBuilder(
+    column: $table.itemsCreated,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get errorMessage => $composableBuilder(
+    column: $table.errorMessage,
+    builder: (column) => column,
+  );
+
+  $$AutomationRulesTableAnnotationComposer get automationId {
+    final $$AutomationRulesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.automationId,
+      referencedTable: $db.automationRules,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AutomationRulesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.automationRules,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$AutomationRunsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AutomationRunsTable,
+          AutomationRun,
+          $$AutomationRunsTableFilterComposer,
+          $$AutomationRunsTableOrderingComposer,
+          $$AutomationRunsTableAnnotationComposer,
+          $$AutomationRunsTableCreateCompanionBuilder,
+          $$AutomationRunsTableUpdateCompanionBuilder,
+          (AutomationRun, $$AutomationRunsTableReferences),
+          AutomationRun,
+          PrefetchHooks Function({bool automationId})
+        > {
+  $$AutomationRunsTableTableManager(
+    _$AppDatabase db,
+    $AutomationRunsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$AutomationRunsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$AutomationRunsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$AutomationRunsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> automationId = const Value.absent(),
+                Value<DateTime> startedAt = const Value.absent(),
+                Value<DateTime?> finishedAt = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<int> itemsProcessed = const Value.absent(),
+                Value<int> itemsCreated = const Value.absent(),
+                Value<String?> errorMessage = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => AutomationRunsCompanion(
+                id: id,
+                automationId: automationId,
+                startedAt: startedAt,
+                finishedAt: finishedAt,
+                status: status,
+                itemsProcessed: itemsProcessed,
+                itemsCreated: itemsCreated,
+                errorMessage: errorMessage,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String automationId,
+                Value<DateTime> startedAt = const Value.absent(),
+                Value<DateTime?> finishedAt = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<int> itemsProcessed = const Value.absent(),
+                Value<int> itemsCreated = const Value.absent(),
+                Value<String?> errorMessage = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => AutomationRunsCompanion.insert(
+                id: id,
+                automationId: automationId,
+                startedAt: startedAt,
+                finishedAt: finishedAt,
+                status: status,
+                itemsProcessed: itemsProcessed,
+                itemsCreated: itemsCreated,
+                errorMessage: errorMessage,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$AutomationRunsTable, AutomationRun>(table),
+                  $$AutomationRunsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({automationId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (automationId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.automationId,
+                        referencedTable: $$AutomationRunsTableReferences
+                            ._automationIdTable(db),
+                        referencedColumn: $$AutomationRunsTableReferences
+                            ._automationIdTable(db)
+                            .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$AutomationRunsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $AutomationRunsTable,
+      AutomationRun,
+      $$AutomationRunsTableFilterComposer,
+      $$AutomationRunsTableOrderingComposer,
+      $$AutomationRunsTableAnnotationComposer,
+      $$AutomationRunsTableCreateCompanionBuilder,
+      $$AutomationRunsTableUpdateCompanionBuilder,
+      (AutomationRun, $$AutomationRunsTableReferences),
+      AutomationRun,
+      PrefetchHooks Function({bool automationId})
+    >;
+typedef $$AutomationActionsTableCreateCompanionBuilder =
+    AutomationActionsCompanion Function({
+      required String id,
+      Value<String?> automationId,
+      required String entityType,
+      Value<String?> entityId,
+      required String actionType,
+      required String title,
+      required String description,
+      Value<String> status,
+      Value<DateTime> createdAt,
+      Value<DateTime?> completedAt,
+      Value<int> rowid,
+    });
+typedef $$AutomationActionsTableUpdateCompanionBuilder =
+    AutomationActionsCompanion Function({
+      Value<String> id,
+      Value<String?> automationId,
+      Value<String> entityType,
+      Value<String?> entityId,
+      Value<String> actionType,
+      Value<String> title,
+      Value<String> description,
+      Value<String> status,
+      Value<DateTime> createdAt,
+      Value<DateTime?> completedAt,
+      Value<int> rowid,
+    });
+
+final class $$AutomationActionsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $AutomationActionsTable,
+          AutomationAction
+        > {
+  $$AutomationActionsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $AutomationRulesTable _automationIdTable(_$AppDatabase db) => db
+      .automationRules
+      .createAlias('automation_actions__automation_id__automation_rules__id');
+
+  $$AutomationRulesTableProcessedTableManager? get automationId {
+    final $_column = $_itemColumn<String>('automation_id');
+    if ($_column == null) return null;
+    final manager = $$AutomationRulesTableTableManager(
+      $_db,
+      $_db.automationRules,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_automationIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$AutomationActionsTableFilterComposer
+    extends Composer<_$AppDatabase, $AutomationActionsTable> {
+  $$AutomationActionsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get entityType => $composableBuilder(
+    column: $table.entityType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get entityId => $composableBuilder(
+    column: $table.entityId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get actionType => $composableBuilder(
+    column: $table.actionType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$AutomationRulesTableFilterComposer get automationId {
+    final $$AutomationRulesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.automationId,
+      referencedTable: $db.automationRules,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AutomationRulesTableFilterComposer(
+            $db: $db,
+            $table: $db.automationRules,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$AutomationActionsTableOrderingComposer
+    extends Composer<_$AppDatabase, $AutomationActionsTable> {
+  $$AutomationActionsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get entityType => $composableBuilder(
+    column: $table.entityType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get entityId => $composableBuilder(
+    column: $table.entityId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get actionType => $composableBuilder(
+    column: $table.actionType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$AutomationRulesTableOrderingComposer get automationId {
+    final $$AutomationRulesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.automationId,
+      referencedTable: $db.automationRules,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AutomationRulesTableOrderingComposer(
+            $db: $db,
+            $table: $db.automationRules,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$AutomationActionsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $AutomationActionsTable> {
+  $$AutomationActionsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get entityType => $composableBuilder(
+    column: $table.entityType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get entityId =>
+      $composableBuilder(column: $table.entityId, builder: (column) => column);
+
+  GeneratedColumn<String> get actionType => $composableBuilder(
+    column: $table.actionType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => column,
+  );
+
+  $$AutomationRulesTableAnnotationComposer get automationId {
+    final $$AutomationRulesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.automationId,
+      referencedTable: $db.automationRules,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AutomationRulesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.automationRules,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$AutomationActionsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AutomationActionsTable,
+          AutomationAction,
+          $$AutomationActionsTableFilterComposer,
+          $$AutomationActionsTableOrderingComposer,
+          $$AutomationActionsTableAnnotationComposer,
+          $$AutomationActionsTableCreateCompanionBuilder,
+          $$AutomationActionsTableUpdateCompanionBuilder,
+          (AutomationAction, $$AutomationActionsTableReferences),
+          AutomationAction,
+          PrefetchHooks Function({bool automationId})
+        > {
+  $$AutomationActionsTableTableManager(
+    _$AppDatabase db,
+    $AutomationActionsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$AutomationActionsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$AutomationActionsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$AutomationActionsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String?> automationId = const Value.absent(),
+                Value<String> entityType = const Value.absent(),
+                Value<String?> entityId = const Value.absent(),
+                Value<String> actionType = const Value.absent(),
+                Value<String> title = const Value.absent(),
+                Value<String> description = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime?> completedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => AutomationActionsCompanion(
+                id: id,
+                automationId: automationId,
+                entityType: entityType,
+                entityId: entityId,
+                actionType: actionType,
+                title: title,
+                description: description,
+                status: status,
+                createdAt: createdAt,
+                completedAt: completedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                Value<String?> automationId = const Value.absent(),
+                required String entityType,
+                Value<String?> entityId = const Value.absent(),
+                required String actionType,
+                required String title,
+                required String description,
+                Value<String> status = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime?> completedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => AutomationActionsCompanion.insert(
+                id: id,
+                automationId: automationId,
+                entityType: entityType,
+                entityId: entityId,
+                actionType: actionType,
+                title: title,
+                description: description,
+                status: status,
+                createdAt: createdAt,
+                completedAt: completedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$AutomationActionsTable, AutomationAction>(table),
+                  $$AutomationActionsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({automationId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (automationId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.automationId,
+                        referencedTable: $$AutomationActionsTableReferences
+                            ._automationIdTable(db),
+                        referencedColumn: $$AutomationActionsTableReferences
+                            ._automationIdTable(db)
+                            .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$AutomationActionsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $AutomationActionsTable,
+      AutomationAction,
+      $$AutomationActionsTableFilterComposer,
+      $$AutomationActionsTableOrderingComposer,
+      $$AutomationActionsTableAnnotationComposer,
+      $$AutomationActionsTableCreateCompanionBuilder,
+      $$AutomationActionsTableUpdateCompanionBuilder,
+      (AutomationAction, $$AutomationActionsTableReferences),
+      AutomationAction,
+      PrefetchHooks Function({bool automationId})
+    >;
+typedef $$NotificationSettingsTableCreateCompanionBuilder =
+    NotificationSettingsCompanion Function({
+      required String id,
+      Value<bool> careerEnabled,
+      Value<bool> workEnabled,
+      Value<bool> dsaEnabled,
+      Value<bool> freelanceEnabled,
+      Value<bool> projectsEnabled,
+      Value<bool> weeklyReportsEnabled,
+      Value<String> eodReminderTime,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+typedef $$NotificationSettingsTableUpdateCompanionBuilder =
+    NotificationSettingsCompanion Function({
+      Value<String> id,
+      Value<bool> careerEnabled,
+      Value<bool> workEnabled,
+      Value<bool> dsaEnabled,
+      Value<bool> freelanceEnabled,
+      Value<bool> projectsEnabled,
+      Value<bool> weeklyReportsEnabled,
+      Value<String> eodReminderTime,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$NotificationSettingsTableFilterComposer
+    extends Composer<_$AppDatabase, $NotificationSettingsTable> {
+  $$NotificationSettingsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get careerEnabled => $composableBuilder(
+    column: $table.careerEnabled,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get workEnabled => $composableBuilder(
+    column: $table.workEnabled,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get dsaEnabled => $composableBuilder(
+    column: $table.dsaEnabled,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get freelanceEnabled => $composableBuilder(
+    column: $table.freelanceEnabled,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get projectsEnabled => $composableBuilder(
+    column: $table.projectsEnabled,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get weeklyReportsEnabled => $composableBuilder(
+    column: $table.weeklyReportsEnabled,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get eodReminderTime => $composableBuilder(
+    column: $table.eodReminderTime,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$NotificationSettingsTableOrderingComposer
+    extends Composer<_$AppDatabase, $NotificationSettingsTable> {
+  $$NotificationSettingsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get careerEnabled => $composableBuilder(
+    column: $table.careerEnabled,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get workEnabled => $composableBuilder(
+    column: $table.workEnabled,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get dsaEnabled => $composableBuilder(
+    column: $table.dsaEnabled,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get freelanceEnabled => $composableBuilder(
+    column: $table.freelanceEnabled,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get projectsEnabled => $composableBuilder(
+    column: $table.projectsEnabled,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get weeklyReportsEnabled => $composableBuilder(
+    column: $table.weeklyReportsEnabled,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get eodReminderTime => $composableBuilder(
+    column: $table.eodReminderTime,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$NotificationSettingsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $NotificationSettingsTable> {
+  $$NotificationSettingsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<bool> get careerEnabled => $composableBuilder(
+    column: $table.careerEnabled,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get workEnabled => $composableBuilder(
+    column: $table.workEnabled,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get dsaEnabled => $composableBuilder(
+    column: $table.dsaEnabled,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get freelanceEnabled => $composableBuilder(
+    column: $table.freelanceEnabled,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get projectsEnabled => $composableBuilder(
+    column: $table.projectsEnabled,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get weeklyReportsEnabled => $composableBuilder(
+    column: $table.weeklyReportsEnabled,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get eodReminderTime => $composableBuilder(
+    column: $table.eodReminderTime,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$NotificationSettingsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $NotificationSettingsTable,
+          NotificationSetting,
+          $$NotificationSettingsTableFilterComposer,
+          $$NotificationSettingsTableOrderingComposer,
+          $$NotificationSettingsTableAnnotationComposer,
+          $$NotificationSettingsTableCreateCompanionBuilder,
+          $$NotificationSettingsTableUpdateCompanionBuilder,
+          (
+            NotificationSetting,
+            BaseReferences<
+              _$AppDatabase,
+              $NotificationSettingsTable,
+              NotificationSetting
+            >,
+          ),
+          NotificationSetting,
+          PrefetchHooks Function()
+        > {
+  $$NotificationSettingsTableTableManager(
+    _$AppDatabase db,
+    $NotificationSettingsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$NotificationSettingsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$NotificationSettingsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$NotificationSettingsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<bool> careerEnabled = const Value.absent(),
+                Value<bool> workEnabled = const Value.absent(),
+                Value<bool> dsaEnabled = const Value.absent(),
+                Value<bool> freelanceEnabled = const Value.absent(),
+                Value<bool> projectsEnabled = const Value.absent(),
+                Value<bool> weeklyReportsEnabled = const Value.absent(),
+                Value<String> eodReminderTime = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => NotificationSettingsCompanion(
+                id: id,
+                careerEnabled: careerEnabled,
+                workEnabled: workEnabled,
+                dsaEnabled: dsaEnabled,
+                freelanceEnabled: freelanceEnabled,
+                projectsEnabled: projectsEnabled,
+                weeklyReportsEnabled: weeklyReportsEnabled,
+                eodReminderTime: eodReminderTime,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                Value<bool> careerEnabled = const Value.absent(),
+                Value<bool> workEnabled = const Value.absent(),
+                Value<bool> dsaEnabled = const Value.absent(),
+                Value<bool> freelanceEnabled = const Value.absent(),
+                Value<bool> projectsEnabled = const Value.absent(),
+                Value<bool> weeklyReportsEnabled = const Value.absent(),
+                Value<String> eodReminderTime = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => NotificationSettingsCompanion.insert(
+                id: id,
+                careerEnabled: careerEnabled,
+                workEnabled: workEnabled,
+                dsaEnabled: dsaEnabled,
+                freelanceEnabled: freelanceEnabled,
+                projectsEnabled: projectsEnabled,
+                weeklyReportsEnabled: weeklyReportsEnabled,
+                eodReminderTime: eodReminderTime,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$NotificationSettingsTable, NotificationSetting>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $NotificationSettingsTable,
+                    NotificationSetting
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$NotificationSettingsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $NotificationSettingsTable,
+      NotificationSetting,
+      $$NotificationSettingsTableFilterComposer,
+      $$NotificationSettingsTableOrderingComposer,
+      $$NotificationSettingsTableAnnotationComposer,
+      $$NotificationSettingsTableCreateCompanionBuilder,
+      $$NotificationSettingsTableUpdateCompanionBuilder,
+      (
+        NotificationSetting,
+        BaseReferences<
+          _$AppDatabase,
+          $NotificationSettingsTable,
+          NotificationSetting
+        >,
+      ),
+      NotificationSetting,
+      PrefetchHooks Function()
+    >;
+typedef $$JobSourceConfigsTableCreateCompanionBuilder =
+    JobSourceConfigsCompanion Function({
+      required String id,
+      required String name,
+      Value<String> providerType,
+      Value<String?> feedUrl,
+      Value<bool> enabled,
+      Value<DateTime?> lastRun,
+      Value<DateTime?> lastSuccess,
+      Value<String?> lastError,
+      Value<int> rateLimitMinutes,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+typedef $$JobSourceConfigsTableUpdateCompanionBuilder =
+    JobSourceConfigsCompanion Function({
+      Value<String> id,
+      Value<String> name,
+      Value<String> providerType,
+      Value<String?> feedUrl,
+      Value<bool> enabled,
+      Value<DateTime?> lastRun,
+      Value<DateTime?> lastSuccess,
+      Value<String?> lastError,
+      Value<int> rateLimitMinutes,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$JobSourceConfigsTableFilterComposer
+    extends Composer<_$AppDatabase, $JobSourceConfigsTable> {
+  $$JobSourceConfigsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get providerType => $composableBuilder(
+    column: $table.providerType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get feedUrl => $composableBuilder(
+    column: $table.feedUrl,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get enabled => $composableBuilder(
+    column: $table.enabled,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastRun => $composableBuilder(
+    column: $table.lastRun,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastSuccess => $composableBuilder(
+    column: $table.lastSuccess,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lastError => $composableBuilder(
+    column: $table.lastError,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get rateLimitMinutes => $composableBuilder(
+    column: $table.rateLimitMinutes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$JobSourceConfigsTableOrderingComposer
+    extends Composer<_$AppDatabase, $JobSourceConfigsTable> {
+  $$JobSourceConfigsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get providerType => $composableBuilder(
+    column: $table.providerType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get feedUrl => $composableBuilder(
+    column: $table.feedUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get enabled => $composableBuilder(
+    column: $table.enabled,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastRun => $composableBuilder(
+    column: $table.lastRun,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastSuccess => $composableBuilder(
+    column: $table.lastSuccess,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get lastError => $composableBuilder(
+    column: $table.lastError,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get rateLimitMinutes => $composableBuilder(
+    column: $table.rateLimitMinutes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$JobSourceConfigsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $JobSourceConfigsTable> {
+  $$JobSourceConfigsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get providerType => $composableBuilder(
+    column: $table.providerType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get feedUrl =>
+      $composableBuilder(column: $table.feedUrl, builder: (column) => column);
+
+  GeneratedColumn<bool> get enabled =>
+      $composableBuilder(column: $table.enabled, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get lastRun =>
+      $composableBuilder(column: $table.lastRun, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get lastSuccess => $composableBuilder(
+    column: $table.lastSuccess,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get lastError =>
+      $composableBuilder(column: $table.lastError, builder: (column) => column);
+
+  GeneratedColumn<int> get rateLimitMinutes => $composableBuilder(
+    column: $table.rateLimitMinutes,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$JobSourceConfigsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $JobSourceConfigsTable,
+          JobSourceConfig,
+          $$JobSourceConfigsTableFilterComposer,
+          $$JobSourceConfigsTableOrderingComposer,
+          $$JobSourceConfigsTableAnnotationComposer,
+          $$JobSourceConfigsTableCreateCompanionBuilder,
+          $$JobSourceConfigsTableUpdateCompanionBuilder,
+          (
+            JobSourceConfig,
+            BaseReferences<
+              _$AppDatabase,
+              $JobSourceConfigsTable,
+              JobSourceConfig
+            >,
+          ),
+          JobSourceConfig,
+          PrefetchHooks Function()
+        > {
+  $$JobSourceConfigsTableTableManager(
+    _$AppDatabase db,
+    $JobSourceConfigsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$JobSourceConfigsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$JobSourceConfigsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$JobSourceConfigsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> providerType = const Value.absent(),
+                Value<String?> feedUrl = const Value.absent(),
+                Value<bool> enabled = const Value.absent(),
+                Value<DateTime?> lastRun = const Value.absent(),
+                Value<DateTime?> lastSuccess = const Value.absent(),
+                Value<String?> lastError = const Value.absent(),
+                Value<int> rateLimitMinutes = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => JobSourceConfigsCompanion(
+                id: id,
+                name: name,
+                providerType: providerType,
+                feedUrl: feedUrl,
+                enabled: enabled,
+                lastRun: lastRun,
+                lastSuccess: lastSuccess,
+                lastError: lastError,
+                rateLimitMinutes: rateLimitMinutes,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String name,
+                Value<String> providerType = const Value.absent(),
+                Value<String?> feedUrl = const Value.absent(),
+                Value<bool> enabled = const Value.absent(),
+                Value<DateTime?> lastRun = const Value.absent(),
+                Value<DateTime?> lastSuccess = const Value.absent(),
+                Value<String?> lastError = const Value.absent(),
+                Value<int> rateLimitMinutes = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => JobSourceConfigsCompanion.insert(
+                id: id,
+                name: name,
+                providerType: providerType,
+                feedUrl: feedUrl,
+                enabled: enabled,
+                lastRun: lastRun,
+                lastSuccess: lastSuccess,
+                lastError: lastError,
+                rateLimitMinutes: rateLimitMinutes,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$JobSourceConfigsTable, JobSourceConfig>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $JobSourceConfigsTable,
+                    JobSourceConfig
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$JobSourceConfigsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $JobSourceConfigsTable,
+      JobSourceConfig,
+      $$JobSourceConfigsTableFilterComposer,
+      $$JobSourceConfigsTableOrderingComposer,
+      $$JobSourceConfigsTableAnnotationComposer,
+      $$JobSourceConfigsTableCreateCompanionBuilder,
+      $$JobSourceConfigsTableUpdateCompanionBuilder,
+      (
+        JobSourceConfig,
+        BaseReferences<_$AppDatabase, $JobSourceConfigsTable, JobSourceConfig>,
+      ),
+      JobSourceConfig,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -27417,4 +32604,14 @@ class $AppDatabaseManager {
       $$AIMessagesTableTableManager(_db, _db.aIMessages);
   $$AIActionsTableTableManager get aIActions =>
       $$AIActionsTableTableManager(_db, _db.aIActions);
+  $$AutomationRulesTableTableManager get automationRules =>
+      $$AutomationRulesTableTableManager(_db, _db.automationRules);
+  $$AutomationRunsTableTableManager get automationRuns =>
+      $$AutomationRunsTableTableManager(_db, _db.automationRuns);
+  $$AutomationActionsTableTableManager get automationActions =>
+      $$AutomationActionsTableTableManager(_db, _db.automationActions);
+  $$NotificationSettingsTableTableManager get notificationSettings =>
+      $$NotificationSettingsTableTableManager(_db, _db.notificationSettings);
+  $$JobSourceConfigsTableTableManager get jobSourceConfigs =>
+      $$JobSourceConfigsTableTableManager(_db, _db.jobSourceConfigs);
 }
