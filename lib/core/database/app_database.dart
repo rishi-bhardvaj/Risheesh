@@ -549,6 +549,38 @@ class JobSourceConfigs extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+// 31. ReportRecords Table (Phase 8 Reports Engine)
+@DataClassName('ReportRecord')
+class ReportRecords extends Table {
+  TextColumn get id => text()();
+  TextColumn get title => text().withLength(min: 1, max: 200)();
+  TextColumn get reportType => text()(); // WEEKLY, MONTHLY, MODULE_CAREER, MODULE_WORK, MODULE_LEARNING, MODULE_FREELANCE, MODULE_FITNESS, MODULE_FINANCE, CROSS_MODULE
+  TextColumn get periodLabel => text()(); // e.g. "This Week", "Sep 2026", "2026-09-01 to 2026-09-25"
+  DateTimeColumn get startDate => dateTime()();
+  DateTimeColumn get endDate => dateTime()();
+  TextColumn get content => text()(); // Markdown content
+  BoolColumn get isAiSynthesized => boolean().withDefault(const Constant(false))();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+// 32. BackupRecords Table (Phase 8 Data Management Snapshots)
+@DataClassName('BackupRecord')
+class BackupRecords extends Table {
+  TextColumn get id => text()();
+  TextColumn get filename => text().withLength(min: 1, max: 250)();
+  TextColumn get backupType => text().withDefault(const Constant('FULL_JSON'))(); // FULL_JSON, CSV_EXPORT
+  IntColumn get recordCount => integer().withDefault(const Constant(0))();
+  IntColumn get fileSizeBytes => integer().withDefault(const Constant(0))();
+  TextColumn get filePath => text().nullable()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 // --- Main App Database ---
 @DriftDatabase(tables: [
   UserProfiles,
@@ -581,12 +613,14 @@ class JobSourceConfigs extends Table {
   AutomationActions,
   NotificationSettings,
   JobSourceConfigs,
+  ReportRecords,
+  BackupRecords,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? impl.connect());
 
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 8;
 
   @override
   MigrationStrategy get migration {
@@ -656,6 +690,10 @@ class AppDatabase extends _$AppDatabase {
           await m.createTable(automationActions);
           await m.createTable(notificationSettings);
           await m.createTable(jobSourceConfigs);
+        }
+        if (from < 8) {
+          await m.createTable(reportRecords);
+          await m.createTable(backupRecords);
         }
       },
       beforeOpen: (details) async {
@@ -1201,6 +1239,28 @@ class AppDatabase extends _$AppDatabase {
       ),
     );
   }
+
+  // --- Phase 8: Report Records Queries ---
+  Future<List<ReportRecord>> getAllReportRecords() =>
+      (select(reportRecords)..orderBy([(r) => OrderingTerm.desc(r.createdAt)])).get();
+  Stream<List<ReportRecord>> watchAllReportRecords() =>
+      (select(reportRecords)..orderBy([(r) => OrderingTerm.desc(r.createdAt)])).watch();
+  Future<ReportRecord?> getReportRecordById(String id) =>
+      (select(reportRecords)..where((r) => r.id.equals(id))).getSingleOrNull();
+  Future<int> insertReportRecord(ReportRecordsCompanion report) =>
+      into(reportRecords).insertOnConflictUpdate(report);
+  Future<int> deleteReportRecord(String id) =>
+      (delete(reportRecords)..where((r) => r.id.equals(id))).go();
+
+  // --- Phase 8: Backup Records Queries ---
+  Future<List<BackupRecord>> getAllBackupRecords() =>
+      (select(backupRecords)..orderBy([(b) => OrderingTerm.desc(b.createdAt)])).get();
+  Stream<List<BackupRecord>> watchAllBackupRecords() =>
+      (select(backupRecords)..orderBy([(b) => OrderingTerm.desc(b.createdAt)])).watch();
+  Future<int> insertBackupRecord(BackupRecordsCompanion backup) =>
+      into(backupRecords).insertOnConflictUpdate(backup);
+  Future<int> deleteBackupRecord(String id) =>
+      (delete(backupRecords)..where((b) => b.id.equals(id))).go();
 }
 
 // Global Provider for AppDatabase instance

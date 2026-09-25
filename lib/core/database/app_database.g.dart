@@ -19359,6 +19359,1052 @@ class JobSourceConfigsCompanion extends UpdateCompanion<JobSourceConfig> {
   }
 }
 
+class $ReportRecordsTable extends ReportRecords
+    with TableInfo<$ReportRecordsTable, ReportRecord> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ReportRecordsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 1,
+      maxTextLength: 200,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _reportTypeMeta = const VerificationMeta(
+    'reportType',
+  );
+  @override
+  late final GeneratedColumn<String> reportType = GeneratedColumn<String>(
+    'report_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _periodLabelMeta = const VerificationMeta(
+    'periodLabel',
+  );
+  @override
+  late final GeneratedColumn<String> periodLabel = GeneratedColumn<String>(
+    'period_label',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _startDateMeta = const VerificationMeta(
+    'startDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> startDate = GeneratedColumn<DateTime>(
+    'start_date',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _endDateMeta = const VerificationMeta(
+    'endDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> endDate = GeneratedColumn<DateTime>(
+    'end_date',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _contentMeta = const VerificationMeta(
+    'content',
+  );
+  @override
+  late final GeneratedColumn<String> content = GeneratedColumn<String>(
+    'content',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _isAiSynthesizedMeta = const VerificationMeta(
+    'isAiSynthesized',
+  );
+  @override
+  late final GeneratedColumn<bool> isAiSynthesized = GeneratedColumn<bool>(
+    'is_ai_synthesized',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_ai_synthesized" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    title,
+    reportType,
+    periodLabel,
+    startDate,
+    endDate,
+    content,
+    isAiSynthesized,
+    createdAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'report_records';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ReportRecord> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+        _titleMeta,
+        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('report_type')) {
+      context.handle(
+        _reportTypeMeta,
+        reportType.isAcceptableOrUnknown(data['report_type']!, _reportTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_reportTypeMeta);
+    }
+    if (data.containsKey('period_label')) {
+      context.handle(
+        _periodLabelMeta,
+        periodLabel.isAcceptableOrUnknown(
+          data['period_label']!,
+          _periodLabelMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_periodLabelMeta);
+    }
+    if (data.containsKey('start_date')) {
+      context.handle(
+        _startDateMeta,
+        startDate.isAcceptableOrUnknown(data['start_date']!, _startDateMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_startDateMeta);
+    }
+    if (data.containsKey('end_date')) {
+      context.handle(
+        _endDateMeta,
+        endDate.isAcceptableOrUnknown(data['end_date']!, _endDateMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_endDateMeta);
+    }
+    if (data.containsKey('content')) {
+      context.handle(
+        _contentMeta,
+        content.isAcceptableOrUnknown(data['content']!, _contentMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_contentMeta);
+    }
+    if (data.containsKey('is_ai_synthesized')) {
+      context.handle(
+        _isAiSynthesizedMeta,
+        isAiSynthesized.isAcceptableOrUnknown(
+          data['is_ai_synthesized']!,
+          _isAiSynthesizedMeta,
+        ),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ReportRecord map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ReportRecord(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      title: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title'],
+      )!,
+      reportType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}report_type'],
+      )!,
+      periodLabel: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}period_label'],
+      )!,
+      startDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}start_date'],
+      )!,
+      endDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}end_date'],
+      )!,
+      content: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}content'],
+      )!,
+      isAiSynthesized: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_ai_synthesized'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $ReportRecordsTable createAlias(String alias) {
+    return $ReportRecordsTable(attachedDatabase, alias);
+  }
+}
+
+class ReportRecord extends DataClass implements Insertable<ReportRecord> {
+  final String id;
+  final String title;
+  final String reportType;
+  final String periodLabel;
+  final DateTime startDate;
+  final DateTime endDate;
+  final String content;
+  final bool isAiSynthesized;
+  final DateTime createdAt;
+  const ReportRecord({
+    required this.id,
+    required this.title,
+    required this.reportType,
+    required this.periodLabel,
+    required this.startDate,
+    required this.endDate,
+    required this.content,
+    required this.isAiSynthesized,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['title'] = Variable<String>(title);
+    map['report_type'] = Variable<String>(reportType);
+    map['period_label'] = Variable<String>(periodLabel);
+    map['start_date'] = Variable<DateTime>(startDate);
+    map['end_date'] = Variable<DateTime>(endDate);
+    map['content'] = Variable<String>(content);
+    map['is_ai_synthesized'] = Variable<bool>(isAiSynthesized);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  ReportRecordsCompanion toCompanion(bool nullToAbsent) {
+    return ReportRecordsCompanion(
+      id: Value(id),
+      title: Value(title),
+      reportType: Value(reportType),
+      periodLabel: Value(periodLabel),
+      startDate: Value(startDate),
+      endDate: Value(endDate),
+      content: Value(content),
+      isAiSynthesized: Value(isAiSynthesized),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory ReportRecord.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ReportRecord(
+      id: serializer.fromJson<String>(json['id']),
+      title: serializer.fromJson<String>(json['title']),
+      reportType: serializer.fromJson<String>(json['reportType']),
+      periodLabel: serializer.fromJson<String>(json['periodLabel']),
+      startDate: serializer.fromJson<DateTime>(json['startDate']),
+      endDate: serializer.fromJson<DateTime>(json['endDate']),
+      content: serializer.fromJson<String>(json['content']),
+      isAiSynthesized: serializer.fromJson<bool>(json['isAiSynthesized']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'title': serializer.toJson<String>(title),
+      'reportType': serializer.toJson<String>(reportType),
+      'periodLabel': serializer.toJson<String>(periodLabel),
+      'startDate': serializer.toJson<DateTime>(startDate),
+      'endDate': serializer.toJson<DateTime>(endDate),
+      'content': serializer.toJson<String>(content),
+      'isAiSynthesized': serializer.toJson<bool>(isAiSynthesized),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  ReportRecord copyWith({
+    String? id,
+    String? title,
+    String? reportType,
+    String? periodLabel,
+    DateTime? startDate,
+    DateTime? endDate,
+    String? content,
+    bool? isAiSynthesized,
+    DateTime? createdAt,
+  }) => ReportRecord(
+    id: id ?? this.id,
+    title: title ?? this.title,
+    reportType: reportType ?? this.reportType,
+    periodLabel: periodLabel ?? this.periodLabel,
+    startDate: startDate ?? this.startDate,
+    endDate: endDate ?? this.endDate,
+    content: content ?? this.content,
+    isAiSynthesized: isAiSynthesized ?? this.isAiSynthesized,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  ReportRecord copyWithCompanion(ReportRecordsCompanion data) {
+    return ReportRecord(
+      id: data.id.present ? data.id.value : this.id,
+      title: data.title.present ? data.title.value : this.title,
+      reportType: data.reportType.present
+          ? data.reportType.value
+          : this.reportType,
+      periodLabel: data.periodLabel.present
+          ? data.periodLabel.value
+          : this.periodLabel,
+      startDate: data.startDate.present ? data.startDate.value : this.startDate,
+      endDate: data.endDate.present ? data.endDate.value : this.endDate,
+      content: data.content.present ? data.content.value : this.content,
+      isAiSynthesized: data.isAiSynthesized.present
+          ? data.isAiSynthesized.value
+          : this.isAiSynthesized,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReportRecord(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('reportType: $reportType, ')
+          ..write('periodLabel: $periodLabel, ')
+          ..write('startDate: $startDate, ')
+          ..write('endDate: $endDate, ')
+          ..write('content: $content, ')
+          ..write('isAiSynthesized: $isAiSynthesized, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    title,
+    reportType,
+    periodLabel,
+    startDate,
+    endDate,
+    content,
+    isAiSynthesized,
+    createdAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ReportRecord &&
+          other.id == this.id &&
+          other.title == this.title &&
+          other.reportType == this.reportType &&
+          other.periodLabel == this.periodLabel &&
+          other.startDate == this.startDate &&
+          other.endDate == this.endDate &&
+          other.content == this.content &&
+          other.isAiSynthesized == this.isAiSynthesized &&
+          other.createdAt == this.createdAt);
+}
+
+class ReportRecordsCompanion extends UpdateCompanion<ReportRecord> {
+  final Value<String> id;
+  final Value<String> title;
+  final Value<String> reportType;
+  final Value<String> periodLabel;
+  final Value<DateTime> startDate;
+  final Value<DateTime> endDate;
+  final Value<String> content;
+  final Value<bool> isAiSynthesized;
+  final Value<DateTime> createdAt;
+  final Value<int> rowid;
+  const ReportRecordsCompanion({
+    this.id = const Value.absent(),
+    this.title = const Value.absent(),
+    this.reportType = const Value.absent(),
+    this.periodLabel = const Value.absent(),
+    this.startDate = const Value.absent(),
+    this.endDate = const Value.absent(),
+    this.content = const Value.absent(),
+    this.isAiSynthesized = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ReportRecordsCompanion.insert({
+    required String id,
+    required String title,
+    required String reportType,
+    required String periodLabel,
+    required DateTime startDate,
+    required DateTime endDate,
+    required String content,
+    this.isAiSynthesized = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       title = Value(title),
+       reportType = Value(reportType),
+       periodLabel = Value(periodLabel),
+       startDate = Value(startDate),
+       endDate = Value(endDate),
+       content = Value(content);
+  static Insertable<ReportRecord> custom({
+    Expression<String>? id,
+    Expression<String>? title,
+    Expression<String>? reportType,
+    Expression<String>? periodLabel,
+    Expression<DateTime>? startDate,
+    Expression<DateTime>? endDate,
+    Expression<String>? content,
+    Expression<bool>? isAiSynthesized,
+    Expression<DateTime>? createdAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (title != null) 'title': title,
+      if (reportType != null) 'report_type': reportType,
+      if (periodLabel != null) 'period_label': periodLabel,
+      if (startDate != null) 'start_date': startDate,
+      if (endDate != null) 'end_date': endDate,
+      if (content != null) 'content': content,
+      if (isAiSynthesized != null) 'is_ai_synthesized': isAiSynthesized,
+      if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ReportRecordsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? title,
+    Value<String>? reportType,
+    Value<String>? periodLabel,
+    Value<DateTime>? startDate,
+    Value<DateTime>? endDate,
+    Value<String>? content,
+    Value<bool>? isAiSynthesized,
+    Value<DateTime>? createdAt,
+    Value<int>? rowid,
+  }) {
+    return ReportRecordsCompanion(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      reportType: reportType ?? this.reportType,
+      periodLabel: periodLabel ?? this.periodLabel,
+      startDate: startDate ?? this.startDate,
+      endDate: endDate ?? this.endDate,
+      content: content ?? this.content,
+      isAiSynthesized: isAiSynthesized ?? this.isAiSynthesized,
+      createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (reportType.present) {
+      map['report_type'] = Variable<String>(reportType.value);
+    }
+    if (periodLabel.present) {
+      map['period_label'] = Variable<String>(periodLabel.value);
+    }
+    if (startDate.present) {
+      map['start_date'] = Variable<DateTime>(startDate.value);
+    }
+    if (endDate.present) {
+      map['end_date'] = Variable<DateTime>(endDate.value);
+    }
+    if (content.present) {
+      map['content'] = Variable<String>(content.value);
+    }
+    if (isAiSynthesized.present) {
+      map['is_ai_synthesized'] = Variable<bool>(isAiSynthesized.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReportRecordsCompanion(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('reportType: $reportType, ')
+          ..write('periodLabel: $periodLabel, ')
+          ..write('startDate: $startDate, ')
+          ..write('endDate: $endDate, ')
+          ..write('content: $content, ')
+          ..write('isAiSynthesized: $isAiSynthesized, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $BackupRecordsTable extends BackupRecords
+    with TableInfo<$BackupRecordsTable, BackupRecord> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $BackupRecordsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _filenameMeta = const VerificationMeta(
+    'filename',
+  );
+  @override
+  late final GeneratedColumn<String> filename = GeneratedColumn<String>(
+    'filename',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 1,
+      maxTextLength: 250,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _backupTypeMeta = const VerificationMeta(
+    'backupType',
+  );
+  @override
+  late final GeneratedColumn<String> backupType = GeneratedColumn<String>(
+    'backup_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('FULL_JSON'),
+  );
+  static const VerificationMeta _recordCountMeta = const VerificationMeta(
+    'recordCount',
+  );
+  @override
+  late final GeneratedColumn<int> recordCount = GeneratedColumn<int>(
+    'record_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _fileSizeBytesMeta = const VerificationMeta(
+    'fileSizeBytes',
+  );
+  @override
+  late final GeneratedColumn<int> fileSizeBytes = GeneratedColumn<int>(
+    'file_size_bytes',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _filePathMeta = const VerificationMeta(
+    'filePath',
+  );
+  @override
+  late final GeneratedColumn<String> filePath = GeneratedColumn<String>(
+    'file_path',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    filename,
+    backupType,
+    recordCount,
+    fileSizeBytes,
+    filePath,
+    createdAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'backup_records';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<BackupRecord> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('filename')) {
+      context.handle(
+        _filenameMeta,
+        filename.isAcceptableOrUnknown(data['filename']!, _filenameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_filenameMeta);
+    }
+    if (data.containsKey('backup_type')) {
+      context.handle(
+        _backupTypeMeta,
+        backupType.isAcceptableOrUnknown(data['backup_type']!, _backupTypeMeta),
+      );
+    }
+    if (data.containsKey('record_count')) {
+      context.handle(
+        _recordCountMeta,
+        recordCount.isAcceptableOrUnknown(
+          data['record_count']!,
+          _recordCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('file_size_bytes')) {
+      context.handle(
+        _fileSizeBytesMeta,
+        fileSizeBytes.isAcceptableOrUnknown(
+          data['file_size_bytes']!,
+          _fileSizeBytesMeta,
+        ),
+      );
+    }
+    if (data.containsKey('file_path')) {
+      context.handle(
+        _filePathMeta,
+        filePath.isAcceptableOrUnknown(data['file_path']!, _filePathMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  BackupRecord map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return BackupRecord(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      filename: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}filename'],
+      )!,
+      backupType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}backup_type'],
+      )!,
+      recordCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}record_count'],
+      )!,
+      fileSizeBytes: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}file_size_bytes'],
+      )!,
+      filePath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}file_path'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $BackupRecordsTable createAlias(String alias) {
+    return $BackupRecordsTable(attachedDatabase, alias);
+  }
+}
+
+class BackupRecord extends DataClass implements Insertable<BackupRecord> {
+  final String id;
+  final String filename;
+  final String backupType;
+  final int recordCount;
+  final int fileSizeBytes;
+  final String? filePath;
+  final DateTime createdAt;
+  const BackupRecord({
+    required this.id,
+    required this.filename,
+    required this.backupType,
+    required this.recordCount,
+    required this.fileSizeBytes,
+    this.filePath,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['filename'] = Variable<String>(filename);
+    map['backup_type'] = Variable<String>(backupType);
+    map['record_count'] = Variable<int>(recordCount);
+    map['file_size_bytes'] = Variable<int>(fileSizeBytes);
+    if (!nullToAbsent || filePath != null) {
+      map['file_path'] = Variable<String>(filePath);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  BackupRecordsCompanion toCompanion(bool nullToAbsent) {
+    return BackupRecordsCompanion(
+      id: Value(id),
+      filename: Value(filename),
+      backupType: Value(backupType),
+      recordCount: Value(recordCount),
+      fileSizeBytes: Value(fileSizeBytes),
+      filePath: filePath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(filePath),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory BackupRecord.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return BackupRecord(
+      id: serializer.fromJson<String>(json['id']),
+      filename: serializer.fromJson<String>(json['filename']),
+      backupType: serializer.fromJson<String>(json['backupType']),
+      recordCount: serializer.fromJson<int>(json['recordCount']),
+      fileSizeBytes: serializer.fromJson<int>(json['fileSizeBytes']),
+      filePath: serializer.fromJson<String?>(json['filePath']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'filename': serializer.toJson<String>(filename),
+      'backupType': serializer.toJson<String>(backupType),
+      'recordCount': serializer.toJson<int>(recordCount),
+      'fileSizeBytes': serializer.toJson<int>(fileSizeBytes),
+      'filePath': serializer.toJson<String?>(filePath),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  BackupRecord copyWith({
+    String? id,
+    String? filename,
+    String? backupType,
+    int? recordCount,
+    int? fileSizeBytes,
+    Value<String?> filePath = const Value.absent(),
+    DateTime? createdAt,
+  }) => BackupRecord(
+    id: id ?? this.id,
+    filename: filename ?? this.filename,
+    backupType: backupType ?? this.backupType,
+    recordCount: recordCount ?? this.recordCount,
+    fileSizeBytes: fileSizeBytes ?? this.fileSizeBytes,
+    filePath: filePath.present ? filePath.value : this.filePath,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  BackupRecord copyWithCompanion(BackupRecordsCompanion data) {
+    return BackupRecord(
+      id: data.id.present ? data.id.value : this.id,
+      filename: data.filename.present ? data.filename.value : this.filename,
+      backupType: data.backupType.present
+          ? data.backupType.value
+          : this.backupType,
+      recordCount: data.recordCount.present
+          ? data.recordCount.value
+          : this.recordCount,
+      fileSizeBytes: data.fileSizeBytes.present
+          ? data.fileSizeBytes.value
+          : this.fileSizeBytes,
+      filePath: data.filePath.present ? data.filePath.value : this.filePath,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BackupRecord(')
+          ..write('id: $id, ')
+          ..write('filename: $filename, ')
+          ..write('backupType: $backupType, ')
+          ..write('recordCount: $recordCount, ')
+          ..write('fileSizeBytes: $fileSizeBytes, ')
+          ..write('filePath: $filePath, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    filename,
+    backupType,
+    recordCount,
+    fileSizeBytes,
+    filePath,
+    createdAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is BackupRecord &&
+          other.id == this.id &&
+          other.filename == this.filename &&
+          other.backupType == this.backupType &&
+          other.recordCount == this.recordCount &&
+          other.fileSizeBytes == this.fileSizeBytes &&
+          other.filePath == this.filePath &&
+          other.createdAt == this.createdAt);
+}
+
+class BackupRecordsCompanion extends UpdateCompanion<BackupRecord> {
+  final Value<String> id;
+  final Value<String> filename;
+  final Value<String> backupType;
+  final Value<int> recordCount;
+  final Value<int> fileSizeBytes;
+  final Value<String?> filePath;
+  final Value<DateTime> createdAt;
+  final Value<int> rowid;
+  const BackupRecordsCompanion({
+    this.id = const Value.absent(),
+    this.filename = const Value.absent(),
+    this.backupType = const Value.absent(),
+    this.recordCount = const Value.absent(),
+    this.fileSizeBytes = const Value.absent(),
+    this.filePath = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  BackupRecordsCompanion.insert({
+    required String id,
+    required String filename,
+    this.backupType = const Value.absent(),
+    this.recordCount = const Value.absent(),
+    this.fileSizeBytes = const Value.absent(),
+    this.filePath = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       filename = Value(filename);
+  static Insertable<BackupRecord> custom({
+    Expression<String>? id,
+    Expression<String>? filename,
+    Expression<String>? backupType,
+    Expression<int>? recordCount,
+    Expression<int>? fileSizeBytes,
+    Expression<String>? filePath,
+    Expression<DateTime>? createdAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (filename != null) 'filename': filename,
+      if (backupType != null) 'backup_type': backupType,
+      if (recordCount != null) 'record_count': recordCount,
+      if (fileSizeBytes != null) 'file_size_bytes': fileSizeBytes,
+      if (filePath != null) 'file_path': filePath,
+      if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  BackupRecordsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? filename,
+    Value<String>? backupType,
+    Value<int>? recordCount,
+    Value<int>? fileSizeBytes,
+    Value<String?>? filePath,
+    Value<DateTime>? createdAt,
+    Value<int>? rowid,
+  }) {
+    return BackupRecordsCompanion(
+      id: id ?? this.id,
+      filename: filename ?? this.filename,
+      backupType: backupType ?? this.backupType,
+      recordCount: recordCount ?? this.recordCount,
+      fileSizeBytes: fileSizeBytes ?? this.fileSizeBytes,
+      filePath: filePath ?? this.filePath,
+      createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (filename.present) {
+      map['filename'] = Variable<String>(filename.value);
+    }
+    if (backupType.present) {
+      map['backup_type'] = Variable<String>(backupType.value);
+    }
+    if (recordCount.present) {
+      map['record_count'] = Variable<int>(recordCount.value);
+    }
+    if (fileSizeBytes.present) {
+      map['file_size_bytes'] = Variable<int>(fileSizeBytes.value);
+    }
+    if (filePath.present) {
+      map['file_path'] = Variable<String>(filePath.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BackupRecordsCompanion(')
+          ..write('id: $id, ')
+          ..write('filename: $filename, ')
+          ..write('backupType: $backupType, ')
+          ..write('recordCount: $recordCount, ')
+          ..write('fileSizeBytes: $fileSizeBytes, ')
+          ..write('filePath: $filePath, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -19407,6 +20453,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $JobSourceConfigsTable jobSourceConfigs = $JobSourceConfigsTable(
     this,
   );
+  late final $ReportRecordsTable reportRecords = $ReportRecordsTable(this);
+  late final $BackupRecordsTable backupRecords = $BackupRecordsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -19442,6 +20490,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     automationActions,
     notificationSettings,
     jobSourceConfigs,
+    reportRecords,
+    backupRecords,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -32551,6 +33601,550 @@ typedef $$JobSourceConfigsTableProcessedTableManager =
       JobSourceConfig,
       PrefetchHooks Function()
     >;
+typedef $$ReportRecordsTableCreateCompanionBuilder =
+    ReportRecordsCompanion Function({
+      required String id,
+      required String title,
+      required String reportType,
+      required String periodLabel,
+      required DateTime startDate,
+      required DateTime endDate,
+      required String content,
+      Value<bool> isAiSynthesized,
+      Value<DateTime> createdAt,
+      Value<int> rowid,
+    });
+typedef $$ReportRecordsTableUpdateCompanionBuilder =
+    ReportRecordsCompanion Function({
+      Value<String> id,
+      Value<String> title,
+      Value<String> reportType,
+      Value<String> periodLabel,
+      Value<DateTime> startDate,
+      Value<DateTime> endDate,
+      Value<String> content,
+      Value<bool> isAiSynthesized,
+      Value<DateTime> createdAt,
+      Value<int> rowid,
+    });
+
+class $$ReportRecordsTableFilterComposer
+    extends Composer<_$AppDatabase, $ReportRecordsTable> {
+  $$ReportRecordsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get reportType => $composableBuilder(
+    column: $table.reportType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get periodLabel => $composableBuilder(
+    column: $table.periodLabel,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get startDate => $composableBuilder(
+    column: $table.startDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get endDate => $composableBuilder(
+    column: $table.endDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get content => $composableBuilder(
+    column: $table.content,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isAiSynthesized => $composableBuilder(
+    column: $table.isAiSynthesized,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ReportRecordsTableOrderingComposer
+    extends Composer<_$AppDatabase, $ReportRecordsTable> {
+  $$ReportRecordsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get reportType => $composableBuilder(
+    column: $table.reportType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get periodLabel => $composableBuilder(
+    column: $table.periodLabel,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get startDate => $composableBuilder(
+    column: $table.startDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get endDate => $composableBuilder(
+    column: $table.endDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get content => $composableBuilder(
+    column: $table.content,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isAiSynthesized => $composableBuilder(
+    column: $table.isAiSynthesized,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ReportRecordsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ReportRecordsTable> {
+  $$ReportRecordsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<String> get reportType => $composableBuilder(
+    column: $table.reportType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get periodLabel => $composableBuilder(
+    column: $table.periodLabel,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get startDate =>
+      $composableBuilder(column: $table.startDate, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get endDate =>
+      $composableBuilder(column: $table.endDate, builder: (column) => column);
+
+  GeneratedColumn<String> get content =>
+      $composableBuilder(column: $table.content, builder: (column) => column);
+
+  GeneratedColumn<bool> get isAiSynthesized => $composableBuilder(
+    column: $table.isAiSynthesized,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+}
+
+class $$ReportRecordsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ReportRecordsTable,
+          ReportRecord,
+          $$ReportRecordsTableFilterComposer,
+          $$ReportRecordsTableOrderingComposer,
+          $$ReportRecordsTableAnnotationComposer,
+          $$ReportRecordsTableCreateCompanionBuilder,
+          $$ReportRecordsTableUpdateCompanionBuilder,
+          (
+            ReportRecord,
+            BaseReferences<_$AppDatabase, $ReportRecordsTable, ReportRecord>,
+          ),
+          ReportRecord,
+          PrefetchHooks Function()
+        > {
+  $$ReportRecordsTableTableManager(_$AppDatabase db, $ReportRecordsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ReportRecordsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ReportRecordsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ReportRecordsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> title = const Value.absent(),
+                Value<String> reportType = const Value.absent(),
+                Value<String> periodLabel = const Value.absent(),
+                Value<DateTime> startDate = const Value.absent(),
+                Value<DateTime> endDate = const Value.absent(),
+                Value<String> content = const Value.absent(),
+                Value<bool> isAiSynthesized = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ReportRecordsCompanion(
+                id: id,
+                title: title,
+                reportType: reportType,
+                periodLabel: periodLabel,
+                startDate: startDate,
+                endDate: endDate,
+                content: content,
+                isAiSynthesized: isAiSynthesized,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String title,
+                required String reportType,
+                required String periodLabel,
+                required DateTime startDate,
+                required DateTime endDate,
+                required String content,
+                Value<bool> isAiSynthesized = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ReportRecordsCompanion.insert(
+                id: id,
+                title: title,
+                reportType: reportType,
+                periodLabel: periodLabel,
+                startDate: startDate,
+                endDate: endDate,
+                content: content,
+                isAiSynthesized: isAiSynthesized,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ReportRecordsTable, ReportRecord>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $ReportRecordsTable,
+                    ReportRecord
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ReportRecordsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ReportRecordsTable,
+      ReportRecord,
+      $$ReportRecordsTableFilterComposer,
+      $$ReportRecordsTableOrderingComposer,
+      $$ReportRecordsTableAnnotationComposer,
+      $$ReportRecordsTableCreateCompanionBuilder,
+      $$ReportRecordsTableUpdateCompanionBuilder,
+      (
+        ReportRecord,
+        BaseReferences<_$AppDatabase, $ReportRecordsTable, ReportRecord>,
+      ),
+      ReportRecord,
+      PrefetchHooks Function()
+    >;
+typedef $$BackupRecordsTableCreateCompanionBuilder =
+    BackupRecordsCompanion Function({
+      required String id,
+      required String filename,
+      Value<String> backupType,
+      Value<int> recordCount,
+      Value<int> fileSizeBytes,
+      Value<String?> filePath,
+      Value<DateTime> createdAt,
+      Value<int> rowid,
+    });
+typedef $$BackupRecordsTableUpdateCompanionBuilder =
+    BackupRecordsCompanion Function({
+      Value<String> id,
+      Value<String> filename,
+      Value<String> backupType,
+      Value<int> recordCount,
+      Value<int> fileSizeBytes,
+      Value<String?> filePath,
+      Value<DateTime> createdAt,
+      Value<int> rowid,
+    });
+
+class $$BackupRecordsTableFilterComposer
+    extends Composer<_$AppDatabase, $BackupRecordsTable> {
+  $$BackupRecordsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get filename => $composableBuilder(
+    column: $table.filename,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get backupType => $composableBuilder(
+    column: $table.backupType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get recordCount => $composableBuilder(
+    column: $table.recordCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get fileSizeBytes => $composableBuilder(
+    column: $table.fileSizeBytes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get filePath => $composableBuilder(
+    column: $table.filePath,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$BackupRecordsTableOrderingComposer
+    extends Composer<_$AppDatabase, $BackupRecordsTable> {
+  $$BackupRecordsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get filename => $composableBuilder(
+    column: $table.filename,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get backupType => $composableBuilder(
+    column: $table.backupType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get recordCount => $composableBuilder(
+    column: $table.recordCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get fileSizeBytes => $composableBuilder(
+    column: $table.fileSizeBytes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get filePath => $composableBuilder(
+    column: $table.filePath,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$BackupRecordsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $BackupRecordsTable> {
+  $$BackupRecordsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get filename =>
+      $composableBuilder(column: $table.filename, builder: (column) => column);
+
+  GeneratedColumn<String> get backupType => $composableBuilder(
+    column: $table.backupType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get recordCount => $composableBuilder(
+    column: $table.recordCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get fileSizeBytes => $composableBuilder(
+    column: $table.fileSizeBytes,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get filePath =>
+      $composableBuilder(column: $table.filePath, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+}
+
+class $$BackupRecordsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $BackupRecordsTable,
+          BackupRecord,
+          $$BackupRecordsTableFilterComposer,
+          $$BackupRecordsTableOrderingComposer,
+          $$BackupRecordsTableAnnotationComposer,
+          $$BackupRecordsTableCreateCompanionBuilder,
+          $$BackupRecordsTableUpdateCompanionBuilder,
+          (
+            BackupRecord,
+            BaseReferences<_$AppDatabase, $BackupRecordsTable, BackupRecord>,
+          ),
+          BackupRecord,
+          PrefetchHooks Function()
+        > {
+  $$BackupRecordsTableTableManager(_$AppDatabase db, $BackupRecordsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$BackupRecordsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$BackupRecordsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$BackupRecordsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> filename = const Value.absent(),
+                Value<String> backupType = const Value.absent(),
+                Value<int> recordCount = const Value.absent(),
+                Value<int> fileSizeBytes = const Value.absent(),
+                Value<String?> filePath = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => BackupRecordsCompanion(
+                id: id,
+                filename: filename,
+                backupType: backupType,
+                recordCount: recordCount,
+                fileSizeBytes: fileSizeBytes,
+                filePath: filePath,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String filename,
+                Value<String> backupType = const Value.absent(),
+                Value<int> recordCount = const Value.absent(),
+                Value<int> fileSizeBytes = const Value.absent(),
+                Value<String?> filePath = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => BackupRecordsCompanion.insert(
+                id: id,
+                filename: filename,
+                backupType: backupType,
+                recordCount: recordCount,
+                fileSizeBytes: fileSizeBytes,
+                filePath: filePath,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$BackupRecordsTable, BackupRecord>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $BackupRecordsTable,
+                    BackupRecord
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$BackupRecordsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $BackupRecordsTable,
+      BackupRecord,
+      $$BackupRecordsTableFilterComposer,
+      $$BackupRecordsTableOrderingComposer,
+      $$BackupRecordsTableAnnotationComposer,
+      $$BackupRecordsTableCreateCompanionBuilder,
+      $$BackupRecordsTableUpdateCompanionBuilder,
+      (
+        BackupRecord,
+        BaseReferences<_$AppDatabase, $BackupRecordsTable, BackupRecord>,
+      ),
+      BackupRecord,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -32614,4 +34208,8 @@ class $AppDatabaseManager {
       $$NotificationSettingsTableTableManager(_db, _db.notificationSettings);
   $$JobSourceConfigsTableTableManager get jobSourceConfigs =>
       $$JobSourceConfigsTableTableManager(_db, _db.jobSourceConfigs);
+  $$ReportRecordsTableTableManager get reportRecords =>
+      $$ReportRecordsTableTableManager(_db, _db.reportRecords);
+  $$BackupRecordsTableTableManager get backupRecords =>
+      $$BackupRecordsTableTableManager(_db, _db.backupRecords);
 }
