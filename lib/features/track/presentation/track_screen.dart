@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/date_formatter.dart';
 import '../providers/track_providers.dart';
 import 'add_edit_dsa_dialog.dart';
 import 'add_edit_expense_dialog.dart';
 import 'add_edit_income_dialog.dart';
-import 'add_edit_resource_dialog.dart';
-import 'add_edit_skill_dialog.dart';
 import 'add_edit_weight_dialog.dart';
 import 'add_edit_workout_dialog.dart';
 import 'dsa_problem_details_screen.dart';
@@ -25,11 +22,12 @@ class TrackScreen extends ConsumerStatefulWidget {
 
 class _TrackScreenState extends ConsumerState<TrackScreen> with SingleTickerProviderStateMixin {
   late final TabController _tabController;
+  bool _isSyncingApas = false;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 5, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
   }
 
   @override
@@ -59,7 +57,6 @@ class _TrackScreenState extends ConsumerState<TrackScreen> with SingleTickerProv
           tabs: const [
             Tab(icon: Icon(Icons.dashboard_outlined, size: 18), text: 'Overview'),
             Tab(icon: Icon(Icons.code, size: 18), text: 'DSA Tracker'),
-            Tab(icon: Icon(Icons.school_outlined, size: 18), text: 'Learning'),
             Tab(icon: Icon(Icons.fitness_center_outlined, size: 18), text: 'Fitness'),
             Tab(icon: Icon(Icons.account_balance_wallet_outlined, size: 18), text: 'Finance'),
           ],
@@ -70,7 +67,6 @@ class _TrackScreenState extends ConsumerState<TrackScreen> with SingleTickerProv
         children: [
           _buildOverviewTab(theme),
           _buildDSATab(theme),
-          _buildLearningTab(theme),
           _buildFitnessTab(theme),
           _buildFinanceTab(theme),
         ],
@@ -156,65 +152,6 @@ class _TrackScreenState extends ConsumerState<TrackScreen> with SingleTickerProv
         ),
         const SizedBox(height: 12),
 
-        // Learning & Skills Card
-        Card(
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: BorderSide(color: theme.colorScheme.outlineVariant),
-          ),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(16),
-            onTap: () => _tabController.animateTo(2),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.school_outlined, color: theme.colorScheme.primary, size: 20),
-                          const SizedBox(width: 8),
-                          Text('Skills & Resources', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                      const Icon(Icons.chevron_right, size: 20),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildMetricTile(
-                          '${snapshot.activeSkillsCount}',
-                          'Tracked Skills',
-                          Icons.stars_outlined,
-                          theme.colorScheme.primary,
-                          theme,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: _buildMetricTile(
-                          '${snapshot.learningResourcesCount}',
-                          'Active Resources',
-                          Icons.menu_book_outlined,
-                          Colors.teal,
-                          theme,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 12),
-
         // Fitness Card
         Card(
           elevation: 0,
@@ -224,7 +161,7 @@ class _TrackScreenState extends ConsumerState<TrackScreen> with SingleTickerProv
           ),
           child: InkWell(
             borderRadius: BorderRadius.circular(16),
-            onTap: () => _tabController.animateTo(3),
+            onTap: () => _tabController.animateTo(2),
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -283,7 +220,7 @@ class _TrackScreenState extends ConsumerState<TrackScreen> with SingleTickerProv
           ),
           child: InkWell(
             borderRadius: BorderRadius.circular(16),
-            onTap: () => _tabController.animateTo(4),
+            onTap: () => _tabController.animateTo(3),
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -386,6 +323,94 @@ class _TrackScreenState extends ConsumerState<TrackScreen> with SingleTickerProv
                 child: _buildStatCard('Revision Due', '${stats.revisionDue}', stats.revisionDue > 0 ? Colors.red : Colors.grey, theme),
               ),
             ],
+          ),
+          const SizedBox(height: 12),
+
+          // APAS LeetCode Integration Banner
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primaryContainer.withOpacity(0.4),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: theme.colorScheme.primary.withOpacity(0.2)),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.auto_awesome, color: theme.colorScheme.primary, size: 20),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'APAS LeetCode Problem Bank',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                      Text(
+                        'Sync 3,600+ LeetCode problems with solutions & company tags',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: theme.hintColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                ElevatedButton.icon(
+                  onPressed: _isSyncingApas
+                      ? null
+                      : () async {
+                          setState(() => _isSyncingApas = true);
+                          try {
+                            final count = await ref
+                                .read(apasDsaServiceProvider)
+                                .syncProblemsToDatabase(limit: 30);
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    count > 0
+                                        ? 'Successfully synced $count new problems from APAS LeetCode!'
+                                        : 'All top APAS LeetCode problems are already up to date.',
+                                  ),
+                                  behavior: SnackBarBehavior.floating,
+                                ),
+                              );
+                            }
+                          } catch (e) {
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('APAS Sync failed: $e'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          } finally {
+                            if (mounted) {
+                              setState(() => _isSyncingApas = false);
+                            }
+                          }
+                        },
+                  icon: _isSyncingApas
+                      ? const SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.sync, size: 16),
+                  label: Text(_isSyncingApas ? 'Syncing...' : 'Sync APAS'),
+                  style: ElevatedButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  ),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 12),
 
@@ -593,270 +618,7 @@ class _TrackScreenState extends ConsumerState<TrackScreen> with SingleTickerProv
   }
 
   // ===========================================================================
-  // 3. LEARNING & RESOURCES TAB
-  // ===========================================================================
-  Widget _buildLearningTab(ThemeData theme) {
-    final skills = ref.watch(skillsStreamProvider).valueOrNull ?? [];
-    final resources = ref.watch(filteredResourcesProvider);
-    final currentType = ref.watch(resourceTypeFilterProvider);
-    final currentStatus = ref.watch(resourceStatusFilterProvider);
-
-    return DefaultTabController(
-      length: 2,
-      child: Column(
-        children: [
-          const TabBar(
-            tabs: [
-              Tab(icon: Icon(Icons.stars_outlined, size: 18), text: 'Skills Competency'),
-              Tab(icon: Icon(Icons.menu_book_outlined, size: 18), text: 'Resources Library'),
-            ],
-          ),
-          Expanded(
-            child: TabBarView(
-              children: [
-                // Subtab 1: Skills List
-                Scaffold(
-                  floatingActionButton: FloatingActionButton.extended(
-                    onPressed: () {
-                      showDialog(context: context, builder: (_) => const AddEditSkillDialog());
-                    },
-                    icon: const Icon(Icons.add),
-                    label: const Text('Add Skill'),
-                  ),
-                  body: ListView(
-                    padding: const EdgeInsets.all(16),
-                    children: [
-                      if (skills.isEmpty)
-                        Card(
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(color: theme.colorScheme.outlineVariant),
-                          ),
-                          child: const Padding(
-                            padding: EdgeInsets.all(32),
-                            child: Center(
-                              child: Text('No technical skills logged yet. Tap "Add Skill" to start tracking!'),
-                            ),
-                          ),
-                        )
-                      else
-                        ...skills.map((s) {
-                          return Card(
-                            margin: const EdgeInsets.only(bottom: 10),
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
-                              side: BorderSide(color: theme.colorScheme.outlineVariant),
-                            ),
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(14),
-                              onTap: () {
-                                showDialog(context: context, builder: (_) => AddEditSkillDialog(skillToEdit: s));
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(14),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(s.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                                          decoration: BoxDecoration(
-                                            color: theme.colorScheme.primaryContainer,
-                                            borderRadius: BorderRadius.circular(6),
-                                          ),
-                                          child: Text(s.category, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: theme.colorScheme.primary)),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Row(
-                                      children: [
-                                        _buildLevelBadge('Current: ${s.currentLevel}', Colors.blueGrey, theme),
-                                        const SizedBox(width: 8),
-                                        const Icon(Icons.arrow_forward, size: 14, color: Colors.grey),
-                                        const SizedBox(width: 8),
-                                        _buildLevelBadge('Target: ${s.targetLevel}', theme.colorScheme.primary, theme),
-                                      ],
-                                    ),
-                                    if (s.notes != null && s.notes!.isNotEmpty) ...[
-                                      const SizedBox(height: 8),
-                                      Text(s.notes!, style: TextStyle(fontSize: 12, color: theme.hintColor), maxLines: 2, overflow: TextOverflow.ellipsis),
-                                    ],
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        }),
-                      const SizedBox(height: 80),
-                    ],
-                  ),
-                ),
-
-                // Subtab 2: Resources List
-                Scaffold(
-                  floatingActionButton: FloatingActionButton.extended(
-                    onPressed: () {
-                      showDialog(context: context, builder: (_) => const AddEditResourceDialog());
-                    },
-                    icon: const Icon(Icons.add),
-                    label: const Text('Add Resource'),
-                  ),
-                  body: ListView(
-                    padding: const EdgeInsets.all(16),
-                    children: [
-                      TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Search documentation, courses, articles...',
-                          prefixIcon: const Icon(Icons.search, size: 20),
-                          isDense: true,
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                          filled: true,
-                          fillColor: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
-                        ),
-                        onChanged: (val) => ref.read(resourceSearchQueryProvider.notifier).state = val,
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: DropdownButtonFormField<String>(
-                              value: currentType,
-                              decoration: const InputDecoration(isDense: true, labelText: 'Type', contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8)),
-                              items: const [
-                                DropdownMenuItem(value: 'all', child: Text('All Types')),
-                                DropdownMenuItem(value: 'COURSE', child: Text('Course')),
-                                DropdownMenuItem(value: 'DOCUMENTATION', child: Text('Documentation')),
-                                DropdownMenuItem(value: 'GITHUB', child: Text('GitHub Repo')),
-                                DropdownMenuItem(value: 'VIDEO', child: Text('Video')),
-                                DropdownMenuItem(value: 'ARTICLE', child: Text('Article')),
-                                DropdownMenuItem(value: 'BOOK', child: Text('Book')),
-                                DropdownMenuItem(value: 'TUTORIAL', child: Text('Tutorial')),
-                              ],
-                              onChanged: (val) {
-                                if (val != null) ref.read(resourceTypeFilterProvider.notifier).state = val;
-                              },
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: DropdownButtonFormField<String>(
-                              value: currentStatus,
-                              decoration: const InputDecoration(isDense: true, labelText: 'Status', contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8)),
-                              items: const [
-                                DropdownMenuItem(value: 'all', child: Text('All Statuses')),
-                                DropdownMenuItem(value: 'TO_READ', child: Text('To Read')),
-                                DropdownMenuItem(value: 'LEARNING', child: Text('In Progress')),
-                                DropdownMenuItem(value: 'COMPLETED', child: Text('Completed')),
-                                DropdownMenuItem(value: 'REFERENCE', child: Text('Reference')),
-                              ],
-                              onChanged: (val) {
-                                if (val != null) ref.read(resourceStatusFilterProvider.notifier).state = val;
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 14),
-
-                      if (resources.isEmpty)
-                        Card(
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(color: theme.colorScheme.outlineVariant),
-                          ),
-                          child: const Padding(
-                            padding: EdgeInsets.all(32),
-                            child: Center(
-                              child: Text('No learning resources found matching filters.'),
-                            ),
-                          ),
-                        )
-                      else
-                        ...resources.map((r) {
-                          return Card(
-                            margin: const EdgeInsets.only(bottom: 10),
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
-                              side: BorderSide(color: theme.colorScheme.outlineVariant),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(14),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(r.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                                            const SizedBox(height: 4),
-                                            Text(r.type, style: TextStyle(fontSize: 11, color: theme.colorScheme.primary, fontWeight: FontWeight.bold)),
-                                          ],
-                                        ),
-                                      ),
-                                      PopupMenuButton<String>(
-                                        onSelected: (action) {
-                                          if (action == 'edit') {
-                                            showDialog(context: context, builder: (_) => AddEditResourceDialog(resourceToEdit: r));
-                                          } else if (action == 'delete') {
-                                            ref.read(trackRepositoryProvider).deleteResource(r.id);
-                                          }
-                                        },
-                                        itemBuilder: (_) => const [
-                                          PopupMenuItem(value: 'edit', child: Text('Edit')),
-                                          PopupMenuItem(value: 'delete', child: Text('Delete', style: TextStyle(color: Colors.red))),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      _buildResourceStatusChip(r.status, theme),
-                                      if (r.url != null && r.url!.isNotEmpty)
-                                        IconButton(
-                                          icon: const Icon(Icons.open_in_new, size: 18),
-                                          tooltip: 'Open URL',
-                                          onPressed: () async {
-                                            final uri = Uri.tryParse(r.url!);
-                                            if (uri != null && await canLaunchUrl(uri)) {
-                                              await launchUrl(uri, mode: LaunchMode.externalApplication);
-                                            }
-                                          },
-                                        ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        }),
-                      const SizedBox(height: 80),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ===========================================================================
-  // 4. FITNESS TAB
+  // 3. FITNESS TAB
   // ===========================================================================
   Widget _buildFitnessTab(ThemeData theme) {
     final workouts = ref.watch(workoutsStreamProvider).valueOrNull ?? [];
@@ -1341,34 +1103,6 @@ class _TrackScreenState extends ConsumerState<TrackScreen> with SingleTickerProv
         borderRadius: BorderRadius.circular(6),
       ),
       child: Text(status.label, style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.bold)),
-    );
-  }
-
-  Widget _buildLevelBadge(String text, Color color, ThemeData theme) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Text(text, style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w600)),
-    );
-  }
-
-  Widget _buildResourceStatusChip(String status, ThemeData theme) {
-    final s = ResourceStatus.fromString(status);
-    Color color = Colors.blueGrey;
-    if (s == ResourceStatus.learning) color = Colors.orange.shade800;
-    if (s == ResourceStatus.completed) color = Colors.green;
-    if (s == ResourceStatus.reference) color = theme.colorScheme.primary;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Text(s.label, style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.bold)),
     );
   }
 

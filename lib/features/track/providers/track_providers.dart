@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/database/app_database.dart';
+import '../services/apas_dsa_service.dart';
 
 // ==========================================
 // 1. DSA PROVIDERS & MODELS
@@ -974,4 +975,9 @@ class TrackRepository {
 final trackRepositoryProvider = Provider<TrackRepository>((ref) {
   final db = ref.watch(databaseProvider);
   return TrackRepository(db);
+});
+
+final apasDsaServiceProvider = Provider<ApasDsaService>((ref) {
+  final db = ref.watch(databaseProvider);
+  return ApasDsaService(db: db);
 });
