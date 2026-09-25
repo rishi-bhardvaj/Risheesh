@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/database/app_database.dart';
 import '../../../core/utils/date_formatter.dart';
@@ -15,6 +16,8 @@ import 'application_details_screen.dart';
 import 'job_details_screen.dart';
 import 'resume_vault_view.dart';
 import 'saved_searches_view.dart';
+import 'widgets/job_ai_analysis_dialog.dart';
+import 'widgets/resume_selector_banner.dart';
 
 class CareerScreen extends ConsumerStatefulWidget {
   const CareerScreen({super.key});
@@ -333,12 +336,16 @@ class _CareerScreenState extends ConsumerState<CareerScreen> with SingleTickerPr
     final jobs = ref.watch(filteredJobsProvider);
     final filter = ref.watch(jobFilterProvider);
     final currentSort = ref.watch(jobSortProvider);
+    final discoveryState = ref.watch(liveDiscoveryProvider);
 
     return Column(
       children: [
-        // Search & Filter Bar
+        // Active Resume Context Banner
+        const ResumeSelectorBanner(),
+
+        // Search, Discover Live & Filter Bar
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
           child: Row(
             children: [
               Expanded(
@@ -362,21 +369,47 @@ class _CareerScreenState extends ConsumerState<CareerScreen> with SingleTickerPr
                   },
                   elevation: const WidgetStatePropertyAll(0),
                   backgroundColor: WidgetStatePropertyAll(
-                    theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                    theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                   ),
                 ),
               ),
               const SizedBox(width: 8),
+              FilledButton.tonalIcon(
+                onPressed: discoveryState.isLoading
+                    ? null
+                    : () async {
+                        final messenger = ScaffoldMessenger.of(context);
+                        final res = await ref.read(liveDiscoveryProvider.notifier).discoverJobs();
+                        if (res != null) {
+                          messenger.showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Discovered ${res.totalDiscovered} jobs: ${res.newJobsSaved} new saved, ${res.duplicatesSkipped} duplicates skipped.',
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                icon: discoveryState.isLoading
+                    ? const SizedBox(
+                        width: 14,
+                        height: 14,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.radar, size: 18),
+                label: Text(discoveryState.isLoading ? 'Discovering...' : 'Discover Live'),
+              ),
+              const SizedBox(width: 4),
               IconButton.filledTonal(
                 icon: Badge(
                   isLabelVisible: filter.hasActiveFilters,
-                  child: const Icon(Icons.filter_list),
+                  child: const Icon(Icons.filter_list, size: 20),
                 ),
                 tooltip: 'Filter Jobs',
                 onPressed: () => _showJobFilterSheet(context),
               ),
               PopupMenuButton<JobSortOption>(
-                icon: const Icon(Icons.sort),
+                icon: const Icon(Icons.sort, size: 20),
                 tooltip: 'Sort Jobs',
                 initialValue: currentSort,
                 onSelected: (s) => ref.read(jobSortProvider.notifier).state = s,
@@ -431,13 +464,20 @@ class _CareerScreenState extends ConsumerState<CareerScreen> with SingleTickerPr
               ? EmptyStateView(
                   icon: Icons.work_off_outlined,
                   title: 'No Jobs Found',
-                  message: 'Save jobs here to track opportunities and match against your profile.',
-                  actionLabel: 'Add Job Opportunity',
-                  onAction: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => const AddEditJobDialog(),
-                    );
+                  message: 'Tap "Discover Live" to fetch opportunities from RemoteOK and RSS feeds tailored to your active resume, or add manually.',
+                  actionLabel: 'Discover Live Jobs',
+                  onAction: () async {
+                    final messenger = ScaffoldMessenger.of(context);
+                    final res = await ref.read(liveDiscoveryProvider.notifier).discoverJobs();
+                    if (res != null) {
+                      messenger.showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Discovered ${res.totalDiscovered} jobs: ${res.newJobsSaved} new saved, ${res.duplicatesSkipped} duplicates skipped.',
+                          ),
+                        ),
+                      );
+                    }
                   },
                 )
               : ListView.builder(
@@ -447,13 +487,20 @@ class _CareerScreenState extends ConsumerState<CareerScreen> with SingleTickerPr
                     final job = jobs[index];
                     final match = ref.watch(jobMatchProvider(job));
 
+                    Color matchColor = Colors.grey;
+                    if (match.matchPercentage >= 80) {
+                      matchColor = Colors.green;
+                    } else if (match.matchPercentage >= 50) {
+                      matchColor = Colors.amber.shade800;
+                    }
+
                     return Card(
                       elevation: 0,
                       margin: const EdgeInsets.only(bottom: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                         side: BorderSide(
-                          color: job.isSaved ? theme.colorScheme.primary.withOpacity(0.5) : theme.colorScheme.outlineVariant,
+                          color: job.isSaved ? theme.colorScheme.primary.withValues(alpha: 0.5) : theme.colorScheme.outlineVariant,
                           width: job.isSaved ? 1.5 : 1,
                         ),
                       ),
@@ -485,10 +532,33 @@ class _CareerScreenState extends ConsumerState<CareerScreen> with SingleTickerPr
                                         ),
                                         const SizedBox(height: 2),
                                         Text(
-                                          job.company,
+                                          '${job.company} • ${job.location ?? "Remote"}',
                                           style: theme.textTheme.bodyMedium?.copyWith(
                                             color: theme.colorScheme.primary,
                                             fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: matchColor.withValues(alpha: 0.12),
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(color: matchColor.withValues(alpha: 0.3)),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(Icons.bolt, size: 14, color: matchColor),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          '${match.matchPercentage}%',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                            color: matchColor,
                                           ),
                                         ),
                                       ],
@@ -505,61 +575,65 @@ class _CareerScreenState extends ConsumerState<CareerScreen> with SingleTickerPr
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 8),
-
-                              // Info tags
-                              Wrap(
-                                spacing: 6,
-                                runSpacing: 6,
-                                children: [
-                                  if (job.location != null)
-                                    _buildSmallTag(job.location!, Icons.location_on_outlined, theme),
-                                  if (job.employmentType != null)
-                                    _buildSmallTag(job.employmentType!, Icons.work_outline, theme),
-                                  if (job.salary != null)
-                                    _buildSmallTag(job.salary!, Icons.payments_outlined, theme),
-                                ],
-                              ),
+                              if (job.skills != null && job.skills!.isNotEmpty) ...[
+                                const SizedBox(height: 8),
+                                Wrap(
+                                  spacing: 6,
+                                  runSpacing: 4,
+                                  children: job.skills!
+                                      .split(',')
+                                      .take(4)
+                                      .map((s) => Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                            decoration: BoxDecoration(
+                                              color: theme.colorScheme.surfaceContainerHighest,
+                                              borderRadius: BorderRadius.circular(4),
+                                            ),
+                                            child: Text(
+                                              s.trim(),
+                                              style: theme.textTheme.labelSmall?.copyWith(fontSize: 11),
+                                            ),
+                                          ))
+                                      .toList(),
+                                ),
+                              ],
                               const SizedBox(height: 12),
                               const Divider(height: 1),
                               const SizedBox(height: 8),
 
-                              // Match indicator & Action
+                              // Actions Row: AI Analysis, Apply, Track Application
                               Row(
                                 children: [
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color: match.matchPercentage >= 70
-                                          ? Colors.green.withOpacity(0.15)
-                                          : (match.matchPercentage >= 40 ? Colors.orange.withOpacity(0.15) : Colors.grey.withOpacity(0.15)),
-                                      borderRadius: BorderRadius.circular(6),
+                                  if (job.salary != null && job.salary!.isNotEmpty)
+                                    Text(
+                                      job.salary!,
+                                      style: theme.textTheme.labelSmall?.copyWith(
+                                        color: Colors.green.shade700,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          Icons.tune,
-                                          size: 14,
-                                          color: match.matchPercentage >= 70
-                                              ? Colors.green
-                                              : (match.matchPercentage >= 40 ? Colors.orange : Colors.grey),
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          '${match.matchPercentage}% Match',
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                            color: match.matchPercentage >= 70
-                                                ? Colors.green.shade800
-                                                : (match.matchPercentage >= 40 ? Colors.orange.shade900 : Colors.grey.shade700),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
                                   const Spacer(),
+                                  IconButton(
+                                    icon: const Icon(Icons.psychology_outlined, size: 20),
+                                    tooltip: 'AI Description Analysis',
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (_) => JobAiAnalysisDialog(job: job),
+                                      );
+                                    },
+                                  ),
+                                  if (job.url != null && job.url!.isNotEmpty)
+                                    IconButton(
+                                      icon: const Icon(Icons.open_in_new, size: 18),
+                                      tooltip: 'Apply Online',
+                                      onPressed: () async {
+                                        final uri = Uri.tryParse(job.url!);
+                                        if (uri != null && await canLaunchUrl(uri)) {
+                                          await launchUrl(uri, mode: LaunchMode.externalApplication);
+                                        }
+                                      },
+                                    ),
                                   TextButton.icon(
                                     onPressed: () {
                                       showDialog(
@@ -568,7 +642,7 @@ class _CareerScreenState extends ConsumerState<CareerScreen> with SingleTickerPr
                                       );
                                     },
                                     icon: const Icon(Icons.send, size: 16),
-                                    label: const Text('Track Application'),
+                                    label: const Text('Track'),
                                   ),
                                 ],
                               ),
@@ -881,27 +955,6 @@ class _CareerScreenState extends ConsumerState<CareerScreen> with SingleTickerPr
           ),
         );
       },
-    );
-  }
-
-  Widget _buildSmallTag(String text, IconData icon, ThemeData theme) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.6),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 12, color: theme.colorScheme.onSurfaceVariant),
-          const SizedBox(width: 4),
-          Text(
-            text,
-            style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant),
-          ),
-        ],
-      ),
     );
   }
 
