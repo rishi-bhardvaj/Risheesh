@@ -4565,6 +4565,44 @@ class $ResumesTable extends Resumes with TableInfo<$ResumesTable, Resume> {
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _parsedDataJsonMeta = const VerificationMeta(
+    'parsedDataJson',
+  );
+  @override
+  late final GeneratedColumn<String> parsedDataJson = GeneratedColumn<String>(
+    'parsed_data_json',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _extractionStatusMeta = const VerificationMeta(
+    'extractionStatus',
+  );
+  @override
+  late final GeneratedColumn<String> extractionStatus = GeneratedColumn<String>(
+    'extraction_status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('NOT_PARSED'),
+  );
+  static const VerificationMeta _isActiveMeta = const VerificationMeta(
+    'isActive',
+  );
+  @override
+  late final GeneratedColumn<bool> isActive = GeneratedColumn<bool>(
+    'is_active',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_active" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -4599,6 +4637,9 @@ class $ResumesTable extends Resumes with TableInfo<$ResumesTable, Resume> {
     fileName,
     notes,
     isPrimary,
+    parsedDataJson,
+    extractionStatus,
+    isActive,
     createdAt,
     updatedAt,
   ];
@@ -4667,6 +4708,30 @@ class $ResumesTable extends Resumes with TableInfo<$ResumesTable, Resume> {
         isPrimary.isAcceptableOrUnknown(data['is_primary']!, _isPrimaryMeta),
       );
     }
+    if (data.containsKey('parsed_data_json')) {
+      context.handle(
+        _parsedDataJsonMeta,
+        parsedDataJson.isAcceptableOrUnknown(
+          data['parsed_data_json']!,
+          _parsedDataJsonMeta,
+        ),
+      );
+    }
+    if (data.containsKey('extraction_status')) {
+      context.handle(
+        _extractionStatusMeta,
+        extractionStatus.isAcceptableOrUnknown(
+          data['extraction_status']!,
+          _extractionStatusMeta,
+        ),
+      );
+    }
+    if (data.containsKey('is_active')) {
+      context.handle(
+        _isActiveMeta,
+        isActive.isAcceptableOrUnknown(data['is_active']!, _isActiveMeta),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -4720,6 +4785,18 @@ class $ResumesTable extends Resumes with TableInfo<$ResumesTable, Resume> {
         DriftSqlType.bool,
         data['${effectivePrefix}is_primary'],
       )!,
+      parsedDataJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}parsed_data_json'],
+      ),
+      extractionStatus: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}extraction_status'],
+      )!,
+      isActive: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_active'],
+      )!,
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -4746,6 +4823,9 @@ class Resume extends DataClass implements Insertable<Resume> {
   final String fileName;
   final String? notes;
   final bool isPrimary;
+  final String? parsedDataJson;
+  final String extractionStatus;
+  final bool isActive;
   final DateTime createdAt;
   final DateTime updatedAt;
   const Resume({
@@ -4757,6 +4837,9 @@ class Resume extends DataClass implements Insertable<Resume> {
     required this.fileName,
     this.notes,
     required this.isPrimary,
+    this.parsedDataJson,
+    required this.extractionStatus,
+    required this.isActive,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -4775,6 +4858,11 @@ class Resume extends DataClass implements Insertable<Resume> {
       map['notes'] = Variable<String>(notes);
     }
     map['is_primary'] = Variable<bool>(isPrimary);
+    if (!nullToAbsent || parsedDataJson != null) {
+      map['parsed_data_json'] = Variable<String>(parsedDataJson);
+    }
+    map['extraction_status'] = Variable<String>(extractionStatus);
+    map['is_active'] = Variable<bool>(isActive);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
@@ -4794,6 +4882,11 @@ class Resume extends DataClass implements Insertable<Resume> {
           ? const Value.absent()
           : Value(notes),
       isPrimary: Value(isPrimary),
+      parsedDataJson: parsedDataJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(parsedDataJson),
+      extractionStatus: Value(extractionStatus),
+      isActive: Value(isActive),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
     );
@@ -4813,6 +4906,9 @@ class Resume extends DataClass implements Insertable<Resume> {
       fileName: serializer.fromJson<String>(json['fileName']),
       notes: serializer.fromJson<String?>(json['notes']),
       isPrimary: serializer.fromJson<bool>(json['isPrimary']),
+      parsedDataJson: serializer.fromJson<String?>(json['parsedDataJson']),
+      extractionStatus: serializer.fromJson<String>(json['extractionStatus']),
+      isActive: serializer.fromJson<bool>(json['isActive']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
@@ -4829,6 +4925,9 @@ class Resume extends DataClass implements Insertable<Resume> {
       'fileName': serializer.toJson<String>(fileName),
       'notes': serializer.toJson<String?>(notes),
       'isPrimary': serializer.toJson<bool>(isPrimary),
+      'parsedDataJson': serializer.toJson<String?>(parsedDataJson),
+      'extractionStatus': serializer.toJson<String>(extractionStatus),
+      'isActive': serializer.toJson<bool>(isActive),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
@@ -4843,6 +4942,9 @@ class Resume extends DataClass implements Insertable<Resume> {
     String? fileName,
     Value<String?> notes = const Value.absent(),
     bool? isPrimary,
+    Value<String?> parsedDataJson = const Value.absent(),
+    String? extractionStatus,
+    bool? isActive,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) => Resume(
@@ -4854,6 +4956,11 @@ class Resume extends DataClass implements Insertable<Resume> {
     fileName: fileName ?? this.fileName,
     notes: notes.present ? notes.value : this.notes,
     isPrimary: isPrimary ?? this.isPrimary,
+    parsedDataJson: parsedDataJson.present
+        ? parsedDataJson.value
+        : this.parsedDataJson,
+    extractionStatus: extractionStatus ?? this.extractionStatus,
+    isActive: isActive ?? this.isActive,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
   );
@@ -4869,6 +4976,13 @@ class Resume extends DataClass implements Insertable<Resume> {
       fileName: data.fileName.present ? data.fileName.value : this.fileName,
       notes: data.notes.present ? data.notes.value : this.notes,
       isPrimary: data.isPrimary.present ? data.isPrimary.value : this.isPrimary,
+      parsedDataJson: data.parsedDataJson.present
+          ? data.parsedDataJson.value
+          : this.parsedDataJson,
+      extractionStatus: data.extractionStatus.present
+          ? data.extractionStatus.value
+          : this.extractionStatus,
+      isActive: data.isActive.present ? data.isActive.value : this.isActive,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
@@ -4885,6 +4999,9 @@ class Resume extends DataClass implements Insertable<Resume> {
           ..write('fileName: $fileName, ')
           ..write('notes: $notes, ')
           ..write('isPrimary: $isPrimary, ')
+          ..write('parsedDataJson: $parsedDataJson, ')
+          ..write('extractionStatus: $extractionStatus, ')
+          ..write('isActive: $isActive, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -4901,6 +5018,9 @@ class Resume extends DataClass implements Insertable<Resume> {
     fileName,
     notes,
     isPrimary,
+    parsedDataJson,
+    extractionStatus,
+    isActive,
     createdAt,
     updatedAt,
   );
@@ -4916,6 +5036,9 @@ class Resume extends DataClass implements Insertable<Resume> {
           other.fileName == this.fileName &&
           other.notes == this.notes &&
           other.isPrimary == this.isPrimary &&
+          other.parsedDataJson == this.parsedDataJson &&
+          other.extractionStatus == this.extractionStatus &&
+          other.isActive == this.isActive &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
 }
@@ -4929,6 +5052,9 @@ class ResumesCompanion extends UpdateCompanion<Resume> {
   final Value<String> fileName;
   final Value<String?> notes;
   final Value<bool> isPrimary;
+  final Value<String?> parsedDataJson;
+  final Value<String> extractionStatus;
+  final Value<bool> isActive;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<int> rowid;
@@ -4941,6 +5067,9 @@ class ResumesCompanion extends UpdateCompanion<Resume> {
     this.fileName = const Value.absent(),
     this.notes = const Value.absent(),
     this.isPrimary = const Value.absent(),
+    this.parsedDataJson = const Value.absent(),
+    this.extractionStatus = const Value.absent(),
+    this.isActive = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -4954,6 +5083,9 @@ class ResumesCompanion extends UpdateCompanion<Resume> {
     required String fileName,
     this.notes = const Value.absent(),
     this.isPrimary = const Value.absent(),
+    this.parsedDataJson = const Value.absent(),
+    this.extractionStatus = const Value.absent(),
+    this.isActive = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -4970,6 +5102,9 @@ class ResumesCompanion extends UpdateCompanion<Resume> {
     Expression<String>? fileName,
     Expression<String>? notes,
     Expression<bool>? isPrimary,
+    Expression<String>? parsedDataJson,
+    Expression<String>? extractionStatus,
+    Expression<bool>? isActive,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<int>? rowid,
@@ -4983,6 +5118,9 @@ class ResumesCompanion extends UpdateCompanion<Resume> {
       if (fileName != null) 'file_name': fileName,
       if (notes != null) 'notes': notes,
       if (isPrimary != null) 'is_primary': isPrimary,
+      if (parsedDataJson != null) 'parsed_data_json': parsedDataJson,
+      if (extractionStatus != null) 'extraction_status': extractionStatus,
+      if (isActive != null) 'is_active': isActive,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (rowid != null) 'rowid': rowid,
@@ -4998,6 +5136,9 @@ class ResumesCompanion extends UpdateCompanion<Resume> {
     Value<String>? fileName,
     Value<String?>? notes,
     Value<bool>? isPrimary,
+    Value<String?>? parsedDataJson,
+    Value<String>? extractionStatus,
+    Value<bool>? isActive,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
     Value<int>? rowid,
@@ -5011,6 +5152,9 @@ class ResumesCompanion extends UpdateCompanion<Resume> {
       fileName: fileName ?? this.fileName,
       notes: notes ?? this.notes,
       isPrimary: isPrimary ?? this.isPrimary,
+      parsedDataJson: parsedDataJson ?? this.parsedDataJson,
+      extractionStatus: extractionStatus ?? this.extractionStatus,
+      isActive: isActive ?? this.isActive,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       rowid: rowid ?? this.rowid,
@@ -5044,6 +5188,15 @@ class ResumesCompanion extends UpdateCompanion<Resume> {
     if (isPrimary.present) {
       map['is_primary'] = Variable<bool>(isPrimary.value);
     }
+    if (parsedDataJson.present) {
+      map['parsed_data_json'] = Variable<String>(parsedDataJson.value);
+    }
+    if (extractionStatus.present) {
+      map['extraction_status'] = Variable<String>(extractionStatus.value);
+    }
+    if (isActive.present) {
+      map['is_active'] = Variable<bool>(isActive.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -5067,6 +5220,9 @@ class ResumesCompanion extends UpdateCompanion<Resume> {
           ..write('fileName: $fileName, ')
           ..write('notes: $notes, ')
           ..write('isPrimary: $isPrimary, ')
+          ..write('parsedDataJson: $parsedDataJson, ')
+          ..write('extractionStatus: $extractionStatus, ')
+          ..write('isActive: $isActive, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('rowid: $rowid')
@@ -5197,6 +5353,39 @@ class $JobsTable extends Jobs with TableInfo<$JobsTable, Job> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _atsProviderMeta = const VerificationMeta(
+    'atsProvider',
+  );
+  @override
+  late final GeneratedColumn<String> atsProvider = GeneratedColumn<String>(
+    'ats_provider',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _rawJsonMeta = const VerificationMeta(
+    'rawJson',
+  );
+  @override
+  late final GeneratedColumn<String> rawJson = GeneratedColumn<String>(
+    'raw_json',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _externalIdMeta = const VerificationMeta(
+    'externalId',
+  );
+  @override
+  late final GeneratedColumn<String> externalId = GeneratedColumn<String>(
+    'external_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _postedDateMeta = const VerificationMeta(
     'postedDate',
   );
@@ -5281,6 +5470,9 @@ class $JobsTable extends Jobs with TableInfo<$JobsTable, Job> {
     source,
     description,
     skills,
+    atsProvider,
+    rawJson,
+    externalId,
     postedDate,
     discoveredAt,
     isSaved,
@@ -5378,6 +5570,27 @@ class $JobsTable extends Jobs with TableInfo<$JobsTable, Job> {
         skills.isAcceptableOrUnknown(data['skills']!, _skillsMeta),
       );
     }
+    if (data.containsKey('ats_provider')) {
+      context.handle(
+        _atsProviderMeta,
+        atsProvider.isAcceptableOrUnknown(
+          data['ats_provider']!,
+          _atsProviderMeta,
+        ),
+      );
+    }
+    if (data.containsKey('raw_json')) {
+      context.handle(
+        _rawJsonMeta,
+        rawJson.isAcceptableOrUnknown(data['raw_json']!, _rawJsonMeta),
+      );
+    }
+    if (data.containsKey('external_id')) {
+      context.handle(
+        _externalIdMeta,
+        externalId.isAcceptableOrUnknown(data['external_id']!, _externalIdMeta),
+      );
+    }
     if (data.containsKey('posted_date')) {
       context.handle(
         _postedDateMeta,
@@ -5470,6 +5683,18 @@ class $JobsTable extends Jobs with TableInfo<$JobsTable, Job> {
         DriftSqlType.string,
         data['${effectivePrefix}skills'],
       ),
+      atsProvider: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}ats_provider'],
+      ),
+      rawJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}raw_json'],
+      ),
+      externalId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}external_id'],
+      ),
       postedDate: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}posted_date'],
@@ -5515,6 +5740,9 @@ class Job extends DataClass implements Insertable<Job> {
   final String? source;
   final String? description;
   final String? skills;
+  final String? atsProvider;
+  final String? rawJson;
+  final String? externalId;
   final DateTime? postedDate;
   final DateTime discoveredAt;
   final bool isSaved;
@@ -5533,6 +5761,9 @@ class Job extends DataClass implements Insertable<Job> {
     this.source,
     this.description,
     this.skills,
+    this.atsProvider,
+    this.rawJson,
+    this.externalId,
     this.postedDate,
     required this.discoveredAt,
     required this.isSaved,
@@ -5569,6 +5800,15 @@ class Job extends DataClass implements Insertable<Job> {
     }
     if (!nullToAbsent || skills != null) {
       map['skills'] = Variable<String>(skills);
+    }
+    if (!nullToAbsent || atsProvider != null) {
+      map['ats_provider'] = Variable<String>(atsProvider);
+    }
+    if (!nullToAbsent || rawJson != null) {
+      map['raw_json'] = Variable<String>(rawJson);
+    }
+    if (!nullToAbsent || externalId != null) {
+      map['external_id'] = Variable<String>(externalId);
     }
     if (!nullToAbsent || postedDate != null) {
       map['posted_date'] = Variable<DateTime>(postedDate);
@@ -5610,6 +5850,15 @@ class Job extends DataClass implements Insertable<Job> {
       skills: skills == null && nullToAbsent
           ? const Value.absent()
           : Value(skills),
+      atsProvider: atsProvider == null && nullToAbsent
+          ? const Value.absent()
+          : Value(atsProvider),
+      rawJson: rawJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(rawJson),
+      externalId: externalId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(externalId),
       postedDate: postedDate == null && nullToAbsent
           ? const Value.absent()
           : Value(postedDate),
@@ -5642,6 +5891,9 @@ class Job extends DataClass implements Insertable<Job> {
       source: serializer.fromJson<String?>(json['source']),
       description: serializer.fromJson<String?>(json['description']),
       skills: serializer.fromJson<String?>(json['skills']),
+      atsProvider: serializer.fromJson<String?>(json['atsProvider']),
+      rawJson: serializer.fromJson<String?>(json['rawJson']),
+      externalId: serializer.fromJson<String?>(json['externalId']),
       postedDate: serializer.fromJson<DateTime?>(json['postedDate']),
       discoveredAt: serializer.fromJson<DateTime>(json['discoveredAt']),
       isSaved: serializer.fromJson<bool>(json['isSaved']),
@@ -5667,6 +5919,9 @@ class Job extends DataClass implements Insertable<Job> {
       'source': serializer.toJson<String?>(source),
       'description': serializer.toJson<String?>(description),
       'skills': serializer.toJson<String?>(skills),
+      'atsProvider': serializer.toJson<String?>(atsProvider),
+      'rawJson': serializer.toJson<String?>(rawJson),
+      'externalId': serializer.toJson<String?>(externalId),
       'postedDate': serializer.toJson<DateTime?>(postedDate),
       'discoveredAt': serializer.toJson<DateTime>(discoveredAt),
       'isSaved': serializer.toJson<bool>(isSaved),
@@ -5688,6 +5943,9 @@ class Job extends DataClass implements Insertable<Job> {
     Value<String?> source = const Value.absent(),
     Value<String?> description = const Value.absent(),
     Value<String?> skills = const Value.absent(),
+    Value<String?> atsProvider = const Value.absent(),
+    Value<String?> rawJson = const Value.absent(),
+    Value<String?> externalId = const Value.absent(),
     Value<DateTime?> postedDate = const Value.absent(),
     DateTime? discoveredAt,
     bool? isSaved,
@@ -5710,6 +5968,9 @@ class Job extends DataClass implements Insertable<Job> {
     source: source.present ? source.value : this.source,
     description: description.present ? description.value : this.description,
     skills: skills.present ? skills.value : this.skills,
+    atsProvider: atsProvider.present ? atsProvider.value : this.atsProvider,
+    rawJson: rawJson.present ? rawJson.value : this.rawJson,
+    externalId: externalId.present ? externalId.value : this.externalId,
     postedDate: postedDate.present ? postedDate.value : this.postedDate,
     discoveredAt: discoveredAt ?? this.discoveredAt,
     isSaved: isSaved ?? this.isSaved,
@@ -5736,6 +5997,13 @@ class Job extends DataClass implements Insertable<Job> {
           ? data.description.value
           : this.description,
       skills: data.skills.present ? data.skills.value : this.skills,
+      atsProvider: data.atsProvider.present
+          ? data.atsProvider.value
+          : this.atsProvider,
+      rawJson: data.rawJson.present ? data.rawJson.value : this.rawJson,
+      externalId: data.externalId.present
+          ? data.externalId.value
+          : this.externalId,
       postedDate: data.postedDate.present
           ? data.postedDate.value
           : this.postedDate,
@@ -5763,6 +6031,9 @@ class Job extends DataClass implements Insertable<Job> {
           ..write('source: $source, ')
           ..write('description: $description, ')
           ..write('skills: $skills, ')
+          ..write('atsProvider: $atsProvider, ')
+          ..write('rawJson: $rawJson, ')
+          ..write('externalId: $externalId, ')
           ..write('postedDate: $postedDate, ')
           ..write('discoveredAt: $discoveredAt, ')
           ..write('isSaved: $isSaved, ')
@@ -5786,6 +6057,9 @@ class Job extends DataClass implements Insertable<Job> {
     source,
     description,
     skills,
+    atsProvider,
+    rawJson,
+    externalId,
     postedDate,
     discoveredAt,
     isSaved,
@@ -5808,6 +6082,9 @@ class Job extends DataClass implements Insertable<Job> {
           other.source == this.source &&
           other.description == this.description &&
           other.skills == this.skills &&
+          other.atsProvider == this.atsProvider &&
+          other.rawJson == this.rawJson &&
+          other.externalId == this.externalId &&
           other.postedDate == this.postedDate &&
           other.discoveredAt == this.discoveredAt &&
           other.isSaved == this.isSaved &&
@@ -5828,6 +6105,9 @@ class JobsCompanion extends UpdateCompanion<Job> {
   final Value<String?> source;
   final Value<String?> description;
   final Value<String?> skills;
+  final Value<String?> atsProvider;
+  final Value<String?> rawJson;
+  final Value<String?> externalId;
   final Value<DateTime?> postedDate;
   final Value<DateTime> discoveredAt;
   final Value<bool> isSaved;
@@ -5847,6 +6127,9 @@ class JobsCompanion extends UpdateCompanion<Job> {
     this.source = const Value.absent(),
     this.description = const Value.absent(),
     this.skills = const Value.absent(),
+    this.atsProvider = const Value.absent(),
+    this.rawJson = const Value.absent(),
+    this.externalId = const Value.absent(),
     this.postedDate = const Value.absent(),
     this.discoveredAt = const Value.absent(),
     this.isSaved = const Value.absent(),
@@ -5867,6 +6150,9 @@ class JobsCompanion extends UpdateCompanion<Job> {
     this.source = const Value.absent(),
     this.description = const Value.absent(),
     this.skills = const Value.absent(),
+    this.atsProvider = const Value.absent(),
+    this.rawJson = const Value.absent(),
+    this.externalId = const Value.absent(),
     this.postedDate = const Value.absent(),
     this.discoveredAt = const Value.absent(),
     this.isSaved = const Value.absent(),
@@ -5889,6 +6175,9 @@ class JobsCompanion extends UpdateCompanion<Job> {
     Expression<String>? source,
     Expression<String>? description,
     Expression<String>? skills,
+    Expression<String>? atsProvider,
+    Expression<String>? rawJson,
+    Expression<String>? externalId,
     Expression<DateTime>? postedDate,
     Expression<DateTime>? discoveredAt,
     Expression<bool>? isSaved,
@@ -5910,6 +6199,9 @@ class JobsCompanion extends UpdateCompanion<Job> {
       if (source != null) 'source': source,
       if (description != null) 'description': description,
       if (skills != null) 'skills': skills,
+      if (atsProvider != null) 'ats_provider': atsProvider,
+      if (rawJson != null) 'raw_json': rawJson,
+      if (externalId != null) 'external_id': externalId,
       if (postedDate != null) 'posted_date': postedDate,
       if (discoveredAt != null) 'discovered_at': discoveredAt,
       if (isSaved != null) 'is_saved': isSaved,
@@ -5932,6 +6224,9 @@ class JobsCompanion extends UpdateCompanion<Job> {
     Value<String?>? source,
     Value<String?>? description,
     Value<String?>? skills,
+    Value<String?>? atsProvider,
+    Value<String?>? rawJson,
+    Value<String?>? externalId,
     Value<DateTime?>? postedDate,
     Value<DateTime>? discoveredAt,
     Value<bool>? isSaved,
@@ -5953,6 +6248,9 @@ class JobsCompanion extends UpdateCompanion<Job> {
       source: source ?? this.source,
       description: description ?? this.description,
       skills: skills ?? this.skills,
+      atsProvider: atsProvider ?? this.atsProvider,
+      rawJson: rawJson ?? this.rawJson,
+      externalId: externalId ?? this.externalId,
       postedDate: postedDate ?? this.postedDate,
       discoveredAt: discoveredAt ?? this.discoveredAt,
       isSaved: isSaved ?? this.isSaved,
@@ -6001,6 +6299,15 @@ class JobsCompanion extends UpdateCompanion<Job> {
     if (skills.present) {
       map['skills'] = Variable<String>(skills.value);
     }
+    if (atsProvider.present) {
+      map['ats_provider'] = Variable<String>(atsProvider.value);
+    }
+    if (rawJson.present) {
+      map['raw_json'] = Variable<String>(rawJson.value);
+    }
+    if (externalId.present) {
+      map['external_id'] = Variable<String>(externalId.value);
+    }
     if (postedDate.present) {
       map['posted_date'] = Variable<DateTime>(postedDate.value);
     }
@@ -6039,6 +6346,9 @@ class JobsCompanion extends UpdateCompanion<Job> {
           ..write('source: $source, ')
           ..write('description: $description, ')
           ..write('skills: $skills, ')
+          ..write('atsProvider: $atsProvider, ')
+          ..write('rawJson: $rawJson, ')
+          ..write('externalId: $externalId, ')
           ..write('postedDate: $postedDate, ')
           ..write('discoveredAt: $discoveredAt, ')
           ..write('isSaved: $isSaved, ')
@@ -23968,6 +24278,9 @@ typedef $$ResumesTableCreateCompanionBuilder = ResumesCompanion Function({
   required String fileName,
   Value<String?> notes,
   Value<bool> isPrimary,
+  Value<String?> parsedDataJson,
+  Value<String> extractionStatus,
+  Value<bool> isActive,
   Value<DateTime> createdAt,
   Value<DateTime> updatedAt,
   Value<int> rowid,
@@ -23981,6 +24294,9 @@ typedef $$ResumesTableUpdateCompanionBuilder = ResumesCompanion Function({
   Value<String> fileName,
   Value<String?> notes,
   Value<bool> isPrimary,
+  Value<String?> parsedDataJson,
+  Value<String> extractionStatus,
+  Value<bool> isActive,
   Value<DateTime> createdAt,
   Value<DateTime> updatedAt,
   Value<int> rowid,
@@ -24057,6 +24373,21 @@ class $$ResumesTableFilterComposer
 
   ColumnFilters<bool> get isPrimary => $composableBuilder(
     column: $table.isPrimary,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get parsedDataJson => $composableBuilder(
+    column: $table.parsedDataJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get extractionStatus => $composableBuilder(
+    column: $table.extractionStatus,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isActive => $composableBuilder(
+    column: $table.isActive,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -24145,6 +24476,21 @@ class $$ResumesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get parsedDataJson => $composableBuilder(
+    column: $table.parsedDataJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get extractionStatus => $composableBuilder(
+    column: $table.extractionStatus,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isActive => $composableBuilder(
+    column: $table.isActive,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -24190,6 +24536,19 @@ class $$ResumesTableAnnotationComposer
 
   GeneratedColumn<bool> get isPrimary =>
       $composableBuilder(column: $table.isPrimary, builder: (column) => column);
+
+  GeneratedColumn<String> get parsedDataJson => $composableBuilder(
+    column: $table.parsedDataJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get extractionStatus => $composableBuilder(
+    column: $table.extractionStatus,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get isActive =>
+      $composableBuilder(column: $table.isActive, builder: (column) => column);
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -24259,6 +24618,9 @@ class $$ResumesTableTableManager
                 Value<String> fileName = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<bool> isPrimary = const Value.absent(),
+                Value<String?> parsedDataJson = const Value.absent(),
+                Value<String> extractionStatus = const Value.absent(),
+                Value<bool> isActive = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -24271,6 +24633,9 @@ class $$ResumesTableTableManager
                 fileName: fileName,
                 notes: notes,
                 isPrimary: isPrimary,
+                parsedDataJson: parsedDataJson,
+                extractionStatus: extractionStatus,
+                isActive: isActive,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 rowid: rowid,
@@ -24285,6 +24650,9 @@ class $$ResumesTableTableManager
                 required String fileName,
                 Value<String?> notes = const Value.absent(),
                 Value<bool> isPrimary = const Value.absent(),
+                Value<String?> parsedDataJson = const Value.absent(),
+                Value<String> extractionStatus = const Value.absent(),
+                Value<bool> isActive = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -24297,6 +24665,9 @@ class $$ResumesTableTableManager
                 fileName: fileName,
                 notes: notes,
                 isPrimary: isPrimary,
+                parsedDataJson: parsedDataJson,
+                extractionStatus: extractionStatus,
+                isActive: isActive,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 rowid: rowid,
@@ -24370,6 +24741,9 @@ typedef $$JobsTableCreateCompanionBuilder = JobsCompanion Function({
   Value<String?> source,
   Value<String?> description,
   Value<String?> skills,
+  Value<String?> atsProvider,
+  Value<String?> rawJson,
+  Value<String?> externalId,
   Value<DateTime?> postedDate,
   Value<DateTime> discoveredAt,
   Value<bool> isSaved,
@@ -24390,6 +24764,9 @@ typedef $$JobsTableUpdateCompanionBuilder = JobsCompanion Function({
   Value<String?> source,
   Value<String?> description,
   Value<String?> skills,
+  Value<String?> atsProvider,
+  Value<String?> rawJson,
+  Value<String?> externalId,
   Value<DateTime?> postedDate,
   Value<DateTime> discoveredAt,
   Value<bool> isSaved,
@@ -24484,6 +24861,21 @@ class $$JobsTableFilterComposer extends Composer<_$AppDatabase, $JobsTable> {
 
   ColumnFilters<String> get skills => $composableBuilder(
     column: $table.skills,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get atsProvider => $composableBuilder(
+    column: $table.atsProvider,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get rawJson => $composableBuilder(
+    column: $table.rawJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get externalId => $composableBuilder(
+    column: $table.externalId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -24606,6 +24998,21 @@ class $$JobsTableOrderingComposer extends Composer<_$AppDatabase, $JobsTable> {
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get atsProvider => $composableBuilder(
+    column: $table.atsProvider,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get rawJson => $composableBuilder(
+    column: $table.rawJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get externalId => $composableBuilder(
+    column: $table.externalId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get postedDate => $composableBuilder(
     column: $table.postedDate,
     builder: (column) => ColumnOrderings(column),
@@ -24684,6 +25091,19 @@ class $$JobsTableAnnotationComposer
 
   GeneratedColumn<String> get skills =>
       $composableBuilder(column: $table.skills, builder: (column) => column);
+
+  GeneratedColumn<String> get atsProvider => $composableBuilder(
+    column: $table.atsProvider,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get rawJson =>
+      $composableBuilder(column: $table.rawJson, builder: (column) => column);
+
+  GeneratedColumn<String> get externalId => $composableBuilder(
+    column: $table.externalId,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<DateTime> get postedDate => $composableBuilder(
     column: $table.postedDate,
@@ -24772,6 +25192,9 @@ class $$JobsTableTableManager
                 Value<String?> source = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<String?> skills = const Value.absent(),
+                Value<String?> atsProvider = const Value.absent(),
+                Value<String?> rawJson = const Value.absent(),
+                Value<String?> externalId = const Value.absent(),
                 Value<DateTime?> postedDate = const Value.absent(),
                 Value<DateTime> discoveredAt = const Value.absent(),
                 Value<bool> isSaved = const Value.absent(),
@@ -24791,6 +25214,9 @@ class $$JobsTableTableManager
                 source: source,
                 description: description,
                 skills: skills,
+                atsProvider: atsProvider,
+                rawJson: rawJson,
+                externalId: externalId,
                 postedDate: postedDate,
                 discoveredAt: discoveredAt,
                 isSaved: isSaved,
@@ -24812,6 +25238,9 @@ class $$JobsTableTableManager
                 Value<String?> source = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<String?> skills = const Value.absent(),
+                Value<String?> atsProvider = const Value.absent(),
+                Value<String?> rawJson = const Value.absent(),
+                Value<String?> externalId = const Value.absent(),
                 Value<DateTime?> postedDate = const Value.absent(),
                 Value<DateTime> discoveredAt = const Value.absent(),
                 Value<bool> isSaved = const Value.absent(),
@@ -24831,6 +25260,9 @@ class $$JobsTableTableManager
                 source: source,
                 description: description,
                 skills: skills,
+                atsProvider: atsProvider,
+                rawJson: rawJson,
+                externalId: externalId,
                 postedDate: postedDate,
                 discoveredAt: discoveredAt,
                 isSaved: isSaved,

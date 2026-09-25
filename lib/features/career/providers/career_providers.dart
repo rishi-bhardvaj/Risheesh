@@ -4,6 +4,9 @@ import 'package:uuid/uuid.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/database/app_database.dart';
 import '../domain/job_match_service.dart';
+import '../domain/job_search_criteria_builder.dart';
+import '../domain/resume_profile_models.dart';
+import '../services/live_job_discovery_service.dart';
 
 // --- Profile Providers ---
 final careerProfileProvider = StreamProvider<UserProfile?>((ref) {
@@ -687,4 +690,125 @@ class CareerRepository {
 final careerRepositoryProvider = Provider<CareerRepository>((ref) {
   final db = ref.watch(databaseProvider);
   return CareerRepository(db);
+});
+
+// ==========================================
+// RESUME INTELLIGENCE & LIVE DISCOVERY PROVIDERS
+// ==========================================
+
+enum ResumeSelectionMode {
+  single,
+  multi,
+  all,
+}
+
+final resumeSelectionModeProvider = StateProvider<ResumeSelectionMode>((ref) => ResumeSelectionMode.single);
+final singleSelectedResumeIdProvider = StateProvider<String?>((ref) => null);
+final multiSelectedResumeIdsProvider = StateProvider<Set<String>>((ref) => <String>{});
+
+final activeResumesProvider = Provider<List<Resume>>((ref) {
+  final allResumes = ref.watch(allResumesProvider).valueOrNull ?? [];
+  if (allResumes.isEmpty) return [];
+
+  final mode = ref.watch(resumeSelectionModeProvider);
+  switch (mode) {
+    case ResumeSelectionMode.single:
+      final singleId = ref.watch(singleSelectedResumeIdProvider);
+      if (singleId != null) {
+        final match = allResumes.where((r) => r.id == singleId).toList();
+        if (match.isNotEmpty) return match;
+      }
+      final primary = allResumes.where((r) => r.isPrimary).toList();
+      return primary.isNotEmpty ? primary : [allResumes.first];
+
+    case ResumeSelectionMode.multi:
+      final selectedIds = ref.watch(multiSelectedResumeIdsProvider);
+      if (selectedIds.isNotEmpty) {
+        final matches = allResumes.where((r) => selectedIds.contains(r.id)).toList();
+        if (matches.isNotEmpty) return matches;
+      }
+      return [allResumes.first];
+
+    case ResumeSelectionMode.all:
+      return allResumes;
+  }
+});
+
+final parsedResumeProfilesProvider = Provider<Map<String, ResumeProfile>>((ref) {
+  final allResumes = ref.watch(allResumesProvider).valueOrNull ?? [];
+  final map = <String, ResumeProfile>{};
+  for (final resume in allResumes) {
+    if (resume.parsedDataJson != null && resume.parsedDataJson!.isNotEmpty) {
+      final parsed = ResumeProfile.fromJsonString(resume.parsedDataJson);
+      if (parsed != null) {
+        map[resume.id] = parsed;
+      }
+    }
+  }
+  return map;
+});
+
+final activeJobSearchCriteriaProvider = Provider<JobSearchCriteria>((ref) {
+  final activeResumes = ref.watch(activeResumesProvider);
+  final parsedProfiles = ref.watch(parsedResumeProfilesProvider);
+  final profile = ref.watch(careerProfileProvider).valueOrNull;
+
+  return JobSearchCriteriaBuilder.buildCriteria(
+    activeResumes: activeResumes,
+    parsedProfiles: parsedProfiles,
+    profile: profile,
+  );
+});
+
+final liveJobDiscoveryServiceProvider = Provider<LiveJobDiscoveryService>((ref) {
+  final db = ref.watch(databaseProvider);
+  return LiveJobDiscoveryService(db: db);
+});
+
+class LiveDiscoveryState {
+  final bool isLoading;
+  final DiscoveryBatchResult? lastResult;
+  final String? error;
+
+  const LiveDiscoveryState({
+    this.isLoading = false,
+    this.lastResult,
+    this.error,
+  });
+
+  LiveDiscoveryState copyWith({
+    bool? isLoading,
+    DiscoveryBatchResult? lastResult,
+    String? error,
+  }) {
+    return LiveDiscoveryState(
+      isLoading: isLoading ?? this.isLoading,
+      lastResult: lastResult ?? this.lastResult,
+      error: error,
+    );
+  }
+}
+
+class LiveDiscoveryNotifier extends StateNotifier<LiveDiscoveryState> {
+  final Ref _ref;
+
+  LiveDiscoveryNotifier(this._ref) : super(const LiveDiscoveryState());
+
+  Future<DiscoveryBatchResult?> discoverJobs() async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final criteria = _ref.read(activeJobSearchCriteriaProvider);
+      final service = _ref.read(liveJobDiscoveryServiceProvider);
+      final result = await service.discoverAndSyncJobs(criteria: criteria);
+      state = state.copyWith(isLoading: false, lastResult: result);
+      return result;
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      return null;
+    }
+  }
+}
+
+final liveDiscoveryProvider = StateNotifierProvider<LiveDiscoveryNotifier, LiveDiscoveryState>((ref) {
+  return LiveDiscoveryNotifier(ref);
 });

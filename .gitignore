@@ -47,7 +47,3 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
-
-# Local Reference Rulebooks
-Backend-Rulebooks/
-Frontend-Rulebooks/
