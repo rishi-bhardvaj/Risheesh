@@ -57,12 +57,14 @@ class RemoteOkJobProvider implements JobProvider {
     bool remoteOnly = true,
   }) async {
     try {
-      final tag = query?.replaceAll(RegExp(r'\s+'), '-').toLowerCase() ?? 'dev';
-      final uri = Uri.parse('https://remoteok.com/api?tag=$tag');
+      final uri = Uri.parse('https://remoteok.com/api');
       final response = await _client.get(
         uri,
-        headers: {'User-Agent': 'CareerOS-App/1.0 (Personal Career Intelligence)'},
-      ).timeout(const Duration(seconds: 12));
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Accept': 'application/json',
+        },
+      ).timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final List<dynamic> list = jsonDecode(response.body);
@@ -73,7 +75,21 @@ class RemoteOkJobProvider implements JobProvider {
             continue;
           }
 
+          final title = item['position'] as String? ?? 'Engineer';
+          final company = item['company'] as String? ?? 'Remote Tech';
+          final loc = item['location'] as String? ?? 'Remote Worldwide';
           final tags = (item['tags'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [];
+          final description = _stripHtml(item['description'] as String? ?? '');
+
+          if (query != null && query.trim().isNotEmpty) {
+            final qTerms = query.toLowerCase().split(RegExp(r'\s+')).where((t) => t.length > 2);
+            if (qTerms.isNotEmpty) {
+              final searchCorpus = '$title $description ${tags.join(' ')}'.toLowerCase();
+              final matches = qTerms.any((term) => searchCorpus.contains(term));
+              if (!matches) continue;
+            }
+          }
+
           final dateStr = item['date'] as String?;
           DateTime? date;
           if (dateStr != null) {
@@ -82,13 +98,13 @@ class RemoteOkJobProvider implements JobProvider {
 
           results.add(
             RawJobItem(
-              title: item['position'] as String? ?? 'Engineer',
-              company: item['company'] as String? ?? 'Remote Company',
-              location: item['location'] as String? ?? 'Remote',
+              title: title,
+              company: company,
+              location: loc,
               salary: item['salary_min'] != null && item['salary_max'] != null
                   ? '\$${item['salary_min']} - \$${item['salary_max']}'
                   : null,
-              description: _stripHtml(item['description'] as String? ?? ''),
+              description: description,
               skills: tags.join(', '),
               url: item['url'] as String? ?? (item['apply_url'] as String?),
               atsProvider: 'REMOTEOK',
@@ -136,8 +152,10 @@ class RssJobProvider implements JobProvider {
     try {
       final response = await _client.get(
         Uri.parse(feedUrl),
-        headers: {'User-Agent': 'CareerOS-App/1.0 (Personal Career Intelligence)'},
-      ).timeout(const Duration(seconds: 12));
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        },
+      ).timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final xml = response.body;
@@ -152,7 +170,6 @@ class RssJobProvider implements JobProvider {
           final description = _stripHtml(_extractTag(block, 'description') ?? '');
           final pubDateStr = _extractTag(block, 'pubDate');
 
-          // Parse Company: Title pattern (standard in job RSS)
           String company = providerName;
           String cleanTitle = title;
           if (title.contains(':')) {
@@ -166,11 +183,11 @@ class RssJobProvider implements JobProvider {
           }
 
           if (query != null && query.isNotEmpty) {
-            final q = query.toLowerCase();
-            if (!cleanTitle.toLowerCase().contains(q) &&
-                !description.toLowerCase().contains(q) &&
-                !company.toLowerCase().contains(q)) {
-              continue;
+            final qTerms = query.toLowerCase().split(RegExp(r'\s+')).where((t) => t.length > 2);
+            if (qTerms.isNotEmpty) {
+              final searchCorpus = '$cleanTitle $description $company'.toLowerCase();
+              final matches = qTerms.any((term) => searchCorpus.contains(term));
+              if (!matches) continue;
             }
           }
 
@@ -213,9 +230,8 @@ class GreenhouseJobProvider implements JobProvider {
   GreenhouseJobProvider({
     http.Client? client,
     this.boardTokens = const [
-      'google', 'airbnb', 'stripe', 'figma', 'notion', 'cloudflare', 'hashicorp',
-      'cockroachlabs', 'gusto', 'airtable', 'databricks', 'plaid', 'discord',
-      'reddit', 'scale', 'anduril', 'ramp', 'retool', 'deel', 'rippling'
+      'airbnb', 'stripe', 'figma', 'cloudflare', 'databricks',
+      'gusto', 'hashicorp', 'discord', 'ramp', 'retool', 'deel', 'rippling'
     ],
   }) : _client = client ?? http.Client();
 
@@ -231,51 +247,50 @@ class GreenhouseJobProvider implements JobProvider {
     String? location,
     bool remoteOnly = false,
   }) async {
-    final results = <RawJobItem>[];
-
-    for (final token in boardTokens) {
+    final futures = boardTokens.map((token) async {
       try {
         final uri = Uri.parse('https://boards-api.greenhouse.io/v1/boards/$token/jobs?content=true');
         final response = await _client.get(
           uri,
           headers: {
             'Accept': 'application/json',
-            'User-Agent': 'CareerOS-App/1.0 (Personal Career Intelligence)'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
           },
-        ).timeout(const Duration(seconds: 15));
+        ).timeout(const Duration(seconds: 8));
 
         if (response.statusCode == 200) {
           final Map<String, dynamic> data = jsonDecode(response.body);
           final List<dynamic> jobs = data['jobs'] ?? [];
+          final boardResults = <RawJobItem>[];
 
-          for (final item in jobs) {
+          for (final item in jobs.take(30)) {
             if (item is! Map<String, dynamic>) continue;
 
             final title = item['title'] as String? ?? 'Engineer';
             final locName = item['location']?['name'] as String? ?? 'Remote';
             final description = _stripHtml(item['content'] as String? ?? '');
-            
-            if (query != null && query.isNotEmpty) {
-              final q = query.toLowerCase();
-              if (!title.toLowerCase().contains(q) &&
-                  !description.toLowerCase().contains(q)) {
-                continue;
+
+            if (query != null && query.trim().isNotEmpty) {
+              final qTerms = query.toLowerCase().split(RegExp(r'\s+')).where((t) => t.length > 2);
+              if (qTerms.isNotEmpty) {
+                final searchCorpus = '$title $description'.toLowerCase();
+                final matches = qTerms.any((term) => searchCorpus.contains(term));
+                if (!matches) continue;
               }
             }
             if (location != null && location.isNotEmpty) {
-              final l = location.toLowerCase();
-              if (!locName.toLowerCase().contains(l)) {
+              if (!locName.toLowerCase().contains(location.toLowerCase())) {
                 continue;
               }
             }
-            
+
             final dateStr = item['updated_at'] as String?;
             DateTime? date;
             if (dateStr != null) {
               date = DateTime.tryParse(dateStr);
             }
 
-            results.add(
+            boardResults.add(
               RawJobItem(
                 title: title,
                 company: token.toUpperCase(),
@@ -288,12 +303,14 @@ class GreenhouseJobProvider implements JobProvider {
               ),
             );
           }
+          return boardResults;
         }
-      } catch (_) {
-        // Continue to next token on failure
-      }
-    }
-    return results;
+      } catch (_) {}
+      return <RawJobItem>[];
+    });
+
+    final allResults = await Future.wait(futures);
+    return allResults.expand((element) => element).toList();
   }
 
   String _stripHtml(String html) {
@@ -308,8 +325,7 @@ class LeverJobProvider implements JobProvider {
   LeverJobProvider({
     http.Client? client,
     this.organizations = const [
-      'netflix', 'twitch', 'JUUL', 'lime', 'webflow', 'verkada', 'relativity',
-      'palantir', 'lucid-motors', 'nuro'
+      'palantir', 'deliveroo', 'atlassian', 'auth0', 'braze'
     ],
   }) : _client = client ?? http.Client();
 
@@ -325,50 +341,49 @@ class LeverJobProvider implements JobProvider {
     String? location,
     bool remoteOnly = false,
   }) async {
-    final results = <RawJobItem>[];
-
-    for (final org in organizations) {
+    final futures = organizations.map((org) async {
       try {
         final uri = Uri.parse('https://api.lever.co/v0/postings/$org?mode=json');
         final response = await _client.get(
           uri,
           headers: {
             'Accept': 'application/json',
-            'User-Agent': 'CareerOS-App/1.0 (Personal Career Intelligence)'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
           },
-        ).timeout(const Duration(seconds: 15));
+        ).timeout(const Duration(seconds: 8));
 
         if (response.statusCode == 200) {
           final List<dynamic> jobs = jsonDecode(response.body);
+          final orgResults = <RawJobItem>[];
 
-          for (final item in jobs) {
+          for (final item in jobs.take(30)) {
             if (item is! Map<String, dynamic>) continue;
 
             final title = item['text'] as String? ?? 'Engineer';
             final locName = item['categories']?['location'] as String? ?? 'Remote';
             final description = _stripHtml(item['descriptionPlain'] as String? ?? '');
-            
-            if (query != null && query.isNotEmpty) {
-              final q = query.toLowerCase();
-              if (!title.toLowerCase().contains(q) &&
-                  !description.toLowerCase().contains(q)) {
-                continue;
+
+            if (query != null && query.trim().isNotEmpty) {
+              final qTerms = query.toLowerCase().split(RegExp(r'\s+')).where((t) => t.length > 2);
+              if (qTerms.isNotEmpty) {
+                final searchCorpus = '$title $description'.toLowerCase();
+                final matches = qTerms.any((term) => searchCorpus.contains(term));
+                if (!matches) continue;
               }
             }
             if (location != null && location.isNotEmpty) {
-              final l = location.toLowerCase();
-              if (!locName.toLowerCase().contains(l)) {
+              if (!locName.toLowerCase().contains(location.toLowerCase())) {
                 continue;
               }
             }
-            
+
             final timestamp = item['createdAt'];
             DateTime? date;
             if (timestamp is int) {
               date = DateTime.fromMillisecondsSinceEpoch(timestamp);
             }
 
-            results.add(
+            orgResults.add(
               RawJobItem(
                 title: title,
                 company: org.toUpperCase(),
@@ -381,12 +396,14 @@ class LeverJobProvider implements JobProvider {
               ),
             );
           }
+          return orgResults;
         }
-      } catch (_) {
-        // Continue to next org on failure
-      }
-    }
-    return results;
+      } catch (_) {}
+      return <RawJobItem>[];
+    });
+
+    final allResults = await Future.wait(futures);
+    return allResults.expand((element) => element).toList();
   }
 
   String _stripHtml(String html) {

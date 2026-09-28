@@ -368,7 +368,7 @@ class _TrackScreenState extends ConsumerState<TrackScreen> with SingleTickerProv
                           try {
                             final count = await ref
                                 .read(apasDsaServiceProvider)
-                                .syncProblemsToDatabase(limit: 30);
+                                .syncProblemsToDatabase(limit: 500);
                             if (mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(

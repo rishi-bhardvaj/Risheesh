@@ -35,57 +35,74 @@ class ApasDsaService {
 
   ApasDsaService({required this.db});
 
-  /// Fetches summary of problems from LeetCode GraphQL API or falls back to offline curated seed
+  /// Fetches summary of problems from LeetCode GraphQL API with pagination or falls back to offline curated seed
   Future<List<ApasDsaProblem>> fetchApasProblems({
+    int targetCount = 500,
     String? category,
     String? difficulty,
     String? tag,
   }) async {
+    final allProblems = <ApasDsaProblem>[];
     try {
       final uri = Uri.parse('https://leetcode.com/graphql');
-      final body = jsonEncode({
-        "query": "query problemsetQuestionList(\$categorySlug: String, \$limit: Int, \$skip: Int, \$filters: QuestionListFilterInput) { problemsetQuestionList: questionList(categorySlug: \$categorySlug limit: \$limit skip: \$skip filters: \$filters) { total: totalNum questions: data { acRate difficulty frontendQuestionId: questionFrontendId title titleSlug topicTags { name slug } } } }",
-        "variables": {
-          "categorySlug": "",
-          "skip": 0,
-          "limit": 100,
-          "filters": {}
+      final pageCount = (targetCount / 100).ceil().clamp(1, 5);
+
+      final futures = List.generate(pageCount, (pageIdx) async {
+        final skip = pageIdx * 100;
+        final body = jsonEncode({
+          "query": "query problemsetQuestionList(\$categorySlug: String, \$limit: Int, \$skip: Int, \$filters: QuestionListFilterInput) { problemsetQuestionList: questionList(categorySlug: \$categorySlug limit: \$limit skip: \$skip filters: \$filters) { total: totalNum questions: data { acRate difficulty frontendQuestionId: questionFrontendId title titleSlug topicTags { name slug } } } }",
+          "variables": {
+            "categorySlug": category ?? "",
+            "skip": skip,
+            "limit": 100,
+            "filters": {}
+          }
+        });
+
+        final response = await http.post(
+          uri,
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          },
+          body: body,
+        ).timeout(const Duration(seconds: 12));
+
+        if (response.statusCode == 200) {
+          final Map<String, dynamic> data = jsonDecode(response.body);
+          final questionsData = data['data']['problemsetQuestionList']['questions'] as List<dynamic>? ?? [];
+          return questionsData.map((item) {
+            final idStr = item['frontendQuestionId']?.toString() ?? '0';
+            final id = int.tryParse(idStr) ?? 0;
+            final title = item['title']?.toString() ?? 'Problem #$id';
+            final diff = _normalizeDifficulty(item['difficulty']?.toString());
+            final slug = item['titleSlug']?.toString() ?? 'problem-$id';
+
+            final tags = (item['topicTags'] as List<dynamic>?)?.map((t) => t['name']?.toString() ?? '').where((t) => t.isNotEmpty).toList() ?? [];
+            final topic = _normalizeTopic(tags.isNotEmpty ? tags.first : '');
+
+            return ApasDsaProblem(
+              id: id,
+              title: '$idStr. $title',
+              slug: slug,
+              difficulty: diff,
+              topic: topic,
+              url: 'https://leetcode.com/problems/$slug/',
+              companyTags: tags,
+            );
+          }).toList();
         }
+        return <ApasDsaProblem>[];
       });
-      
-      final response = await http.post(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: body,
-      ).timeout(const Duration(seconds: 10));
 
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = jsonDecode(response.body);
-        final questionsData = data['data']['problemsetQuestionList']['questions'] as List<dynamic>;
-        
-        return questionsData.map((item) {
-          final idStr = item['frontendQuestionId']?.toString() ?? '0';
-          final id = int.tryParse(idStr) ?? 0;
-          final title = item['title']?.toString() ?? 'Problem #$id';
-          final diff = _normalizeDifficulty(item['difficulty']?.toString());
-          final slug = item['titleSlug']?.toString() ?? 'problem-$id';
-          
-          final tags = (item['topicTags'] as List<dynamic>?)?.map((t) => t['name']?.toString() ?? '').where((t) => t.isNotEmpty).toList() ?? [];
-          final topic = _normalizeTopic(tags.isNotEmpty ? tags.first : '');
+      final results = await Future.wait(futures);
+      for (final r in results) {
+        allProblems.addAll(r);
+      }
 
-          return ApasDsaProblem(
-            id: id,
-            title: title,
-            slug: slug,
-            difficulty: diff,
-            topic: topic,
-            url: 'https://leetcode.com/problems/$slug/',
-            companyTags: tags,
-          );
-        }).toList();
+      if (allProblems.isNotEmpty) {
+        return allProblems;
       }
     } catch (e) {
       debugPrint('ApasDsaService: LeetCode GraphQL fetch failed or timed out: $e. Using offline curated bank.');
@@ -95,8 +112,8 @@ class ApasDsaService {
   }
 
   /// Syncs APAS problems directly into local Drift DSA tracker
-  Future<int> syncProblemsToDatabase({int limit = 50}) async {
-    final apasProblems = await fetchApasProblems();
+  Future<int> syncProblemsToDatabase({int limit = 500}) async {
+    final apasProblems = await fetchApasProblems(targetCount: limit);
     int addedCount = 0;
 
     final existing = await db.getAllDSAProblems();

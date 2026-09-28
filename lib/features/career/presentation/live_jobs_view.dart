@@ -20,6 +20,17 @@ class _LiveJobsViewState extends ConsumerState<LiveJobsView> {
   String _selectedFilter = 'ALL'; // ALL, STRONG_MATCH, REMOTE, SAVED
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final jobs = ref.read(allJobsProvider).valueOrNull ?? [];
+      if (jobs.isEmpty) {
+        ref.read(liveDiscoveryProvider.notifier).discoverJobs();
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final jobsAsync = ref.watch(allJobsProvider);
@@ -155,9 +166,35 @@ class _LiveJobsViewState extends ConsumerState<LiveJobsView> {
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            'Tap "Discover Live" to fetch real opportunities from RemoteOK and developer feeds tailored to your active resume.',
+                            'Discover live opportunities across Greenhouse, Lever, RemoteOK, and tech career boards tailored to your active resume.',
                             textAlign: TextAlign.center,
                             style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                          ),
+                          const SizedBox(height: 16),
+                          FilledButton.icon(
+                            onPressed: discoveryState.isLoading
+                                ? null
+                                : () async {
+                                    final messenger = ScaffoldMessenger.of(context);
+                                    final result = await ref.read(liveDiscoveryProvider.notifier).discoverJobs();
+                                    if (mounted && result != null) {
+                                      messenger.showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            'Discovered ${result.totalDiscovered} jobs: ${result.newJobsSaved} new saved, ${result.duplicatesSkipped} duplicates skipped.',
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
+                            icon: discoveryState.isLoading
+                                ? const SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                  )
+                                : const Icon(Icons.radar, size: 18),
+                            label: Text(discoveryState.isLoading ? 'Discovering...' : 'Discover Live Jobs Now'),
                           ),
                         ],
                       ),

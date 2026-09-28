@@ -25,6 +25,7 @@ class _FreelanceScreenState extends ConsumerState<FreelanceScreen> with SingleTi
   late TabController _tabController;
   final TextEditingController _leadSearchCtrl = TextEditingController();
   final TextEditingController _clientSearchCtrl = TextEditingController();
+  bool _isDiscoveringLeads = false;
 
   @override
   void initState() {
@@ -32,6 +33,12 @@ class _FreelanceScreenState extends ConsumerState<FreelanceScreen> with SingleTi
     _tabController = TabController(length: 5, vsync: this);
     _tabController.addListener(() {
       if (mounted) setState(() {});
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final leads = ref.read(allLeadsStreamProvider).valueOrNull ?? [];
+      if (leads.isEmpty) {
+        ref.read(freelanceLeadDiscoveryServiceProvider).discoverAndSyncLeads();
+      }
     });
   }
 
@@ -405,6 +412,98 @@ class _FreelanceScreenState extends ConsumerState<FreelanceScreen> with SingleTi
                 );
               }),
             ],
+          ),
+        ),
+
+        // Live Freelance Discovery Banner (LeadScraper Engine)
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primaryContainer.withOpacity(0.35),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: theme.colorScheme.primary.withOpacity(0.2)),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.radar, color: theme.colorScheme.primary, size: 20),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Live Freelance Opportunities',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                      Text(
+                        'Scrape remote contracts, Upwork feeds & client projects',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: theme.hintColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                ElevatedButton.icon(
+                  onPressed: _isDiscoveringLeads
+                      ? null
+                      : () async {
+                          final messenger = ScaffoldMessenger.of(context);
+                          setState(() => _isDiscoveringLeads = true);
+                          try {
+                            final result = await ref
+                                .read(freelanceLeadDiscoveryServiceProvider)
+                                .discoverAndSyncLeads();
+                            if (mounted) {
+                              messenger.showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    result.newLeadsSaved > 0
+                                        ? 'Discovered ${result.totalDiscovered} leads: ${result.newLeadsSaved} new contracts saved!'
+                                        : 'All ${result.totalDiscovered} freelance contracts are already saved.',
+                                  ),
+                                  behavior: SnackBarBehavior.floating,
+                                ),
+                              );
+                            }
+                          } catch (e) {
+                            if (mounted) {
+                              messenger.showSnackBar(
+                                SnackBar(
+                                  content: Text('Lead discovery error: $e'),
+                                  backgroundColor: Colors.red,
+                                  behavior: SnackBarBehavior.floating,
+                                ),
+                              );
+                            }
+                          } finally {
+                            if (mounted) {
+                              setState(() => _isDiscoveringLeads = false);
+                            }
+                          }
+                        },
+                  icon: _isDiscoveringLeads
+                      ? const SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.sync, size: 16),
+                  label: Text(_isDiscoveringLeads ? 'Scraping...' : 'Discover Leads'),
+                  style: ElevatedButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
 

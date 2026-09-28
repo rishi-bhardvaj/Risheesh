@@ -2,6 +2,7 @@ import 'package:drift/drift.dart' as drift;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/database/app_database.dart';
+import '../services/freelance_lead_discovery_service.dart';
 
 // --- Snapshot Model ---
 class FreelanceSnapshot {
@@ -746,5 +747,10 @@ class FreelanceRepository {
 final freelanceRepositoryProvider = Provider<FreelanceRepository>((ref) {
   final db = ref.watch(databaseProvider);
   return FreelanceRepository(db);
+});
+
+final freelanceLeadDiscoveryServiceProvider = Provider<FreelanceLeadDiscoveryService>((ref) {
+  final db = ref.watch(databaseProvider);
+  return FreelanceLeadDiscoveryService(db: db);
 });
 
