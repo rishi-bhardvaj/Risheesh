@@ -205,3 +205,191 @@ class RssJobProvider implements JobProvider {
     return html.replaceAll(RegExp(r'<[^>]*>'), ' ').replaceAll(RegExp(r'\s+'), ' ').trim();
   }
 }
+
+class GreenhouseJobProvider implements JobProvider {
+  final http.Client _client;
+  final List<String> boardTokens;
+
+  GreenhouseJobProvider({
+    http.Client? client,
+    this.boardTokens = const [
+      'google', 'airbnb', 'stripe', 'figma', 'notion', 'cloudflare', 'hashicorp',
+      'cockroachlabs', 'gusto', 'airtable', 'databricks', 'plaid', 'discord',
+      'reddit', 'scale', 'anduril', 'ramp', 'retool', 'deel', 'rippling'
+    ],
+  }) : _client = client ?? http.Client();
+
+  @override
+  String get providerId => 'GREENHOUSE';
+
+  @override
+  String get providerName => 'Greenhouse Public API';
+
+  @override
+  Future<List<RawJobItem>> searchJobs({
+    String? query,
+    String? location,
+    bool remoteOnly = false,
+  }) async {
+    final results = <RawJobItem>[];
+
+    for (final token in boardTokens) {
+      try {
+        final uri = Uri.parse('https://boards-api.greenhouse.io/v1/boards/$token/jobs?content=true');
+        final response = await _client.get(
+          uri,
+          headers: {
+            'Accept': 'application/json',
+            'User-Agent': 'CareerOS-App/1.0 (Personal Career Intelligence)'
+          },
+        ).timeout(const Duration(seconds: 15));
+
+        if (response.statusCode == 200) {
+          final Map<String, dynamic> data = jsonDecode(response.body);
+          final List<dynamic> jobs = data['jobs'] ?? [];
+
+          for (final item in jobs) {
+            if (item is! Map<String, dynamic>) continue;
+
+            final title = item['title'] as String? ?? 'Engineer';
+            final locName = item['location']?['name'] as String? ?? 'Remote';
+            final description = _stripHtml(item['content'] as String? ?? '');
+            
+            if (query != null && query.isNotEmpty) {
+              final q = query.toLowerCase();
+              if (!title.toLowerCase().contains(q) &&
+                  !description.toLowerCase().contains(q)) {
+                continue;
+              }
+            }
+            if (location != null && location.isNotEmpty) {
+              final l = location.toLowerCase();
+              if (!locName.toLowerCase().contains(l)) {
+                continue;
+              }
+            }
+            
+            final dateStr = item['updated_at'] as String?;
+            DateTime? date;
+            if (dateStr != null) {
+              date = DateTime.tryParse(dateStr);
+            }
+
+            results.add(
+              RawJobItem(
+                title: title,
+                company: token.toUpperCase(),
+                location: locName,
+                description: description,
+                url: item['absolute_url'] as String?,
+                atsProvider: 'GREENHOUSE',
+                publishedAt: date ?? DateTime.now(),
+                isRemote: locName.toLowerCase().contains('remote'),
+              ),
+            );
+          }
+        }
+      } catch (_) {
+        // Continue to next token on failure
+      }
+    }
+    return results;
+  }
+
+  String _stripHtml(String html) {
+    return html.replaceAll(RegExp(r'<[^>]*>'), ' ').replaceAll(RegExp(r'\s+'), ' ').trim();
+  }
+}
+
+class LeverJobProvider implements JobProvider {
+  final http.Client _client;
+  final List<String> organizations;
+
+  LeverJobProvider({
+    http.Client? client,
+    this.organizations = const [
+      'netflix', 'twitch', 'JUUL', 'lime', 'webflow', 'verkada', 'relativity',
+      'palantir', 'lucid-motors', 'nuro'
+    ],
+  }) : _client = client ?? http.Client();
+
+  @override
+  String get providerId => 'LEVER';
+
+  @override
+  String get providerName => 'Lever Public API';
+
+  @override
+  Future<List<RawJobItem>> searchJobs({
+    String? query,
+    String? location,
+    bool remoteOnly = false,
+  }) async {
+    final results = <RawJobItem>[];
+
+    for (final org in organizations) {
+      try {
+        final uri = Uri.parse('https://api.lever.co/v0/postings/$org?mode=json');
+        final response = await _client.get(
+          uri,
+          headers: {
+            'Accept': 'application/json',
+            'User-Agent': 'CareerOS-App/1.0 (Personal Career Intelligence)'
+          },
+        ).timeout(const Duration(seconds: 15));
+
+        if (response.statusCode == 200) {
+          final List<dynamic> jobs = jsonDecode(response.body);
+
+          for (final item in jobs) {
+            if (item is! Map<String, dynamic>) continue;
+
+            final title = item['text'] as String? ?? 'Engineer';
+            final locName = item['categories']?['location'] as String? ?? 'Remote';
+            final description = _stripHtml(item['descriptionPlain'] as String? ?? '');
+            
+            if (query != null && query.isNotEmpty) {
+              final q = query.toLowerCase();
+              if (!title.toLowerCase().contains(q) &&
+                  !description.toLowerCase().contains(q)) {
+                continue;
+              }
+            }
+            if (location != null && location.isNotEmpty) {
+              final l = location.toLowerCase();
+              if (!locName.toLowerCase().contains(l)) {
+                continue;
+              }
+            }
+            
+            final timestamp = item['createdAt'];
+            DateTime? date;
+            if (timestamp is int) {
+              date = DateTime.fromMillisecondsSinceEpoch(timestamp);
+            }
+
+            results.add(
+              RawJobItem(
+                title: title,
+                company: org.toUpperCase(),
+                location: locName,
+                description: description,
+                url: item['hostedUrl'] as String?,
+                atsProvider: 'LEVER',
+                publishedAt: date ?? DateTime.now(),
+                isRemote: locName.toLowerCase().contains('remote'),
+              ),
+            );
+          }
+        }
+      } catch (_) {
+        // Continue to next org on failure
+      }
+    }
+    return results;
+  }
+
+  String _stripHtml(String html) {
+    return html.replaceAll(RegExp(r'<[^>]*>'), ' ').replaceAll(RegExp(r'\s+'), ' ').trim();
+  }
+}

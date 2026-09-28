@@ -114,6 +114,8 @@ class LiveJobDiscoveryService {
                 providerName: 'RSS Alternate Feed',
                 feedUrl: 'https://www.smashingmagazine.com/articles/feed?tag=career',
               ),
+              GreenhouseJobProvider(),
+              LeverJobProvider(),
             ];
 
   Future<DiscoveryBatchResult> discoverAndSyncJobs({
