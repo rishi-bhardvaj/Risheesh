@@ -18,6 +18,7 @@ final userProfileStreamProvider = StreamProvider<UserProfile?>((ref) {
 class OnboardingService {
   final AppDatabase db;
   final Ref ref;
+  static const _uuid = Uuid();
 
   OnboardingService(this.db, this.ref);
 
@@ -30,9 +31,31 @@ class OnboardingService {
     String? preferredLocations,
     String remotePreference = 'any',
     String? expectedSalary,
+    String? resumeFilePath,
+    String? resumeFileName,
   }) async {
+    // If a resume was uploaded during onboarding, insert it into the resumes table
+    String? resumeId;
+    if (resumeFilePath != null) {
+      final now = DateTime.now();
+      final companion = ResumesCompanion(
+        id: Value(_uuid.v4()),
+        name: Value(resumeFileName ?? 'Resume'),
+        version: const Value('1.0'),
+        targetRole: Value(currentRole),
+        filePath: Value(resumeFilePath),
+        fileName: Value(resumeFileName ?? 'Resume'),
+        notes: const Value('Uploaded during first-run onboarding'),
+        isPrimary: const Value(true),
+        createdAt: Value(now),
+        updatedAt: Value(now),
+      );
+      await db.insertResume(companion);
+      resumeId = companion.id.value;
+    }
+
     final existing = await db.getProfile();
-    final profileId = existing?.id ?? const Uuid().v4();
+    final profileId = existing?.id ?? resumeId ?? const Uuid().v4();
     final now = DateTime.now();
 
     final companion = UserProfilesCompanion(
@@ -51,6 +74,11 @@ class OnboardingService {
 
     await db.upsertProfile(companion);
 
+    // If a resume was uploaded, set it as primary
+    if (resumeId != null) {
+      await db.setPrimaryResume(resumeId);
+    }
+
     final prefs = ref.read(sharedPreferencesProvider);
     await prefs.setBool(AppConstants.keyOnboardingCompleted, true);
     ref.read(onboardingCompletedProvider.notifier).state = true;
@@ -61,4 +89,3 @@ final onboardingServiceProvider = Provider<OnboardingService>((ref) {
   final db = ref.watch(databaseProvider);
   return OnboardingService(db, ref);
 });
-

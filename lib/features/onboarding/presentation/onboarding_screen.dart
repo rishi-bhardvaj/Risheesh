@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/utils/resume_storage_helper.dart';
 import '../providers/onboarding_provider.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
@@ -21,6 +22,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final _expectedSalaryController = TextEditingController();
   String _remotePreference = 'any';
   bool _isLoading = false;
+  String? _resumeFileName;
+  String? _resumeFilePath;
+  bool _hasResumedUpload = false;
 
   @override
   void dispose() {
@@ -34,17 +38,30 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     super.dispose();
   }
 
-  Future<void> _submit({bool isSkip = false}) async {
-    if (!isSkip && !_formKey.currentState!.validate()) {
-      return;
+  Future<void> _pickResume() async {
+    try {
+      final result = await ResumeStorageHelper.pickAndSaveResume();
+      if (result == null) return;
+      setState(() {
+        _resumeFileName = result.fileName;
+        _resumeFilePath = result.localPath;
+        _hasResumedUpload = true;
+      });
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to pick resume: $e')),
+        );
+      }
     }
+  }
 
+  Future<void> _submit({bool isSkip = false}) async {
+    if (!isSkip && !_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
-
     try {
       final name = isSkip || _nameController.text.trim().isEmpty ? 'Engineer' : _nameController.text.trim();
       final exp = double.tryParse(_experienceController.text.trim()) ?? 0.0;
-
       await ref.read(onboardingServiceProvider).completeOnboarding(
             name: name,
             currentRole: isSkip ? null : _currentRoleController.text,
@@ -54,11 +71,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             preferredLocations: isSkip ? null : _preferredLocationsController.text,
             remotePreference: isSkip ? 'any' : _remotePreference,
             expectedSalary: isSkip ? null : _expectedSalaryController.text,
+            resumeFilePath: _hasResumedUpload ? _resumeFilePath : null,
+            resumeFileName: _resumeFileName,
           );
-
-      if (mounted) {
-        context.go('/home');
-      }
+      if (mounted) context.go('/home');
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -66,16 +82,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         );
       }
     } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -89,7 +102,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const SizedBox(height: 12),
-                    // Header Badge
                     Row(
                       children: [
                         Container(
@@ -126,12 +138,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       ],
                     ),
                     const SizedBox(height: 28),
-
                     Text(
                       'Let’s set up your profile',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 6),
                     Text(
@@ -141,8 +150,62 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       ),
                     ),
                     const SizedBox(height: 24),
-
-                    // Personal Information Section
+                    // Resume Upload Section
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 8),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.surfaceContainerHighest,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: _pickResume,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.upload_file,
+                                size: 28,
+                                color: theme.colorScheme.primary,
+                              ),
+                              const SizedBox(width: 14),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Upload Resume',
+                                      style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Select PDF or DOCX file to auto-populate your profile',
+                                      style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              if (_hasResumedUpload && _resumeFileName != null)
+                                Flexible(
+                                  child: Text(
+                                    _resumeFileName!,
+                                    style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.primary, fontWeight: FontWeight.bold),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                )
+                              else
+                                Text(
+                                  'No file selected',
+                                  style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurface.withOpacity(0.4)),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
                     Text(
                       'PERSONAL',
                       style: theme.textTheme.labelSmall?.copyWith(
@@ -159,17 +222,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         hintText: 'e.g. Risheesh Upadhyay',
                         prefixIcon: Icon(Icons.person_outline, size: 20),
                       ),
-                      validator: (val) {
-                        if (val == null || val.trim().isEmpty) {
-                          return 'Please enter your name';
-                        }
-                        return null;
-                      },
+                      validator: (val) => val == null || val.trim().isEmpty ? 'Please enter your name' : null,
                       textCapitalization: TextCapitalization.words,
                     ),
                     const SizedBox(height: 20),
-
-                    // Career Information Section
                     Text(
                       'CAREER PROFILE',
                       style: theme.textTheme.labelSmall?.copyWith(
@@ -202,7 +258,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                               hintText: 'e.g. 2.5',
                               prefixIcon: Icon(Icons.timer_outlined, size: 20),
                             ),
-                            keyboardType: const TextInputFormatDouble(),
+                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
                           ),
                         ),
                       ],
@@ -247,50 +303,32 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         DropdownMenuItem(value: 'hybrid', child: Text('Hybrid')),
                         DropdownMenuItem(value: 'onsite', child: Text('On-site')),
                       ],
-                      onChanged: (val) {
-                        if (val != null) setState(() => _remotePreference = val);
-                      },
+                      onChanged: (val) => val != null ? setState(() => _remotePreference = val) : null,
                     ),
                     const SizedBox(height: 14),
                     TextFormField(
                       controller: _expectedSalaryController,
                       decoration: const InputDecoration(
                         labelText: 'Expected Compensation / Target',
-                        hintText: 'e.g. ₹25-30 LPA or \$120k',
+                        hintText: 'e.g. ₹25-30 LPA or 120k',
                         prefixIcon: Icon(Icons.currency_rupee, size: 20),
                       ),
                     ),
                     const SizedBox(height: 32),
-
-                    // Actions
                     FilledButton(
                       onPressed: _isLoading ? null : () => _submit(isSkip: false),
                       style: FilledButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
                       child: _isLoading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                            )
-                          : const Text(
-                              'Complete Setup & Launch',
-                              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-                            ),
+                          ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                          : const Text('Complete Setup & Launch', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
                     ),
                     const SizedBox(height: 12),
                     TextButton(
                       onPressed: _isLoading ? null : () => _submit(isSkip: true),
-                      child: Text(
-                        'Skip for now (Set defaults)',
-                        style: TextStyle(
-                          color: theme.colorScheme.onSurface.withOpacity(0.6),
-                        ),
-                      ),
+                      child: Text('Skip for now (Set defaults)', style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6))),
                     ),
                     const SizedBox(height: 16),
                   ],
@@ -303,8 +341,3 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     );
   }
 }
-
-class TextInputFormatDouble extends TextInputType {
-  const TextInputFormatDouble() : super.numberWithOptions(decimal: true);
-}
-

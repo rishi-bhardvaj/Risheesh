@@ -108,6 +108,12 @@ class LiveJobDiscoveryService {
                 providerName: 'Remotive Feed',
                 feedUrl: 'https://remotive.com/remote-jobs/feed',
               ),
+              // Additional public API source
+              RssJobProvider(
+                providerId: 'RSS_ALTERNATE',
+                providerName: 'RSS Alternate Feed',
+                feedUrl: 'https://www.smashingmagazine.com/articles/feed?tag=career',
+              ),
             ];
 
   Future<DiscoveryBatchResult> discoverAndSyncJobs({

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../shared/widgets/status_badge.dart';
 import '../../../career/presentation/application_details_screen.dart';
 import '../../../career/providers/career_providers.dart';
+import '../../../track/providers/track_providers.dart';
 
 class CareerSnapshotSection extends ConsumerWidget {
   const CareerSnapshotSection({super.key});
@@ -15,6 +16,7 @@ class CareerSnapshotSection extends ConsumerWidget {
     final followUpsDue = ref.watch(followUpsDueTodayProvider);
     final recentJobs = ref.watch(allJobsProvider).valueOrNull ?? [];
     final recentApps = ref.watch(allApplicationsProvider).valueOrNull ?? [];
+    final dsaStats = ref.watch(dsaDashboardStatsProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,6 +124,86 @@ class CareerSnapshotSection extends ConsumerWidget {
           const SizedBox(height: 12),
         ],
 
+        // LeetCode / DSA Quick Stats
+        Card(
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: theme.colorScheme.outlineVariant),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.auto_awesome, color: theme.colorScheme.primary, size: 20),
+                    const SizedBox(width: 8),
+                    Text(
+                      'DSA Tracker',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: theme.colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.1,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildDsaQuickStat(
+                        '${dsaStats.total}',
+                        'Total',
+                        Icons.numbers,
+                        theme.colorScheme.primary,
+                        theme,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: _buildDsaQuickStat(
+                        '${dsaStats.solved}',
+                        'Solved',
+                        Icons.check_circle_outline,
+                        Colors.green,
+                        theme,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildDsaQuickStat(
+                        '${dsaStats.revisionDue}',
+                        'Revision Due',
+                        Icons.alarm,
+                        dsaStats.revisionDue > 0 ? Colors.red : Colors.grey,
+                        theme,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: _buildDsaQuickStat(
+                        '${dsaStats.attempted}',
+                        'Attempted',
+                        Icons.history,
+                        Colors.orange.shade800,
+                        theme,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+
         // Recent Applications Preview
         if (recentApps.isNotEmpty) ...[
           Text(
@@ -214,6 +296,25 @@ class CareerSnapshotSection extends ConsumerWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildDsaQuickStat(String value, String label, IconData icon, Color color, ThemeData theme) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.4),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(height: 2),
+          Text(value, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: color)),
+          const SizedBox(height: 2),
+          Text(label, style: TextStyle(fontSize: 9, color: theme.hintColor)),
+        ],
       ),
     );
   }
