@@ -28,7 +28,7 @@ class ResumeStorageHelper {
     try {
       final pickedFile = await FilePicker.pickFile(
         type: FileType.custom,
-        allowedExtensions: ['pdf', 'docx', 'doc', 'txt'],
+        allowedExtensions: ['pdf', 'docx', 'txt', 'md'],
       );
 
       if (pickedFile == null) {
@@ -70,6 +70,18 @@ class ResumeStorageHelper {
       debugPrint('Error picking/saving resume: $e');
       rethrow;
     }
+  }
+
+  /// Stores pasted resume text as a .txt file so it can live in the vault
+  /// like an uploaded file.
+  static Future<ResumeFileResult> saveTextResume(String text, {String baseName = 'Pasted_Resume'}) async {
+    final appDir = await getApplicationDocumentsDirectory();
+    final resumesDir = Directory(p.join(appDir.path, 'resumes'));
+    if (!await resumesDir.exists()) await resumesDir.create(recursive: true);
+    final fileName = '${baseName.replaceAll(RegExp(r'[^\w\-]'), '_')}.txt';
+    final file = File(p.join(resumesDir.path, '${_uuid.v4().substring(0, 8)}_$fileName'));
+    await file.writeAsString(text);
+    return ResumeFileResult(fileName: fileName, localPath: file.path, fileSizeBytes: await file.length());
   }
 
   /// Opens a resume file using system default viewer

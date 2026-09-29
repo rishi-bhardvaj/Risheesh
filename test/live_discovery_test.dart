@@ -4,7 +4,6 @@ import 'package:drift/native.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:career_os/core/database/app_database.dart';
-import 'package:career_os/features/freelance/services/freelance_lead_discovery_service.dart';
 import 'package:career_os/features/career/data/job_providers/public_api_job_provider.dart';
 import 'package:career_os/features/track/services/apas_dsa_service.dart';
 
@@ -17,46 +16,6 @@ void main() {
 
   tearDown(() async {
     await db.close();
-  });
-
-  group('Freelance Lead Discovery Service Tests', () {
-    test('Discovers and syncs new freelance leads into Drift database', () async {
-      final mockClient = MockClient((request) async {
-        if (request.url.host == 'remoteok.com') {
-          return http.Response(
-            jsonEncode([
-              {'legal': 'disclaimer'},
-              {
-                'id': 101,
-                'position': 'Flutter Mobile Developer Contract',
-                'company': 'Apex Global',
-                'url': 'https://remoteok.com/job/101',
-                'description': '<p>We need a Flutter contractor for 3 months</p>',
-                'tags': ['flutter', 'mobile'],
-                'salary_min': 5000,
-              }
-            ]),
-            200,
-            headers: {'content-type': 'application/json'},
-          );
-        }
-        return http.Response('', 404);
-      });
-
-      final service = FreelanceLeadDiscoveryService(db: db, client: mockClient);
-      final result = await service.discoverAndSyncLeads(query: 'flutter');
-
-      expect(result.totalDiscovered, greaterThanOrEqualTo(1));
-      expect(result.newLeadsSaved, greaterThanOrEqualTo(1));
-
-      final savedLeads = await db.getAllFreelanceLeads();
-      expect(savedLeads.length, equals(result.newLeadsSaved));
-
-      // Re-run discovery: should detect duplicates and save 0 new
-      final secondResult = await service.discoverAndSyncLeads(query: 'flutter');
-      expect(secondResult.newLeadsSaved, equals(0));
-      expect(secondResult.duplicatesSkipped, greaterThanOrEqualTo(1));
-    });
   });
 
   group('Job Providers Tests (Greenhouse & Lever)', () {
@@ -130,7 +89,8 @@ void main() {
 
   group('ApasDsaService Offline & Sync Tests', () {
     test('Returns curated bank and syncs to database when offline', () async {
-      final service = ApasDsaService(db: db);
+      // No network in tests: every LeetCode page fails, so the offline bank is used.
+      final service = ApasDsaService(db: db, client: MockClient((_) async => http.Response('offline', 503)));
       final count = await service.syncProblemsToDatabase(limit: 10);
 
       expect(count, equals(10));

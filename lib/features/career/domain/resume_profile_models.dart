@@ -90,6 +90,51 @@ class ResumeQualityAudit {
   }
 }
 
+/// One role from the Experience section.
+class WorkExperience {
+  final String role;
+  final String? company;
+  final String? location;
+  final String? dateRange;
+  final DateTime? start;
+  final DateTime? end; // null + isCurrent == "Present"
+  final bool isCurrent;
+  final List<String> bullets;
+
+  const WorkExperience({
+    required this.role,
+    this.company,
+    this.location,
+    this.dateRange,
+    this.start,
+    this.end,
+    this.isCurrent = false,
+    this.bullets = const [],
+  });
+
+  Map<String, dynamic> toJson() => {
+        'role': role,
+        if (company != null) 'company': company,
+        if (location != null) 'location': location,
+        if (dateRange != null) 'dateRange': dateRange,
+        if (start != null) 'start': start!.toIso8601String(),
+        if (end != null) 'end': end!.toIso8601String(),
+        'isCurrent': isCurrent,
+        'bullets': bullets,
+      };
+
+  factory WorkExperience.fromJson(Map<String, dynamic> json) => WorkExperience(
+        role: json['role'] as String? ?? '',
+        company: json['company'] as String?,
+        location: json['location'] as String?,
+        dateRange: json['dateRange'] as String?,
+        start: DateTime.tryParse(json['start'] as String? ?? ''),
+        end: DateTime.tryParse(json['end'] as String? ?? ''),
+        isCurrent: json['isCurrent'] as bool? ?? false,
+        bullets: (json['bullets'] as List<dynamic>? ?? const []).map((e) => e.toString()).toList(),
+      );
+}
+
 class ResumeProfile {
   final String resumeId;
   final String resumeName;
@@ -107,6 +152,10 @@ class ResumeProfile {
   final List<ExtractedField<String>> domainSkills;
   final List<String> rawLines;
   final ResumeQualityAudit qualityAudit;
+  final List<WorkExperience> experience;
+  final List<String> educationEntries;
+  final List<String> sections; // canonical section names found
+  final String? rawText;
 
   const ResumeProfile({
     required this.resumeId,
@@ -125,6 +174,10 @@ class ResumeProfile {
     this.domainSkills = const [],
     this.rawLines = const [],
     required this.qualityAudit,
+    this.experience = const [],
+    this.educationEntries = const [],
+    this.sections = const [],
+    this.rawText,
   });
 
   List<String> get allUniqueSkills {
@@ -162,6 +215,10 @@ class ResumeProfile {
         'toolsAndCloud': toolsAndCloud.map((e) => e.toJson()).toList(),
         'domainSkills': domainSkills.map((e) => e.toJson()).toList(),
         'qualityAudit': qualityAudit.toJson(),
+        'experience': experience.map((e) => e.toJson()).toList(),
+        'educationEntries': educationEntries,
+        'sections': sections,
+        if (rawText != null) 'rawText': rawText,
       };
 
   factory ResumeProfile.fromJson(Map<String, dynamic> json) {
@@ -221,6 +278,14 @@ class ResumeProfile {
                   e as Map<String, dynamic>, (v) => v.toString()))
               .toList() ??
           [],
+      experience: (json['experience'] as List<dynamic>? ?? const [])
+          .whereType<Map<String, dynamic>>()
+          .map(WorkExperience.fromJson)
+          .toList(),
+      educationEntries: (json['educationEntries'] as List<dynamic>? ?? const []).map((e) => e.toString()).toList(),
+      sections: (json['sections'] as List<dynamic>? ?? const []).map((e) => e.toString()).toList(),
+      rawText: json['rawText'] as String?,
+      rawLines: (json['rawText'] as String? ?? '').split('\n').where((l) => l.trim().isNotEmpty).toList(),
       qualityAudit: json['qualityAudit'] != null
           ? ResumeQualityAudit.fromJson(
               json['qualityAudit'] as Map<String, dynamic>)

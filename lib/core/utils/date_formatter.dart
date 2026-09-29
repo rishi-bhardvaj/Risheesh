@@ -41,6 +41,18 @@ class DateFormatter {
     }
   }
 
+  /// Compact past-relative time for feed items: "just now", "5m", "3h", "2d", "4w".
+  static String timeAgo(DateTime? date) {
+    if (date == null) return '';
+    final diff = DateTime.now().difference(date);
+    if (diff.isNegative || diff.inMinutes < 1) return 'just now';
+    if (diff.inHours < 1) return '${diff.inMinutes}m ago';
+    if (diff.inDays < 1) return '${diff.inHours}h ago';
+    if (diff.inDays < 14) return '${diff.inDays}d ago';
+    if (diff.inDays < 60) return '${diff.inDays ~/ 7}w ago';
+    return DateFormat('dd MMM yyyy').format(date);
+  }
+
   static bool isToday(DateTime? date) {
     if (date == null) return false;
     final now = DateTime.now();

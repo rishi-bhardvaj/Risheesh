@@ -15,6 +15,9 @@ analyzer:
     - android/**
     - web/**
     - windows/**
+    - "server/**"
+    - "packages/**"
+    - "test_preview/**"
     - "**/*.g.dart"
   errors:
     deprecated_member_use: ignore

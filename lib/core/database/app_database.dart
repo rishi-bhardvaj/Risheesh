@@ -21,6 +21,18 @@ class UserProfiles extends Table {
   TextColumn get noticePeriod => text().nullable()();
   TextColumn get education => text().nullable()();
   TextColumn get resumePreferences => text().nullable()();
+  TextColumn get email => text().nullable()();
+  TextColumn get phone => text().nullable()();
+  TextColumn get linkedinUrl => text().nullable()();
+  TextColumn get githubUrl => text().nullable()();
+  RealColumn get expectedSalaryAmount => real().nullable()();
+  TextColumn get expectedSalaryCurrency => text().nullable().withDefault(const Constant('INR'))();
+  TextColumn get expectedSalaryPeriod => text().nullable().withDefault(const Constant('YEAR'))();
+  TextColumn get displayCurrency => text().nullable().withDefault(const Constant('INR'))();
+  BoolColumn get isAdmin => boolean().nullable().withDefault(const Constant(false))();
+  TextColumn get status => text().nullable().withDefault(const Constant('APPROVED'))();
+  TextColumn get permissions => text().nullable().withDefault(const Constant('ALL'))();
+  TextColumn get passwordHash => text().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
 
@@ -78,6 +90,12 @@ class Resumes extends Table {
   TextColumn get fileName => text()();
   TextColumn get notes => text().nullable()();
   BoolColumn get isPrimary => boolean().withDefault(const Constant(false))();
+  TextColumn get parsedDataJson => text().nullable()(); // ResumeProfile JSON (see resume_profile_models.dart)
+  TextColumn get extractionStatus => text().withDefault(const Constant('NOT_PARSED'))(); // NOT_PARSED, PARSED, FAILED
+  BoolColumn get isActive => boolean().withDefault(const Constant(true))();
+  TextColumn get jobId => text().nullable().references(Jobs, #id, onDelete: KeyAction.setNull)();
+  TextColumn get latexSource => text().nullable()();
+  IntColumn get atsScore => integer().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
 
@@ -102,6 +120,17 @@ class Jobs extends Table {
   DateTimeColumn get discoveredAt => dateTime().withDefault(currentDateAndTime)();
   BoolColumn get isSaved => boolean().withDefault(const Constant(false))();
   TextColumn get notes => text().nullable()();
+  TextColumn get atsProvider => text().nullable()(); // GREENHOUSE, LEVER, REMOTEOK, WWR, REMOTIVE
+  TextColumn get rawJson => text().nullable()();
+  TextColumn get externalId => text().nullable()();
+  IntColumn get matchScore => integer().nullable()();
+  TextColumn get matchTier => text().nullable()();
+  TextColumn get matchJson => text().nullable()();
+  TextColumn get matchProfileVersion => text().nullable()();
+  TextColumn get roleFamily => text().nullable()();
+  BoolColumn get isRemote => boolean().nullable()();
+  RealColumn get salaryMinInr => real().nullable()();
+  RealColumn get salaryMaxInr => real().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
 
@@ -581,6 +610,129 @@ class BackupRecords extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+// 33. Habits Table (Track > Habits)
+@DataClassName('Habit')
+class Habits extends Table {
+  TextColumn get id => text()();
+  TextColumn get name => text().withLength(min: 1, max: 100)();
+  TextColumn get icon => text().withDefault(const Constant('check'))();
+  IntColumn get colorValue => integer().withDefault(const Constant(0xFF6366F1))();
+  BoolColumn get isArchived => boolean().withDefault(const Constant(false))();
+  TextColumn get reminderTime => text().nullable()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+// 34. HabitLogs Table - one row per habit per completed day
+@DataClassName('HabitLog')
+class HabitLogs extends Table {
+  TextColumn get id => text()();
+  TextColumn get habitId => text().references(Habits, #id, onDelete: KeyAction.cascade)();
+  DateTimeColumn get day => dateTime()(); // local midnight
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {id};
+
+  @override
+  List<Set<Column>> get uniqueKeys => [
+        {habitId, day},
+      ];
+}
+
+// 35. DailyReflections Table (Track > Reflection)
+@DataClassName('DailyReflection')
+class DailyReflections extends Table {
+  TextColumn get id => text()();
+  DateTimeColumn get day => dateTime().unique()(); // local midnight
+  IntColumn get mood => integer().withDefault(const Constant(3))(); // 1-5
+  TextColumn get wins => text().nullable()();
+  TextColumn get blockers => text().nullable()();
+  TextColumn get learned => text().nullable()();
+  TextColumn get tomorrow => text().nullable()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+// 36. BusinessLeads Table (Freelance > businesses with 1Cr+ turnover and weak web presence)
+@DataClassName('BusinessLead')
+class BusinessLeads extends Table {
+  TextColumn get id => text()();
+  TextColumn get name => text().withLength(min: 1, max: 200)();
+  TextColumn get industry => text().nullable()();
+  TextColumn get city => text().nullable()();
+  TextColumn get country => text().withDefault(const Constant('India'))();
+  RealColumn get turnoverInr => real().nullable()(); // estimated annual turnover in INR
+  TextColumn get turnoverEvidence => text().nullable()();
+  TextColumn get turnoverSourceUrl => text().nullable()();
+  TextColumn get websiteUrl => text().nullable()();
+  TextColumn get webPresence => text().withDefault(const Constant('NO_WEBSITE'))(); // NO_WEBSITE, SHOPIFY, NEEDS_WEBSITE, HAS_WEBSITE
+  TextColumn get presenceNotes => text().nullable()(); // newline-separated findings
+  TextColumn get phone => text().nullable()();
+  TextColumn get email => text().nullable()();
+  TextColumn get address => text().nullable()();
+  TextColumn get linksJson => text().nullable()(); // [{"label","url"}] socials / marketplaces
+  TextColumn get sourcesJson => text().nullable()(); // [{"title","url"}]
+  TextColumn get pitch => text().nullable()();
+  IntColumn get needScore => integer().withDefault(const Constant(0))(); // 0-100
+  TextColumn get status => text().withDefault(const Constant('NEW'))(); // NEW, CONTACTED, PROPOSAL, WON, LOST
+  TextColumn get notes => text().nullable()();
+  DateTimeColumn get discoveredAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+// 37. FxRates Table (Frankfurter ECB exchange rates cache)
+@DataClassName('FxRate')
+class FxRates extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get baseCurrency => text().withDefault(const Constant('INR'))();
+  TextColumn get ratesJson => text()();
+  DateTimeColumn get fetchedAt => dateTime().withDefault(currentDateAndTime)();
+}
+
+// 38. NotificationLogs Table (Deduplication and history)
+@DataClassName('NotificationLog')
+class NotificationLogs extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get notificationKey => text().unique()();
+  TextColumn get title => text()();
+  TextColumn get body => text()();
+  TextColumn get route => text().nullable()();
+  TextColumn get channel => text().withDefault(const Constant('default'))();
+  DateTimeColumn get sentAt => dateTime().withDefault(currentDateAndTime)();
+}
+
+// 39. AiUsages Table (Token tracking and daily budgets)
+@DataClassName('AiUsage')
+class AiUsages extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get provider => text()(); // gemini, claude, nemotron
+  TextColumn get task => text()(); // search, leads, drafts, match, tailor
+  IntColumn get tokens => integer().withDefault(const Constant(0))();
+  RealColumn get costInr => real().nullable()();
+  DateTimeColumn get timestamp => dateTime().withDefault(currentDateAndTime)();
+}
+
+// 40. AiCaches Table (24-hour result caching)
+@DataClassName('AiCache')
+class AiCaches extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get cacheKey => text().unique()();
+  TextColumn get task => text()();
+  TextColumn get promptHash => text()();
+  TextColumn get responseText => text()();
+  DateTimeColumn get expiresAt => dateTime()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+}
+
 // --- Main App Database ---
 @DriftDatabase(tables: [
   UserProfiles,
@@ -615,12 +767,20 @@ class BackupRecords extends Table {
   JobSourceConfigs,
   ReportRecords,
   BackupRecords,
+  Habits,
+  HabitLogs,
+  DailyReflections,
+  BusinessLeads,
+  FxRates,
+  NotificationLogs,
+  AiUsages,
+  AiCaches,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? impl.connect());
 
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 11;
 
   @override
   MigrationStrategy get migration {
@@ -695,11 +855,79 @@ class AppDatabase extends _$AppDatabase {
           await m.createTable(reportRecords);
           await m.createTable(backupRecords);
         }
+        if (from < 9) {
+          // These columns shipped in generated code before they were declared
+          // here, so v8 databases may or may not already have them.
+          await _addColumnIfMissing(m, resumes, resumes.parsedDataJson);
+          await _addColumnIfMissing(m, resumes, resumes.extractionStatus);
+          await _addColumnIfMissing(m, resumes, resumes.isActive);
+          await _addColumnIfMissing(m, jobs, jobs.atsProvider);
+          await _addColumnIfMissing(m, jobs, jobs.rawJson);
+          await _addColumnIfMissing(m, jobs, jobs.externalId);
+          await m.addColumn(userProfiles, userProfiles.email);
+          await m.addColumn(userProfiles, userProfiles.phone);
+          await m.addColumn(userProfiles, userProfiles.linkedinUrl);
+          await m.addColumn(userProfiles, userProfiles.githubUrl);
+          await m.createTable(habits);
+          await m.createTable(habitLogs);
+          await m.createTable(dailyReflections);
+        }
+        if (from < 10) {
+          await m.createTable(businessLeads);
+        }
+        if (from < 11) {
+          // Jobs table columns
+          await _addColumnIfMissing(m, jobs, jobs.matchScore);
+          await _addColumnIfMissing(m, jobs, jobs.matchTier);
+          await _addColumnIfMissing(m, jobs, jobs.matchJson);
+          await _addColumnIfMissing(m, jobs, jobs.matchProfileVersion);
+          await _addColumnIfMissing(m, jobs, jobs.roleFamily);
+          await _addColumnIfMissing(m, jobs, jobs.isRemote);
+          await _addColumnIfMissing(m, jobs, jobs.salaryMinInr);
+          await _addColumnIfMissing(m, jobs, jobs.salaryMaxInr);
+
+          // UserProfiles table columns
+          await _addColumnIfMissing(m, userProfiles, userProfiles.expectedSalaryAmount);
+          await _addColumnIfMissing(m, userProfiles, userProfiles.expectedSalaryCurrency);
+          await _addColumnIfMissing(m, userProfiles, userProfiles.expectedSalaryPeriod);
+          await _addColumnIfMissing(m, userProfiles, userProfiles.displayCurrency);
+          await _addColumnIfMissing(m, userProfiles, userProfiles.isAdmin);
+          await _addColumnIfMissing(m, userProfiles, userProfiles.status);
+          await _addColumnIfMissing(m, userProfiles, userProfiles.permissions);
+          await _addColumnIfMissing(m, userProfiles, userProfiles.passwordHash);
+
+          // Habits table columns
+          await _addColumnIfMissing(m, habits, habits.reminderTime);
+
+          // Resumes table columns
+          await _addColumnIfMissing(m, resumes, resumes.jobId);
+          await _addColumnIfMissing(m, resumes, resumes.latexSource);
+          await _addColumnIfMissing(m, resumes, resumes.atsScore);
+
+          // New tables
+          await m.createTable(fxRates);
+          await m.createTable(notificationLogs);
+          await m.createTable(aiUsages);
+          await m.createTable(aiCaches);
+
+          // Database diet: clear raw_json to save space
+          await customStatement('UPDATE jobs SET raw_json = NULL WHERE raw_json IS NOT NULL;');
+        }
       },
       beforeOpen: (details) async {
         await customStatement('PRAGMA foreign_keys = ON;');
       },
     );
+  }
+
+  Future<void> _addColumnIfMissing(
+    Migrator m,
+    TableInfo table,
+    GeneratedColumn column,
+  ) async {
+    final info = await customSelect('PRAGMA table_info("${table.actualTableName}")').get();
+    final exists = info.any((row) => row.read<String>('name') == column.name);
+    if (!exists) await m.addColumn(table, column);
   }
 
   // --- Profile Queries ---
@@ -751,7 +979,10 @@ class AppDatabase extends _$AppDatabase {
   Stream<Resume?> watchPrimaryResume() =>
       (select(resumes)..where((r) => r.isPrimary.equals(true))).watchSingleOrNull();
   Future<int> insertResume(ResumesCompanion resume) => into(resumes).insert(resume);
-  Future<bool> updateResume(ResumesCompanion resume) => update(resumes).replace(resume);
+  /// Partial update: only fields present in [resume] are written, so parsed
+  /// data and extraction status survive an edit of the name or version.
+  Future<bool> updateResume(ResumesCompanion resume) async =>
+      await (update(resumes)..where((r) => r.id.equals(resume.id.value))).write(resume) > 0;
   Future<int> deleteResume(String id) =>
       (delete(resumes)..where((r) => r.id.equals(id))).go();
 
@@ -1261,6 +1492,330 @@ class AppDatabase extends _$AppDatabase {
       into(backupRecords).insertOnConflictUpdate(backup);
   Future<int> deleteBackupRecord(String id) =>
       (delete(backupRecords)..where((b) => b.id.equals(id))).go();
+
+  // --- Freelance: Business leads ---
+  Stream<List<BusinessLead>> watchBusinessLeads() =>
+      (select(businessLeads)..orderBy([(b) => OrderingTerm.desc(b.needScore), (b) => OrderingTerm.desc(b.discoveredAt)])).watch();
+  Future<List<BusinessLead>> getBusinessLeads() => select(businessLeads).get();
+  Future<int> updateBusinessLeadStatus(String id, String status) =>
+      (update(businessLeads)..where((b) => b.id.equals(id)))
+          .write(BusinessLeadsCompanion(status: Value(status), updatedAt: Value(DateTime.now())));
+  Future<int> deleteBusinessLead(String id) => (delete(businessLeads)..where((b) => b.id.equals(id))).go();
+
+  // --- Track: Habits ---
+  Stream<List<Habit>> watchActiveHabits() => (select(habits)
+        ..where((h) => h.isArchived.equals(false))
+        ..orderBy([(h) => OrderingTerm.asc(h.createdAt)]))
+      .watch();
+  Future<int> insertHabit(HabitsCompanion habit) => into(habits).insert(habit);
+  Future<int> deleteHabit(String id) => (delete(habits)..where((h) => h.id.equals(id))).go();
+  Stream<List<HabitLog>> watchHabitLogsSince(DateTime since) =>
+      (select(habitLogs)..where((l) => l.day.isBiggerOrEqualValue(since))).watch();
+
+  Future<List<Habit>> getActiveHabits() => (select(habits)
+        ..where((h) => h.isArchived.equals(false))
+        ..orderBy([(h) => OrderingTerm.asc(h.createdAt)]))
+      .get();
+
+  Future<List<HabitLog>> getHabitLogsSince(DateTime since) =>
+      (select(habitLogs)..where((l) => l.day.isBiggerOrEqualValue(since))).get();
+
+  /// Marks [habitId] done on [day] (local midnight), or clears it.
+  Future<void> setHabitDone(String habitId, DateTime day, bool done, String newId) async {
+    if (done) {
+      await into(habitLogs).insert(
+        HabitLogsCompanion.insert(id: newId, habitId: habitId, day: day),
+        mode: InsertMode.insertOrIgnore,
+      );
+    } else {
+      await (delete(habitLogs)..where((l) => l.habitId.equals(habitId) & l.day.equals(day))).go();
+    }
+  }
+
+  // --- Track: Daily Reflections ---
+  Stream<List<DailyReflection>> watchRecentReflections({int limit = 30}) => (select(dailyReflections)
+        ..orderBy([(r) => OrderingTerm.desc(r.day)])
+        ..limit(limit))
+      .watch();
+  Future<DailyReflection?> getReflectionForDay(DateTime day) =>
+      (select(dailyReflections)..where((r) => r.day.equals(day))).getSingleOrNull();
+  Future<int> upsertReflection(DailyReflectionsCompanion reflection) =>
+      into(dailyReflections).insertOnConflictUpdate(reflection);
+
+  // --- P1: Job Paging and SQL Filters ---
+  Stream<List<JobListItem>> watchJobPage({
+    String? tier,
+    bool? isRemote,
+    bool? isSaved,
+    double? minSalaryInr,
+    String? query,
+    int limit = 50,
+    int offset = 0,
+  }) {
+    final q = select(jobs);
+    if (tier != null && tier != 'ALL') {
+      q.where((j) => j.matchTier.equals(tier));
+    }
+    if (isRemote == true) {
+      q.where((j) => j.isRemote.equals(true));
+    }
+    if (isSaved == true) {
+      q.where((j) => j.isSaved.equals(true));
+    }
+    if (minSalaryInr != null && minSalaryInr > 0) {
+      q.where((j) => j.salaryMaxInr.isBiggerOrEqualValue(minSalaryInr));
+    }
+    if (query != null && query.trim().isNotEmpty) {
+      final term = '%${query.trim().toLowerCase()}%';
+      q.where((j) => j.title.lower().like(term) | j.company.lower().like(term));
+    }
+
+    q.orderBy([
+      (j) => OrderingTerm(expression: j.matchScore, mode: OrderingMode.desc, nulls: NullsOrder.last),
+      (j) => OrderingTerm(expression: j.discoveredAt, mode: OrderingMode.desc),
+    ]);
+
+    q.limit(limit, offset: offset);
+
+    return q.map((j) => JobListItem.fromJob(j)).watch();
+  }
+
+  Future<Map<String, int>> getJobTierCounts() async {
+    final rows = await customSelect('''
+      SELECT 
+        COUNT(*) as total_count,
+        SUM(CASE WHEN match_tier = 'STRONG_MATCH' THEN 1 ELSE 0 END) as strong_count,
+        SUM(CASE WHEN match_tier = 'RELEVANT' THEN 1 ELSE 0 END) as relevant_count,
+        SUM(CASE WHEN is_saved = 1 THEN 1 ELSE 0 END) as saved_count
+      FROM jobs;
+    ''').get();
+
+    if (rows.isEmpty) {
+      return {'all': 0, 'strong': 0, 'relevant': 0, 'saved': 0};
+    }
+    final r = rows.first;
+    return {
+      'all': r.read<int?>('total_count') ?? 0,
+      'strong': r.read<int?>('strong_count') ?? 0,
+      'relevant': r.read<int?>('relevant_count') ?? 0,
+      'saved': r.read<int?>('saved_count') ?? 0,
+    };
+  }
+
+  // --- Profile RBAC Management ---
+  Future<List<UserProfile>> getAllProfiles() => select(userProfiles).get();
+  Stream<List<UserProfile>> watchAllProfiles() => select(userProfiles).watch();
+  Future<UserProfile?> getProfileById(String id) =>
+      (select(userProfiles)..where((p) => p.id.equals(id))).getSingleOrNull();
+
+  Future<int> setProfileStatus(String id, String status) =>
+      (update(userProfiles)..where((p) => p.id.equals(id)))
+          .write(UserProfilesCompanion(status: Value(status), updatedAt: Value(DateTime.now())));
+
+  Future<int> setProfilePermissions(String id, String permissions) =>
+      (update(userProfiles)..where((p) => p.id.equals(id)))
+          .write(UserProfilesCompanion(permissions: Value(permissions), updatedAt: Value(DateTime.now())));
+
+  Future<int> deleteProfile(String id) =>
+      (delete(userProfiles)..where((p) => p.id.equals(id))).go();
+
+  Future<int> getPendingProfileCount() async {
+    final list = await (select(userProfiles)..where((p) => p.status.equals('PENDING'))).get();
+    return list.length;
+  }
+
+  Future<void> registerNewProfile({
+    required String id,
+    required String name,
+    String? email,
+    String? currentRole,
+  }) async {
+    final existing = await select(userProfiles).get();
+    final isFirst = existing.isEmpty;
+    final isAdmin = isFirst;
+    final status = isFirst ? 'APPROVED' : 'PENDING';
+    final perms = isFirst ? 'ALL' : '';
+
+    await into(userProfiles).insert(
+      UserProfilesCompanion(
+        id: Value(id),
+        name: Value(name),
+        email: Value(email),
+        currentRole: Value(currentRole),
+        isAdmin: Value(isAdmin),
+        status: Value(status),
+        permissions: Value(perms),
+        createdAt: Value(DateTime.now()),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+
+    if (!isFirst) {
+      await recordNotification(
+        'new_user_$id',
+        'New User Registration',
+        '$name (${email ?? "No email"}) has registered and is awaiting permission approval.',
+        route: '/settings/admin-users',
+        channel: 'admin_alerts',
+      );
+    }
+  }
+
+  // --- Notification Log Queries ---
+  Future<bool> hasNotificationBeenSent(String key) async {
+    final existing = await (select(notificationLogs)..where((n) => n.notificationKey.equals(key))).getSingleOrNull();
+    return existing != null;
+  }
+
+  Future<int> recordNotification(
+    String key,
+    String title,
+    String body, {
+    String? route,
+    String channel = 'default',
+  }) async {
+    final existing = await (select(notificationLogs)..where((n) => n.notificationKey.equals(key))).getSingleOrNull();
+    if (existing != null) return 0;
+    return into(notificationLogs).insert(
+      NotificationLogsCompanion(
+        notificationKey: Value(key),
+        title: Value(title),
+        body: Value(body),
+        route: Value(route),
+        channel: Value(channel),
+        sentAt: Value(DateTime.now()),
+      ),
+    );
+  }
+
+  Future<List<NotificationLog>> getRecentNotifications({int limit = 50}) =>
+      (select(notificationLogs)
+            ..orderBy([(n) => OrderingTerm(expression: n.sentAt, mode: OrderingMode.desc)])
+            ..limit(limit))
+          .get();
+
+  Stream<List<NotificationLog>> watchRecentNotifications({int limit = 50}) =>
+      (select(notificationLogs)
+            ..orderBy([(n) => OrderingTerm(expression: n.sentAt, mode: OrderingMode.desc)])
+            ..limit(limit))
+          .watch();
+
+  // --- FxRates Queries ---
+  Future<FxRate?> getLatestFxRate(String base) =>
+      (select(fxRates)..where((f) => f.baseCurrency.equals(base))..orderBy([(f) => OrderingTerm(expression: f.fetchedAt, mode: OrderingMode.desc)])..limit(1)).getSingleOrNull();
+
+  Future<int> saveFxRate(String base, String ratesJson) =>
+      into(fxRates).insert(
+        FxRatesCompanion(
+          baseCurrency: Value(base),
+          ratesJson: Value(ratesJson),
+          fetchedAt: Value(DateTime.now()),
+        ),
+      );
+
+  // --- AiUsage Queries ---
+  Future<int> recordAiUsage(String provider, String task, int tokens, {double? costInr}) =>
+      into(aiUsages).insert(
+        AiUsagesCompanion(
+          provider: Value(provider),
+          task: Value(task),
+          tokens: Value(tokens),
+          costInr: Value(costInr),
+          timestamp: Value(DateTime.now()),
+        ),
+      );
+
+  Future<int> getTodayAiCallCount(String provider) async {
+    final now = DateTime.now();
+    final startOfDay = DateTime(now.year, now.month, now.day);
+    final count = await (select(aiUsages)
+          ..where((a) => a.provider.equals(provider) & a.timestamp.isBiggerOrEqualValue(startOfDay)))
+        .get();
+    return count.length;
+  }
+
+  // --- AiCache Queries ---
+  Future<String?> getCachedAiResponse(String cacheKey) async {
+    final now = DateTime.now();
+    final row = await (select(aiCaches)..where((c) => c.cacheKey.equals(cacheKey) & c.expiresAt.isBiggerThanValue(now))).getSingleOrNull();
+    return row?.responseText;
+  }
+
+  Future<int> saveAiCache(String cacheKey, String task, String promptHash, String responseText, Duration ttl) {
+    final now = DateTime.now();
+    return into(aiCaches).insertOnConflictUpdate(
+      AiCachesCompanion(
+        cacheKey: Value(cacheKey),
+        task: Value(task),
+        promptHash: Value(promptHash),
+        responseText: Value(responseText),
+        expiresAt: Value(now.add(ttl)),
+        createdAt: Value(now),
+      ),
+    );
+  }
+}
+
+class JobListItem {
+  final String id;
+  final String title;
+  final String company;
+  final String? location;
+  final String? salary;
+  final String? employmentType;
+  final String? source;
+  final DateTime? postedDate;
+  final DateTime discoveredAt;
+  final bool isSaved;
+  final String? atsProvider;
+  final int? matchScore;
+  final String? matchTier;
+  final String? matchJson;
+  final double? salaryMinInr;
+  final double? salaryMaxInr;
+  final bool? isRemote;
+
+  const JobListItem({
+    required this.id,
+    required this.title,
+    required this.company,
+    this.location,
+    this.salary,
+    this.employmentType,
+    this.source,
+    this.postedDate,
+    required this.discoveredAt,
+    required this.isSaved,
+    this.atsProvider,
+    this.matchScore,
+    this.matchTier,
+    this.matchJson,
+    this.salaryMinInr,
+    this.salaryMaxInr,
+    this.isRemote,
+  });
+
+  factory JobListItem.fromJob(Job j) {
+    return JobListItem(
+      id: j.id,
+      title: j.title,
+      company: j.company,
+      location: j.location,
+      salary: j.salary,
+      employmentType: j.employmentType,
+      source: j.source,
+      postedDate: j.postedDate,
+      discoveredAt: j.discoveredAt,
+      isSaved: j.isSaved,
+      atsProvider: j.atsProvider,
+      matchScore: j.matchScore,
+      matchTier: j.matchTier,
+      matchJson: j.matchJson,
+      salaryMinInr: j.salaryMinInr,
+      salaryMaxInr: j.salaryMaxInr,
+      isRemote: j.isRemote,
+    );
+  }
 }
 
 // Global Provider for AppDatabase instance

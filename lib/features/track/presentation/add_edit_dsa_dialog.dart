@@ -22,7 +22,7 @@ class _AddEditDSADialogState extends ConsumerState<AddEditDSADialog> {
   late final TextEditingController _notesController;
 
   String _platform = 'LeetCode';
-  String _topic = 'Arrays';
+  String _topic = 'Arrays & Hashing';
   DSADifficulty _difficulty = DSADifficulty.medium;
   DSAStatus _status = DSAStatus.todo;
   DateTime? _revisionDate;
@@ -38,7 +38,7 @@ class _AddEditDSADialogState extends ConsumerState<AddEditDSADialog> {
     _notesController = TextEditingController(text: p?.notes ?? '');
 
     _platform = p?.platform ?? 'LeetCode';
-    _topic = p?.topic ?? 'Arrays';
+    _topic = p?.topic ?? 'Arrays & Hashing';
     _difficulty = DSADifficulty.fromString(p?.difficulty);
     _status = DSAStatus.fromString(p?.status);
     _revisionDate = p?.revisionDate;
@@ -159,9 +159,9 @@ class _AddEditDSADialogState extends ConsumerState<AddEditDSADialog> {
                           const SizedBox(width: 10),
                           Expanded(
                             child: DropdownButtonFormField<String>(
-                              value: dsaTopics.contains(_topic) ? _topic : 'Other',
+                              value: _topic,
                               decoration: const InputDecoration(labelText: 'Topic'),
-                              items: dsaTopics.map((t) => DropdownMenuItem(value: t, child: Text(t))).toList(),
+                              items: {...dsaTopics, _topic}.map((t) => DropdownMenuItem(value: t, child: Text(t, overflow: TextOverflow.ellipsis))).toList(),
                               onChanged: (val) {
                                 if (val != null) setState(() => _topic = val);
                               },

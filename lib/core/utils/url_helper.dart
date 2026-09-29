@@ -26,7 +26,8 @@ class UrlHelper {
     }
 
     String formatted = urlString.trim();
-    if (!formatted.startsWith('http://') && !formatted.startsWith('https://')) {
+    // Keep explicit schemes (tel:, mailto:, https:); bare hosts get https.
+    if (!RegExp(r'^[a-zA-Z][a-zA-Z0-9+.-]*:').hasMatch(formatted)) {
       formatted = 'https://$formatted';
     }
 

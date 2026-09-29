@@ -1,5 +1,5 @@
 class AppConstants {
-  static const String appName = 'Risheesh OS';
+  static const String appName = 'Risheesh';
   static const String appTagline = 'Personal Career & Life Command Center';
   static const String appVersion = '1.0.0+1';
 
@@ -8,6 +8,9 @@ class AppConstants {
   static const String defaultUserName = 'Risheesh';
 
   static const List<String> freelancePlatforms = [
+    'RemoteOK',
+    'WeWorkRemotely',
+    'Remotive',
     'Upwork',
     'Fiverr',
     'Freelancer',
@@ -189,6 +192,9 @@ enum PaymentStatus {
 }
 
 const List<String> freelancePlatforms = [
+  'RemoteOK',
+  'WeWorkRemotely',
+  'Remotive',
   'Upwork',
   'Fiverr',
   'Freelancer',
@@ -260,26 +266,22 @@ const List<String> dsaPlatforms = [
 ];
 
 const List<String> dsaTopics = [
-  'Arrays',
+  'Arrays & Hashing',
   'Strings',
-  'Linked Lists',
-  'Stacks',
-  'Queues',
-  'Hashing',
-  'Trees',
-  'Graphs',
-  'Heaps',
-  'Sorting',
-  'Searching',
-  'Recursion',
-  'Dynamic Programming',
-  'Greedy',
-  'Backtracking',
-  'Bit Manipulation',
   'Two Pointers',
   'Sliding Window',
+  'Stack',
+  'Binary Search',
+  'Linked List',
+  'Trees',
   'Trie',
-  'Math',
+  'Heap / Priority Queue',
+  'Backtracking',
+  'Graphs',
+  'Dynamic Programming',
+  'Greedy',
+  'Intervals',
+  'Math & Bit Manipulation',
   'Other',
 ];
 

@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../../core/database/app_database.dart';
-import '../../work/presentation/add_edit_project_dialog.dart';
 import '../providers/freelance_providers.dart';
 import 'add_edit_client_dialog.dart';
-import 'add_edit_lead_dialog.dart';
 import 'add_edit_payment_dialog.dart';
-import 'lead_details_screen.dart';
 
 class ClientDetailsScreen extends ConsumerWidget {
   final Client? client;
@@ -38,8 +34,6 @@ class ClientDetailsScreen extends ConsumerWidget {
       );
     }
 
-    final leadsAsync = ref.watch(clientLeadsProvider(id));
-    final projectsAsync = ref.watch(clientProjectsProvider(id));
     final paymentsAsync = ref.watch(clientPaymentsProvider(id));
 
     return Scaffold(
@@ -214,168 +208,6 @@ class ClientDetailsScreen extends ConsumerWidget {
             },
             loading: () => const LinearProgressIndicator(),
             error: (_, __) => const SizedBox.shrink(),
-          ),
-          const SizedBox(height: 16),
-
-          // Related Projects Section
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'RELATED PROJECTS',
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: theme.colorScheme.primary,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.1,
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.add_circle_outline, size: 20),
-                tooltip: 'Create Project for Client',
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (_) => AddEditProjectDialog(
-                      initialNotes: 'Client: ${currentClient.name}',
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          projectsAsync.when(
-            data: (projects) {
-              if (projects.isEmpty) {
-                return Card(
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    side: BorderSide(color: theme.colorScheme.outlineVariant),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text('No active projects linked to this client.'),
-                        TextButton(
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (_) => AddEditProjectDialog(
-                                initialNotes: 'Client: ${currentClient.name}',
-                              ),
-                            );
-                          },
-                          child: const Text('Create Project'),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }
-
-              return ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: projects.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 8),
-                itemBuilder: (ctx, idx) {
-                  final proj = projects[idx];
-                  return Card(
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      side: BorderSide(color: theme.colorScheme.outlineVariant),
-                    ),
-                    child: ListTile(
-                      leading: const Icon(Icons.folder_outlined),
-                      title: Text(proj.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-                      subtitle: Text('Status: ${proj.status} • Progress: ${(proj.progress * 100).toInt()}%'),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () => context.push('/work/project/${proj.id}'),
-                    ),
-                  );
-                },
-              );
-            },
-            loading: () => const LinearProgressIndicator(),
-            error: (e, _) => Text('Error loading projects: $e'),
-          ),
-          const SizedBox(height: 16),
-
-          // Related Leads / Opportunities Section
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'OPPORTUNITIES & LEADS',
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: theme.colorScheme.primary,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.1,
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.add_circle_outline, size: 20),
-                tooltip: 'Add Lead for Client',
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (_) => const AddEditLeadDialog(),
-                  );
-                },
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          leadsAsync.when(
-            data: (leads) {
-              if (leads.isEmpty) {
-                return Card(
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    side: BorderSide(color: theme.colorScheme.outlineVariant),
-                  ),
-                  child: const Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Text('No freelance opportunities logged for this client.'),
-                  ),
-                );
-              }
-
-              return ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: leads.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 8),
-                itemBuilder: (ctx, idx) {
-                  final lead = leads[idx];
-                  return Card(
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      side: BorderSide(color: theme.colorScheme.outlineVariant),
-                    ),
-                    child: ListTile(
-                      title: Text(lead.title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                      subtitle: Text('Stage: ${lead.status} • ${lead.platform ?? "Direct"}'),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => LeadDetailsScreen(lead: lead)),
-                        );
-                      },
-                    ),
-                  );
-                },
-              );
-            },
-            loading: () => const LinearProgressIndicator(),
-            error: (e, _) => Text('Error loading leads: $e'),
           ),
           const SizedBox(height: 16),
 

@@ -17,10 +17,10 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
     switch (savedMode) {
       case 'light':
         return ThemeMode.light;
-      case 'dark':
-        return ThemeMode.dark;
-      default:
+      case 'system':
         return ThemeMode.system;
+      default:
+        return ThemeMode.dark; // dark-first until the user picks otherwise
     }
   }
 

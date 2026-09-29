@@ -4,6 +4,8 @@ import 'package:uuid/uuid.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/database/app_database.dart';
 import '../../../core/theme/theme_provider.dart';
+import '../../career/domain/resume_profile_models.dart';
+import '../../career/services/resume_ingest_service.dart';
 
 final onboardingCompletedProvider = StateProvider<bool>((ref) {
   final prefs = ref.watch(sharedPreferencesProvider);
@@ -33,16 +35,18 @@ class OnboardingService {
     String? expectedSalary,
     String? resumeFilePath,
     String? resumeFileName,
+    String? resumeId,
+    ResumeProfile? parsedResume,
   }) async {
     // If a resume was uploaded during onboarding, insert it into the resumes table
-    String? resumeId;
+    String? savedResumeId;
     if (resumeFilePath != null) {
       final now = DateTime.now();
       final companion = ResumesCompanion(
-        id: Value(_uuid.v4()),
+        id: Value(resumeId ?? _uuid.v4()),
         name: Value(resumeFileName ?? 'Resume'),
         version: const Value('1.0'),
-        targetRole: Value(currentRole),
+        targetRole: Value(currentRole?.trim().isEmpty == true ? parsedResume?.targetRole?.value : currentRole),
         filePath: Value(resumeFilePath),
         fileName: Value(resumeFileName ?? 'Resume'),
         notes: const Value('Uploaded during first-run onboarding'),
@@ -51,11 +55,11 @@ class OnboardingService {
         updatedAt: Value(now),
       );
       await db.insertResume(companion);
-      resumeId = companion.id.value;
+      savedResumeId = companion.id.value;
     }
 
     final existing = await db.getProfile();
-    final profileId = existing?.id ?? resumeId ?? const Uuid().v4();
+    final profileId = existing?.id ?? const Uuid().v4();
     final now = DateTime.now();
 
     final companion = UserProfilesCompanion(
@@ -74,9 +78,15 @@ class OnboardingService {
 
     await db.upsertProfile(companion);
 
-    // If a resume was uploaded, set it as primary
-    if (resumeId != null) {
-      await db.setPrimaryResume(resumeId);
+    // If a resume was uploaded, set it as primary and store what we parsed:
+    // resume intelligence, contact details, education and the skills tracker.
+    if (savedResumeId != null) {
+      await db.setPrimaryResume(savedResumeId);
+      if (parsedResume != null) {
+        final ingest = ResumeIngestService(db);
+        await ingest.saveParsed(savedResumeId, parsedResume);
+        await ingest.applyToProfile(parsedResume);
+      }
     }
 
     final prefs = ref.read(sharedPreferencesProvider);

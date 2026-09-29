@@ -1,12 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../core/ai/ai_keys.dart';
+import '../../../core/ai/ai_service.dart';
 import '../../../core/database/app_database.dart';
+import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/date_formatter.dart';
+import '../../../shared/widgets/feed_widgets.dart';
+import '../../../shared/widgets/ui_kit.dart';
 import '../domain/job_match_service.dart';
 import '../providers/career_providers.dart';
-import 'job_details_screen.dart';
-import 'widgets/job_ai_analysis_dialog.dart';
-import 'widgets/resume_selector_banner.dart';
+import '../services/ai_job_search_service.dart';
+
+enum JobFilter { all, bestMatch, remote, fresh, saved }
+
+/// Pure filter used by the Jobs tab (and tests): returns jobs with their
+/// match, sorted by match then recency.
+List<(Job, JobMatchResult)> filterJobs(
+  List<Job> jobs,
+  UserProfile? profile, {
+  JobFilter filter = JobFilter.all,
+  String query = '',
+  DateTime? now,
+}) {
+  final q = query.trim().toLowerCase();
+  final cutoff = (now ?? DateTime.now()).subtract(const Duration(days: 3));
+  final out = <(Job, JobMatchResult)>[];
+  for (final j in jobs) {
+    if (q.isNotEmpty && !'${j.title} ${j.company} ${j.skills ?? ''} ${j.location ?? ''}'.toLowerCase().contains(q)) continue;
+    final match = j.matchScore != null
+        ? JobMatchResult.fromStoredScore(j.matchScore!)
+        : JobMatchService.calculateMatch(job: j, profile: profile);
+    final keep = switch (filter) {
+      JobFilter.all => true,
+      JobFilter.bestMatch => match.hasSufficientData && match.matchPercentage >= 70,
+      JobFilter.remote => '${j.location ?? ''} ${j.employmentType ?? ''}'.toLowerCase().contains('remote'),
+      JobFilter.fresh => (j.postedDate ?? j.discoveredAt).isAfter(cutoff),
+      JobFilter.saved => j.isSaved,
+    };
+    if (keep) out.add((j, match));
+  }
+  out.sort((a, b) {
+    final byScore = b.$2.matchPercentage.compareTo(a.$2.matchPercentage);
+    return byScore != 0 ? byScore : (b.$1.postedDate ?? b.$1.discoveredAt).compareTo(a.$1.postedDate ?? a.$1.discoveredAt);
+  });
+  return out;
+}
+
+final jobFilterSelectionProvider = StateProvider<JobFilter>((ref) => JobFilter.all);
+final jobQueryProvider = StateProvider<String>((ref) => '');
 
 class LiveJobsView extends ConsumerStatefulWidget {
   const LiveJobsView({super.key});
@@ -16,378 +59,308 @@ class LiveJobsView extends ConsumerStatefulWidget {
 }
 
 class _LiveJobsViewState extends ConsumerState<LiveJobsView> {
-  String _searchFilter = '';
-  String _selectedFilter = 'ALL'; // ALL, STRONG_MATCH, REMOTE, SAVED
+  final _search = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final jobs = ref.read(allJobsProvider).valueOrNull ?? [];
-      if (jobs.isEmpty) {
-        ref.read(liveDiscoveryProvider.notifier).discoverJobs();
-      }
+    // Auto-sync public boards when there are no live jobs or the last sync is > 6h old.
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final notifier = ref.read(liveDiscoveryProvider.notifier);
+      final jobs = await ref.read(allJobsProvider.future);
+      if (!mounted) return;
+      if (!jobs.any((j) => j.atsProvider != null) || notifier.isStale()) _refresh(showSnack: false);
     });
+  }
+
+  @override
+  void dispose() {
+    _search.dispose();
+    super.dispose();
+  }
+
+  Future<void> _refresh({bool showSnack = true}) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final result = await ref.read(liveDiscoveryProvider.notifier).discoverJobs();
+    if (mounted && showSnack && result != null) messenger.showSnackBar(SnackBar(content: Text(result.summary)));
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final jobsAsync = ref.watch(allJobsProvider);
-    final profileAsync = ref.watch(careerProfileProvider);
-    final discoveryState = ref.watch(liveDiscoveryProvider);
+    final jobs = ref.watch(allJobsProvider).valueOrNull;
+    final profile = ref.watch(careerProfileProvider).valueOrNull;
+    final discovery = ref.watch(liveDiscoveryProvider);
+    final filter = ref.watch(jobFilterSelectionProvider);
+    final query = ref.watch(jobQueryProvider);
 
-    return Scaffold(
-      body: Column(
-        children: [
-          const ResumeSelectorBanner(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Search discovered jobs...',
-                      prefixIcon: const Icon(Icons.search, size: 20),
-                      isDense: true,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(color: theme.colorScheme.outlineVariant),
-                      ),
-                      suffixIcon: _searchFilter.isNotEmpty
-                          ? IconButton(
-                              icon: const Icon(Icons.clear, size: 18),
-                              onPressed: () => setState(() => _searchFilter = ''),
-                            )
-                          : null,
+    final all = jobs ?? const <Job>[];
+    final counts = {for (final f in JobFilter.values) f: filterJobs(all, profile, filter: f, query: query).length};
+    final visible = filterJobs(all, profile, filter: filter, query: query);
+    final failed = discovery.lastResult?.failedSources ?? const [];
+
+    return RefreshIndicator(
+      onRefresh: _refresh,
+      child: CustomScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        slivers: [
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: SearchField(
+                      controller: _search,
+                      hint: 'Search title, company, skill',
+                      onChanged: (v) {
+                        ref.read(jobQueryProvider.notifier).state = v;
+                        setState(() {});
+                      },
                     ),
-                    onChanged: (val) => setState(() => _searchFilter = val),
+                  ),
+                  const SizedBox(width: 8),
+                  IconButton.filledTonal(
+                    tooltip: 'Search with AI',
+                    onPressed: () => showModalBottomSheet(context: context, isScrollControlled: true, builder: (_) => const AiJobSearchSheet()),
+                    icon: const Icon(Icons.auto_awesome_rounded),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: FilterPills<JobFilter>(
+              options: const [
+                (JobFilter.all, 'All'),
+                (JobFilter.bestMatch, 'Best match'),
+                (JobFilter.remote, 'Remote'),
+                (JobFilter.fresh, 'New'),
+                (JobFilter.saved, 'Saved'),
+              ],
+              counts: counts,
+              selected: filter,
+              onSelected: (f) => ref.read(jobFilterSelectionProvider.notifier).state = f,
+            ),
+          ),
+          if (discovery.isLoading) const SliverToBoxAdapter(child: LinearProgressIndicator(minHeight: 2)),
+          if (!discovery.isLoading && (discovery.error != null || (discovery.lastResult?.allSourcesFailed ?? false)))
+            SliverToBoxAdapter(
+              child: StatusBanner(
+                tone: BannerTone.error,
+                title: 'Couldn’t reach the job boards',
+                message: discovery.error ?? failed.first.error,
+                onRetry: _refresh,
+              ),
+            )
+          else if (!discovery.isLoading && failed.isNotEmpty)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: InkWell(
+                  onTap: () => showSourceStatusSheet(context, discovery.lastResult!.sources),
+                  child: Text(
+                    '${failed.length} of ${discovery.lastResult!.sources.length} sources didn’t respond · details',
+                    style: theme.textTheme.labelSmall?.copyWith(color: AppTheme.warning),
                   ),
                 ),
-                const SizedBox(width: 10),
-                FilledButton.icon(
-                  onPressed: discoveryState.isLoading
-                      ? null
-                      : () async {
-                          final messenger = ScaffoldMessenger.of(context);
-                          final result = await ref.read(liveDiscoveryProvider.notifier).discoverJobs();
-                          if (mounted && result != null) {
-                            messenger.showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  'Discovered ${result.totalDiscovered} jobs: ${result.newJobsSaved} new saved, ${result.duplicatesSkipped} duplicates skipped.',
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                  icon: discoveryState.isLoading
-                      ? const SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                        )
-                      : const Icon(Icons.radar, size: 18),
-                  label: Text(discoveryState.isLoading ? 'Discovering...' : 'Discover Live'),
+              ),
+            ),
+          if (jobs == null)
+            SliverPadding(
+              padding: const EdgeInsets.all(16),
+              sliver: SliverList.builder(itemCount: 4, itemBuilder: (_, __) => const SkeletonCard()),
+            )
+          else if (visible.isEmpty)
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: all.isEmpty
+                  ? EmptyHint(
+                      icon: Icons.radar_rounded,
+                      title: discovery.isLoading ? 'Fetching live jobs…' : 'No jobs yet',
+                      message: 'Pull down to fetch from Greenhouse, Lever, Ashby, RemoteOK and WeWorkRemotely, or tap ✦ to search with AI.',
+                    )
+                  : EmptyHint(
+                      icon: Icons.filter_alt_off_rounded,
+                      title: 'No jobs in this filter',
+                      message: filter == JobFilter.bestMatch && profile?.skills == null
+                          ? 'Add skills to your profile (or upload a resume) to get match scores.'
+                          : 'Try another filter or search term.',
+                    ),
+            )
+          else
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+              sliver: SliverList.separated(
+                itemCount: visible.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 10),
+                itemBuilder: (_, i) => JobCard(job: visible[i].$1, match: visible[i].$2),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class JobCard extends ConsumerWidget {
+  final Job job;
+  final JobMatchResult match;
+
+  const JobCard({super.key, required this.job, required this.match});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final posted = DateFormatter.timeAgo(job.postedDate ?? job.discoveredAt);
+    return AppCard(
+      onTap: () => context.push('/career/job/${job.id}'),
+      padding: const EdgeInsets.fromLTRB(16, 14, 6, 14),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          InitialAvatar(name: job.company),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(job.title, maxLines: 2, overflow: TextOverflow.ellipsis, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700, height: 1.25)),
+                const SizedBox(height: 3),
+                Text(
+                  [job.company, if (job.location != null && job.location!.isNotEmpty) job.location].join(' · '),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodySmall,
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    if (job.salary != null) ...[
+                      Flexible(
+                        child: Text(job.salary!, maxLines: 1, overflow: TextOverflow.ellipsis, style: theme.textTheme.labelLarge?.copyWith(color: AppTheme.success, fontWeight: FontWeight.w700)),
+                      ),
+                      const SizedBox(width: 10),
+                    ],
+                    Text(posted, style: theme.textTheme.labelSmall),
+                    if (job.source != null) ...[
+                      Text('  ·  ', style: theme.textTheme.labelSmall),
+                      Flexible(child: Text(job.source!, maxLines: 1, overflow: TextOverflow.ellipsis, style: theme.textTheme.labelSmall)),
+                    ],
+                  ],
                 ),
               ],
             ),
           ),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            child: Row(
-              children: [
-                _buildFilterChip('ALL', 'All Jobs'),
-                const SizedBox(width: 8),
-                _buildFilterChip('STRONG_MATCH', '🎯 Strong Match (≥80%)'),
-                const SizedBox(width: 8),
-                _buildFilterChip('REMOTE', '🌐 Remote Only'),
-                const SizedBox(width: 8),
-                _buildFilterChip('SAVED', '⭐ Saved / Bookmarked'),
-              ],
-            ),
-          ),
-          const Divider(height: 16),
-          Expanded(
-            child: jobsAsync.when(
-              data: (jobs) {
-                final profile = profileAsync.valueOrNull;
-
-                var filtered = jobs.where((j) {
-                  if (_searchFilter.isNotEmpty) {
-                    final q = _searchFilter.toLowerCase();
-                    final matches = j.title.toLowerCase().contains(q) ||
-                        j.company.toLowerCase().contains(q) ||
-                        (j.skills?.toLowerCase().contains(q) ?? false) ||
-                        (j.location?.toLowerCase().contains(q) ?? false);
-                    if (!matches) return false;
-                  }
-
-                  if (_selectedFilter == 'REMOTE') {
-                    final isRemote = (j.location ?? '').toLowerCase().contains('remote') ||
-                        (j.employmentType ?? '').toLowerCase().contains('remote');
-                    if (!isRemote) return false;
-                  } else if (_selectedFilter == 'SAVED') {
-                    if (!j.isSaved) return false;
-                  }
-
-                  return true;
-                }).toList();
-
-                // Sort by match score descending
-                filtered.sort((a, b) {
-                  final matchA = JobMatchService.calculateMatch(job: a, profile: profile);
-                  final matchB = JobMatchService.calculateMatch(job: b, profile: profile);
-                  return matchB.matchPercentage.compareTo(matchA.matchPercentage);
-                });
-
-                if (_selectedFilter == 'STRONG_MATCH') {
-                  filtered = filtered.where((j) {
-                    final m = JobMatchService.calculateMatch(job: j, profile: profile);
-                    return m.matchPercentage >= 80;
-                  }).toList();
-                }
-
-                if (filtered.isEmpty) {
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.work_outline, size: 48, color: theme.colorScheme.onSurfaceVariant),
-                          const SizedBox(height: 12),
-                          Text(
-                            'No jobs match your filter criteria',
-                            style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            'Discover live opportunities across Greenhouse, Lever, RemoteOK, and tech career boards tailored to your active resume.',
-                            textAlign: TextAlign.center,
-                            style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-                          ),
-                          const SizedBox(height: 16),
-                          FilledButton.icon(
-                            onPressed: discoveryState.isLoading
-                                ? null
-                                : () async {
-                                    final messenger = ScaffoldMessenger.of(context);
-                                    final result = await ref.read(liveDiscoveryProvider.notifier).discoverJobs();
-                                    if (mounted && result != null) {
-                                      messenger.showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            'Discovered ${result.totalDiscovered} jobs: ${result.newJobsSaved} new saved, ${result.duplicatesSkipped} duplicates skipped.',
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                  },
-                            icon: discoveryState.isLoading
-                                ? const SizedBox(
-                                    width: 16,
-                                    height: 16,
-                                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                                  )
-                                : const Icon(Icons.radar, size: 18),
-                            label: Text(discoveryState.isLoading ? 'Discovering...' : 'Discover Live Jobs Now'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }
-
-                return ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  itemCount: filtered.length,
-                  itemBuilder: (context, index) {
-                    final job = filtered[index];
-                    final match = JobMatchService.calculateMatch(job: job, profile: profile);
-
-                    return _buildJobCard(context, ref, job, match);
-                  },
-                );
-              },
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (err, _) => Center(child: Text('Error loading jobs: $err')),
-            ),
+          Column(
+            children: [
+              if (match.hasSufficientData)
+                Padding(
+                  padding: const EdgeInsets.only(top: 2, right: 10),
+                  child: Text('${match.matchPercentage}%', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800, color: scoreColor(match.matchPercentage))),
+                ),
+              IconButton(
+                tooltip: job.isSaved ? 'Unsave' : 'Save',
+                onPressed: () => ref.read(databaseProvider).toggleJobSaved(job.id, !job.isSaved),
+                icon: Icon(job.isSaved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded, color: job.isSaved ? AppTheme.accent : null),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildFilterChip(String filterKey, String label) {
-    final isSelected = _selectedFilter == filterKey;
-    return FilterChip(
-      selected: isSelected,
-      label: Text(label),
-      onSelected: (_) => setState(() => _selectedFilter = filterKey),
-    );
+class AiJobSearchSheet extends ConsumerStatefulWidget {
+  const AiJobSearchSheet({super.key});
+
+  @override
+  ConsumerState<AiJobSearchSheet> createState() => _AiJobSearchSheetState();
+}
+
+class _AiJobSearchSheetState extends ConsumerState<AiJobSearchSheet> {
+  late final TextEditingController _query;
+  late final TextEditingController _location;
+  bool _busy = false;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    final p = ref.read(careerProfileProvider).valueOrNull;
+    _query = TextEditingController(text: (p?.preferredRoles ?? p?.currentRole ?? '').split(',').first.trim());
+    _location = TextEditingController(text: (p?.preferredLocations ?? 'India').split(',').first.trim());
   }
 
-  Widget _buildJobCard(
-    BuildContext context,
-    WidgetRef ref,
-    Job job,
-    JobMatchResult match,
-  ) {
-    final theme = Theme.of(context);
-    final db = ref.read(databaseProvider);
+  @override
+  void dispose() {
+    _query.dispose();
+    _location.dispose();
+    super.dispose();
+  }
 
-    Color scoreColor;
-    if (match.matchPercentage >= 80) {
-      scoreColor = Colors.green.shade600;
-    } else if (match.matchPercentage >= 50) {
-      scoreColor = Colors.amber.shade700;
-    } else {
-      scoreColor = Colors.blueGrey;
+  Future<void> _run() async {
+    if (_query.text.trim().isEmpty) return;
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      final profile = ref.read(careerProfileProvider).valueOrNull;
+      final result = await AiJobSearchService(db: ref.read(databaseProvider), claude: ref.read(aiServiceProvider).claude).search(
+        query: _query.text.trim(),
+        location: _location.text.trim(),
+        skills: (profile?.skills ?? '').split(',').map((s) => s.trim()).where((s) => s.isNotEmpty).toList(),
+      );
+      ref.read(jobFilterSelectionProvider.notifier).state = JobFilter.all;
+      if (mounted) Navigator.pop(context);
+      messenger.showSnackBar(SnackBar(content: Text(result.summary)));
+    } catch (e) {
+      setState(() => _error = '$e');
+    } finally {
+      if (mounted) setState(() => _busy = false);
     }
+  }
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 0,
-      color: theme.colorScheme.surfaceContainerLow,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => JobDetailsScreen(jobId: job.id),
-            ),
-          );
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          job.title,
-                          style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          '${job.company} • ${job.location ?? "Remote"}',
-                          style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: scoreColor.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: scoreColor.withValues(alpha: 0.3)),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.bolt, size: 14, color: scoreColor),
-                        const SizedBox(width: 4),
-                        Text(
-                          '${match.matchPercentage}%',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                            color: scoreColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              if (job.skills != null && job.skills!.isNotEmpty) ...[
-                const SizedBox(height: 10),
-                Wrap(
-                  spacing: 6,
-                  runSpacing: 4,
-                  children: job.skills!
-                      .split(',')
-                      .take(5)
-                      .map((s) => Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: theme.colorScheme.surfaceContainerHighest,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              s.trim(),
-                              style: theme.textTheme.labelSmall?.copyWith(fontSize: 11),
-                            ),
-                          ))
-                      .toList(),
-                ),
-              ],
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  if (job.salary != null && job.salary!.isNotEmpty)
-                    Text(
-                      job.salary!,
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: Colors.green.shade700,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  const Spacer(),
-                  IconButton(
-                    icon: Icon(
-                      job.isSaved ? Icons.bookmark : Icons.bookmark_border,
-                      color: job.isSaved ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant,
-                      size: 20,
-                    ),
-                    onPressed: () {
-                      db.toggleJobSaved(job.id, !job.isSaved);
-                    },
-                    tooltip: job.isSaved ? 'Remove Bookmark' : 'Bookmark Job',
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.psychology_outlined, size: 20),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (_) => JobAiAnalysisDialog(job: job),
-                      );
-                    },
-                    tooltip: 'AI Fit Analysis',
-                  ),
-                  if (job.url != null && job.url!.isNotEmpty)
-                    FilledButton.tonalIcon(
-                      style: FilledButton.styleFrom(
-                        visualDensity: VisualDensity.compact,
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      ),
-                      icon: const Icon(Icons.open_in_new, size: 14),
-                      label: const Text('Apply'),
-                      onPressed: () async {
-                        final uri = Uri.tryParse(job.url!);
-                        if (uri != null && await canLaunchUrl(uri)) {
-                          await launchUrl(uri, mode: LaunchMode.externalApplication);
-                        }
-                      },
-                    ),
-                ],
-              ),
-            ],
-          ),
-        ),
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final hasClaude = ref.watch(aiKeysProvider).has(AiProvider.claude);
+    return Padding(
+      padding: EdgeInsets.fromLTRB(20, 0, 20, 20 + MediaQuery.of(context).viewInsets.bottom),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text('Search with AI', style: theme.textTheme.titleLarge),
+          const SizedBox(height: 4),
+          Text('Claude searches LinkedIn, Naukri, Instahyre, Wellfound and company career pages live.', style: theme.textTheme.bodySmall),
+          const SizedBox(height: 16),
+          TextField(controller: _query, decoration: const InputDecoration(hintText: 'Role, e.g. Flutter developer', prefixIcon: Icon(Icons.work_outline_rounded))),
+          const SizedBox(height: 10),
+          TextField(controller: _location, decoration: const InputDecoration(hintText: 'Location, e.g. Bengaluru or Remote', prefixIcon: Icon(Icons.place_outlined))),
+          const SizedBox(height: 16),
+          if (_error != null) ...[
+            Text(_error!, style: theme.textTheme.bodySmall?.copyWith(color: AppTheme.error)),
+            const SizedBox(height: 10),
+          ],
+          if (!hasClaude)
+            OutlinedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                context.push('/settings/ai');
+              },
+              child: const Text('Add Claude key first'),
+            )
+          else if (_busy) ...[
+            const LinearProgressIndicator(),
+            const SizedBox(height: 8),
+            Text('Searching… this can take a minute.', style: theme.textTheme.bodySmall, textAlign: TextAlign.center),
+          ] else
+            FilledButton.icon(onPressed: _run, icon: const Icon(Icons.auto_awesome_rounded, size: 18), label: const Text('Find jobs')),
+        ],
       ),
     );
   }

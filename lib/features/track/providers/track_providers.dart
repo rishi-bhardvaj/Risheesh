@@ -36,6 +36,24 @@ final dsaDifficultyFilterProvider = StateProvider<String>((ref) => 'all');
 final dsaStatusFilterProvider = StateProvider<String>((ref) => 'all');
 final dsaSortOptionProvider = StateProvider<DSASortOption>((ref) => DSASortOption.recentlyAdded);
 
+/// Topic -> problem count, built from the data so chips always match what's
+/// stored (including legacy topics from manually added problems).
+final dsaTopicCountsProvider = Provider<Map<String, int>>((ref) {
+  final problems = ref.watch(dsaProblemsStreamProvider).valueOrNull ?? const [];
+  final counts = <String, int>{};
+  for (final p in problems) {
+    counts[p.topic] = (counts[p.topic] ?? 0) + 1;
+  }
+  final ordered = <String, int>{
+    for (final t in dsaTopics)
+      if (counts.containsKey(t)) t: counts[t]!,
+  };
+  for (final e in counts.entries) {
+    ordered.putIfAbsent(e.key, () => e.value);
+  }
+  return ordered;
+});
+
 final filteredDSAProblemsProvider = Provider<List<DSAProblem>>((ref) {
   final problemsAsync = ref.watch(dsaProblemsStreamProvider);
   final query = ref.watch(dsaSearchQueryProvider).trim().toLowerCase();
@@ -981,3 +999,121 @@ final apasDsaServiceProvider = Provider<ApasDsaService>((ref) {
   final db = ref.watch(databaseProvider);
   return ApasDsaService(db: db);
 });
+
+class DsaSyncState {
+  final bool isLoading;
+  final DsaSyncResult? lastResult;
+  final String? error;
+
+  const DsaSyncState({this.isLoading = false, this.lastResult, this.error});
+}
+
+class DsaSyncNotifier extends StateNotifier<DsaSyncState> {
+  final Ref _ref;
+
+  DsaSyncNotifier(this._ref) : super(const DsaSyncState());
+
+  Future<DsaSyncResult?> sync({int limit = 500}) async {
+    if (state.isLoading) return null;
+    state = DsaSyncState(isLoading: true, lastResult: state.lastResult);
+    try {
+      final result = await _ref.read(apasDsaServiceProvider).sync(limit: limit);
+      state = DsaSyncState(lastResult: result);
+      return result;
+    } catch (e) {
+      state = DsaSyncState(lastResult: state.lastResult, error: e.toString());
+      return null;
+    }
+  }
+}
+
+final dsaSyncProvider = StateNotifierProvider<DsaSyncNotifier, DsaSyncState>((ref) => DsaSyncNotifier(ref));
+
+// ==========================================
+// HABITS & DAILY REFLECTION
+// ==========================================
+
+DateTime dayKey(DateTime d) => DateTime(d.year, d.month, d.day);
+
+final habitsProvider = StreamProvider<List<Habit>>((ref) => ref.watch(databaseProvider).watchActiveHabits());
+
+/// Logs for the last 35 days, enough for the 7-day strip and streaks.
+final habitLogsProvider = StreamProvider<List<HabitLog>>((ref) {
+  final since = dayKey(DateTime.now()).subtract(const Duration(days: 35));
+  return ref.watch(databaseProvider).watchHabitLogsSince(since);
+});
+
+/// habitId -> set of completed days.
+final habitDoneDaysProvider = Provider<Map<String, Set<DateTime>>>((ref) {
+  final logs = ref.watch(habitLogsProvider).valueOrNull ?? const [];
+  final map = <String, Set<DateTime>>{};
+  for (final l in logs) {
+    map.putIfAbsent(l.habitId, () => <DateTime>{}).add(dayKey(l.day));
+  }
+  return map;
+});
+
+/// Consecutive completed days ending today (or yesterday, if today is not
+/// done yet so the streak isn't shown as broken mid-day).
+int habitStreak(Set<DateTime> days, {DateTime? today}) {
+  var cursor = dayKey(today ?? DateTime.now());
+  if (!days.contains(cursor)) cursor = cursor.subtract(const Duration(days: 1));
+  var streak = 0;
+  while (days.contains(cursor)) {
+    streak++;
+    cursor = cursor.subtract(const Duration(days: 1));
+  }
+  return streak;
+}
+
+final reflectionsProvider =
+    StreamProvider<List<DailyReflection>>((ref) => ref.watch(databaseProvider).watchRecentReflections());
+
+class HabitRepository {
+  final AppDatabase db;
+  static const _uuid = Uuid();
+
+  HabitRepository(this.db);
+
+  Future<void> addHabit(String name, {String icon = 'check', int colorValue = 0xFF6366F1}) => db.insertHabit(
+        HabitsCompanion.insert(
+          id: _uuid.v4(),
+          name: name.trim(),
+          icon: drift.Value(icon),
+          colorValue: drift.Value(colorValue),
+        ),
+      );
+
+  Future<void> deleteHabit(String id) => db.deleteHabit(id);
+
+  Future<void> setDone(String habitId, DateTime day, bool done) =>
+      db.setHabitDone(habitId, dayKey(day), done, _uuid.v4());
+
+  Future<void> saveReflection({
+    required DateTime day,
+    required int mood,
+    String? wins,
+    String? blockers,
+    String? learned,
+    String? tomorrow,
+  }) async {
+    final key = dayKey(day);
+    final existing = await db.getReflectionForDay(key);
+    final now = DateTime.now();
+    String? clean(String? v) => (v == null || v.trim().isEmpty) ? null : v.trim();
+    await db.upsertReflection(DailyReflectionsCompanion(
+      id: drift.Value(existing?.id ?? _uuid.v4()),
+      day: drift.Value(key),
+      mood: drift.Value(mood.clamp(1, 5)),
+      wins: drift.Value(clean(wins)),
+      blockers: drift.Value(clean(blockers)),
+      learned: drift.Value(clean(learned)),
+      tomorrow: drift.Value(clean(tomorrow)),
+      createdAt: drift.Value(existing?.createdAt ?? now),
+      updatedAt: drift.Value(now),
+    ));
+  }
+}
+
+final habitRepositoryProvider = Provider<HabitRepository>((ref) => HabitRepository(ref.watch(databaseProvider)));
+

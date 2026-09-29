@@ -1,4 +1,7 @@
+import 'dart:math' as math;
+
 import '../../../core/database/app_database.dart';
+import '../services/resume_parser_service.dart';
 
 class JobMatchResult {
   final int matchPercentage;
@@ -7,8 +10,7 @@ class JobMatchResult {
   final bool hasSufficientData;
   final String label;
 
-  static const String disclaimer =
-      'Profile-to-job match based on your saved preferences and job data.';
+  static const String disclaimer = 'Profile-to-job match based on your saved preferences and job data.';
 
   const JobMatchResult({
     required this.matchPercentage,
@@ -18,201 +20,149 @@ class JobMatchResult {
     required this.label,
   });
 
-  factory JobMatchResult.insufficient() {
-    return const JobMatchResult(
-      matchPercentage: 0,
-      matchingFactors: [],
-      gapFactors: [],
-      hasSufficientData: false,
-      label: 'Insufficient Profile Data',
-    );
-  }
+  factory JobMatchResult.insufficient() => const JobMatchResult(
+        matchPercentage: 0,
+        matchingFactors: [],
+        gapFactors: [],
+        hasSufficientData: false,
+        label: 'Add skills to your profile',
+      );
+
+  factory JobMatchResult.fromStoredScore(int score, {String? reason}) => JobMatchResult(
+        matchPercentage: score,
+        matchingFactors: reason != null && reason.isNotEmpty ? [reason] : const ['Matched profile skills & experience'],
+        gapFactors: const [],
+        hasSufficientData: true,
+        label: score >= 75 ? 'Strong match' : (score >= 50 ? 'Good match' : 'Possible match'),
+      );
 }
 
+/// Profile-to-job match (0-100):
+///  * Skills 45: overlap of known tech terms in the job vs. the profile.
+///  * Role 30: specialization words ("backend", "flutter", "data") in the title.
+///  * Location 15: remote preference / preferred cities.
+///  * Experience 10: required years and seniority words.
 class JobMatchService {
-  static JobMatchResult calculateMatch({
-    required Job job,
-    required UserProfile? profile,
-  }) {
-    if (profile == null) {
-      return JobMatchResult.insufficient();
+  static final List<String> _dictionary = [
+    ...ResumeParserService.knownLanguages,
+    ...ResumeParserService.knownFrameworks,
+    ...ResumeParserService.knownTools,
+    ...ResumeParserService.knownDomainSkills,
+  ].where((t) => t.length > 1).map((t) => t.toLowerCase()).toSet().toList();
+
+  static const _genericRoleWords = {
+    'engineer', 'engineering', 'developer', 'development', 'senior', 'junior', 'software', 'lead', 'staff',
+    'principal', 'sr', 'jr', 'ii', 'iii', 'iv', 'manager', 'intern', 'associate', 'head', 'the', 'and', 'for',
+  };
+
+  static final Map<String, RegExp> _termPatterns = {
+    for (final t in _dictionary) t: RegExp('(?<![a-z0-9_#+.])${RegExp.escape(t)}(?![a-z0-9_#+]|\\.[a-z])'),
+  };
+
+  static Set<String> _termsIn(String text) {
+    final lower = text.toLowerCase();
+    return {for (final e in _termPatterns.entries) if (e.value.hasMatch(lower)) e.key};
+  }
+
+  static Set<String> _list(Iterable<String?> inputs) => {
+        for (final input in inputs)
+          if (input != null)
+            for (final part in input.split(RegExp(r'[,/|\n;]')))
+              if (part.trim().isNotEmpty && part.trim().length <= 30) part.trim().toLowerCase(),
+      };
+
+  static Set<String> _tokens(String text) =>
+      text.toLowerCase().replaceAll(RegExp(r'[^a-z0-9+#]'), ' ').split(RegExp(r'\s+')).where((s) => s.length > 1).toSet();
+
+  static JobMatchResult calculateMatch({required Job job, required UserProfile? profile}) {
+    if (profile == null) return JobMatchResult.insufficient();
+
+    final userSkillText = [profile.skills, profile.programmingLanguages, profile.frameworks].whereType<String>().join(', ');
+    final userTerms = {..._list([userSkillText]), ..._termsIn(userSkillText)};
+    final roleText = [profile.preferredRoles, profile.currentRole].whereType<String>().join(', ');
+    if (userTerms.isEmpty && roleText.trim().isEmpty) return JobMatchResult.insufficient();
+
+    final matching = <String>[];
+    final gaps = <String>[];
+    var total = 0.0;
+
+    // 1. Skills (45)
+    final jobText = '${job.title}\n${job.skills ?? ''}\n${job.description ?? ''}';
+    final jobTerms = {..._termsIn(jobText), ..._list([job.skills]).where(_dictionary.contains)};
+    if (jobTerms.isNotEmpty && userTerms.isNotEmpty) {
+      final matched = jobTerms.where(userTerms.contains).toList();
+      final missing = jobTerms.where((t) => !userTerms.contains(t)).toList();
+      total += math.min(1.0, matched.length / math.min(jobTerms.length, 6)) * 45;
+      if (matched.isNotEmpty) matching.add('Skills matched: ${matched.take(5).join(', ')}');
+      if (missing.isNotEmpty) gaps.add('Missing skills: ${missing.take(4).join(', ')}');
+    } else if (userTerms.isNotEmpty) {
+      final found = userTerms.where((s) => jobText.toLowerCase().contains(s)).take(3).toList();
+      total += found.isEmpty ? 8 : 22;
+      if (found.isNotEmpty) matching.add('Mentions ${found.join(', ')}');
     }
 
-    final userSkills = _extractKeywords([
-      profile.skills,
-      profile.programmingLanguages,
-      profile.frameworks,
-    ]);
-
-    final userRoles = _extractKeywords([
-      profile.preferredRoles,
-      profile.currentRole,
-    ]);
-
-    final userLocations = _extractKeywords([
-      profile.preferredLocations,
-    ]);
-
-    final userRemote = profile.remotePreference.toLowerCase();
-
-    // If profile has no skills and no preferred roles, insufficient data
-    if (userSkills.isEmpty && userRoles.isEmpty) {
-      return JobMatchResult.insufficient();
+    // 2. Role (30)
+    final titleTokens = _tokens(job.title);
+    final specialization = _tokens(roleText).difference(_genericRoleWords);
+    final specHit = specialization.intersection(titleTokens);
+    if (specHit.isNotEmpty) {
+      total += 30;
+      matching.add('Role match: ${job.title}');
+    } else if (roleText.isNotEmpty && RegExp(r'engineer|developer|programmer|architect', caseSensitive: false).hasMatch(job.title)) {
+      total += 12;
+      gaps.add('Different specialization than ${roleText.split(',').first.trim()}');
+    } else if (roleText.isNotEmpty) {
+      gaps.add('Role differs from your target');
     }
 
-    final matchingFactors = <String>[];
-    final gapFactors = <String>[];
-    double totalPoints = 0;
-    double maxPoints = 0;
-
-    // 1. Role / Title Match (Weight: 30)
-    maxPoints += 30;
-    final jobTitleTokens = _tokenize(job.title);
-    bool roleMatched = false;
-    for (final role in userRoles) {
-      final roleTokens = _tokenize(role);
-      if (roleTokens.any((t) => jobTitleTokens.contains(t))) {
-        roleMatched = true;
-        matchingFactors.add('Role match: ${job.title}');
-        totalPoints += 30;
-        break;
-      }
-    }
-    if (!roleMatched && userRoles.isNotEmpty) {
-      gapFactors.add('Role title differs from preferred: ${userRoles.take(2).join(', ')}');
-    }
-
-    // 2. Skills Match (Weight: 40)
-    final jobSkills = _extractKeywords([job.skills, job.description]);
-    if (jobSkills.isNotEmpty) {
-      maxPoints += 40;
-      final matchedSkills = <String>[];
-      final missingSkills = <String>[];
-
-      for (final skill in jobSkills) {
-        if (userSkills.contains(skill.toLowerCase())) {
-          matchedSkills.add(skill);
-        } else {
-          missingSkills.add(skill);
-        }
-      }
-
-      if (matchedSkills.isNotEmpty) {
-        final skillScore = (matchedSkills.length / jobSkills.length) * 40;
-        totalPoints += skillScore;
-        matchingFactors.add('Skills: ${matchedSkills.take(4).join(', ')}');
-      }
-
-      if (missingSkills.isNotEmpty) {
-        gapFactors.add('Missing skills: ${missingSkills.take(3).join(', ')}');
-      }
-    } else if (userSkills.isNotEmpty) {
-      // If job has no explicit skills, check user skills against job description / title
-      maxPoints += 20;
-      final textToScan = '${job.title} ${job.description ?? ''}'.toLowerCase();
-      final matchedFromText = userSkills.where((s) => textToScan.contains(s)).toList();
-      if (matchedFromText.isNotEmpty) {
-        totalPoints += (matchedFromText.length / userSkills.length.clamp(1, 5)) * 20;
-        matchingFactors.add('Keywords found: ${matchedFromText.take(3).join(', ')}');
-      }
-    }
-
-    // 3. Location & Remote Compatibility (Weight: 20)
-    maxPoints += 20;
-    final jobLoc = (job.location ?? '').toLowerCase();
-    final jobEmpType = (job.employmentType ?? '').toLowerCase();
-    final isJobRemote = jobLoc.contains('remote') || jobEmpType.contains('remote');
-
-    if (userRemote == 'remote' && isJobRemote) {
-      totalPoints += 20;
-      matchingFactors.add('Remote preference matched');
-    } else if (userRemote == 'any' || userLocations.isEmpty) {
-      totalPoints += 15;
-      matchingFactors.add('Location flexible');
+    // 3. Location (15)
+    final jobLoc = '${job.location ?? ''} ${job.employmentType ?? ''}'.toLowerCase();
+    final isRemote = jobLoc.contains('remote') || jobLoc.contains('anywhere');
+    final pref = profile.remotePreference.toLowerCase();
+    final cities = _list([profile.preferredLocations]).where((c) => c != 'remote');
+    if (isRemote && pref != 'onsite') {
+      total += 15;
+      matching.add('Remote');
+    } else if (cities.any(jobLoc.contains)) {
+      total += 15;
+      matching.add('Location match: ${job.location}');
+    } else if (pref == 'any' || (cities.isEmpty && pref != 'remote')) {
+      total += 10;
     } else {
-      bool locMatched = false;
-      for (final loc in userLocations) {
-        if (jobLoc.contains(loc.toLowerCase())) {
-          locMatched = true;
-          totalPoints += 20;
-          matchingFactors.add('Location match: ${job.location}');
-          break;
-        }
-      }
-      if (!locMatched && !isJobRemote) {
-        gapFactors.add('Location differs from preferred locations');
-      }
+      gaps.add(pref == 'remote' ? 'Not remote' : 'Outside your preferred locations');
     }
 
-    // 4. Experience Compatibility (Weight: 10)
-    maxPoints += 10;
-    final expReq = job.experienceRequirement;
-    if (expReq != null && expReq.isNotEmpty) {
-      final expYearsReq = _parseExperienceYears(expReq);
-      if (expYearsReq != null) {
-        if (profile.experienceYears >= expYearsReq) {
-          totalPoints += 10;
-          matchingFactors.add('Experience requirement met ($expReq)');
-        } else {
-          gapFactors.add('Requires $expReq (Profile: ${profile.experienceYears} yrs)');
-        }
-      } else {
-        totalPoints += 8;
-      }
+    // 4. Experience (10)
+    final reqMatch = RegExp(r'(\d{1,2})\s*\+?\s*(?:-\s*\d{1,2}\s*)?(?:years?|yrs?)', caseSensitive: false)
+        .firstMatch('${job.experienceRequirement ?? ''} ${job.description ?? ''}');
+    final required = int.tryParse(reqMatch?.group(1) ?? '');
+    final years = profile.experienceYears;
+    if (required == null || required > 20) {
+      total += 8;
+    } else if (years >= required) {
+      total += 10;
+      matching.add('Meets $required+ yrs');
+    } else if (years >= required - 1) {
+      total += 5;
+      gaps.add('Asks $required+ yrs (you: ${years.toStringAsFixed(1)})');
     } else {
-      totalPoints += 10;
+      gaps.add('Asks $required+ yrs (you: ${years.toStringAsFixed(1)})');
     }
+    final title = job.title.toLowerCase();
+    if (RegExp(r'\b(senior|sr\.?|staff|principal|lead)\b').hasMatch(title) && years < 3) total -= 10;
+    if (RegExp(r'\b(intern|junior|jr\.?|graduate|entry)\b').hasMatch(title) && years >= 5) total -= 10;
 
-    final percentage = maxPoints > 0 ? ((totalPoints / maxPoints) * 100).clamp(0, 100).round() : 0;
-
-    String label;
-    if (percentage >= 80) {
-      label = 'Strong Match';
-    } else if (percentage >= 50) {
-      label = 'Moderate Match';
-    } else {
-      label = 'Low Match';
-    }
-
+    final pct = total.clamp(0, 100).round();
     return JobMatchResult(
-      matchPercentage: percentage,
-      matchingFactors: matchingFactors,
-      gapFactors: gapFactors,
+      matchPercentage: pct,
+      matchingFactors: matching,
+      gapFactors: gaps,
       hasSufficientData: true,
-      label: label,
+      label: pct >= 75
+          ? 'Strong match'
+          : pct >= 50
+              ? 'Good match'
+              : 'Low match',
     );
   }
-
-  static Set<String> _extractKeywords(List<String?> inputs) {
-    final result = <String>{};
-    for (final input in inputs) {
-      if (input == null || input.trim().isEmpty) continue;
-      final parts = input.split(RegExp(r'[,/|\n]'));
-      for (final part in parts) {
-        final clean = part.trim().toLowerCase();
-        if (clean.isNotEmpty) {
-          result.add(clean);
-        }
-      }
-    }
-    return result;
-  }
-
-  static Set<String> _tokenize(String text) {
-    return text
-        .toLowerCase()
-        .replaceAll(RegExp(r'[^\w\s]'), ' ')
-        .split(RegExp(r'\s+'))
-        .where((s) => s.length > 2)
-        .toSet();
-  }
-
-  static double? _parseExperienceYears(String expText) {
-    final match = RegExp(r'(\d+)(\+)?').firstMatch(expText);
-    if (match != null) {
-      return double.tryParse(match.group(1) ?? '');
-    }
-    return null;
-  }
 }
-

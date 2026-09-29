@@ -1,7 +1,8 @@
 import 'package:drift/drift.dart';
-import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
+
 import '../../../core/database/app_database.dart';
+import '../../../core/network/feed_utils.dart';
 import '../data/job_providers/public_api_job_provider.dart';
 import '../domain/job_search_criteria_builder.dart';
 
@@ -24,49 +25,71 @@ class DeduplicationResult {
 
 class JobDeduplicator {
   static DeduplicationResult isDuplicate(RawJobItem rawJob, List<Job> existingJobs) {
-    // 1. Exact URL match
-    if (rawJob.url != null && rawJob.url!.isNotEmpty) {
-      final normalizedRawUrl = _normalizeUrl(rawJob.url!);
-      for (final existing in existingJobs) {
-        if (existing.url != null && _normalizeUrl(existing.url!) == normalizedRawUrl) {
+    final index = JobDedupIndex()..addAll(existingJobs);
+    return index.check(rawJob);
+  }
+
+  static String normalizeUrl(String url) => url
+      .trim()
+      .toLowerCase()
+      .replaceFirst(RegExp(r'^https?://(www\.)?'), '')
+      .replaceAll(RegExp(r'[?#].*$'), '')
+      .replaceAll(RegExp(r'/+$'), '');
+
+  static String normalizeText(String text) =>
+      text.toLowerCase().replaceAll(RegExp(r'[^\w\s]'), ' ').replaceAll(RegExp(r'\s+'), ' ').trim();
+}
+
+/// URL + company/title index. Checking is O(1) for URLs and O(jobs at that
+/// company) for titles, and newly accepted jobs are added so one sync can't
+/// insert the same posting twice (RemoteOK and WWR often cross-post).
+class JobDedupIndex {
+  final _byUrl = <String, Job?>{};
+  final _byCompany = <String, List<(String, String?)>>{};
+
+  void addAll(Iterable<Job> jobs) {
+    for (final j in jobs) {
+      _add(j.url, j.company, j.title, j);
+    }
+  }
+
+  void addRaw(RawJobItem raw) => _add(raw.url, raw.company, raw.title, null);
+
+  void _add(String? url, String company, String title, Job? job) {
+    if (url != null && url.isNotEmpty) _byUrl[JobDeduplicator.normalizeUrl(url)] = job;
+    _byCompany
+        .putIfAbsent(JobDeduplicator.normalizeText(company), () => [])
+        .add((JobDeduplicator.normalizeText(title), job?.id));
+  }
+
+  DeduplicationResult check(RawJobItem raw) {
+    if (raw.url != null && raw.url!.isNotEmpty) {
+      final key = JobDeduplicator.normalizeUrl(raw.url!);
+      if (_byUrl.containsKey(key)) {
+        final existing = _byUrl[key];
+        return DeduplicationResult(
+          isDuplicate: true,
+          existingJobId: existing?.id,
+          reason: 'URL exact match (${existing?.company ?? raw.company})',
+        );
+      }
+    }
+    final titles = _byCompany[JobDeduplicator.normalizeText(raw.company)];
+    if (titles != null) {
+      final t = JobDeduplicator.normalizeText(raw.title);
+      for (final (existingTitle, id) in titles) {
+        // Exact normalized title only: "Software Engineer" and "Senior
+        // Software Engineer, Payments" are different openings.
+        if (t == existingTitle) {
           return DeduplicationResult(
             isDuplicate: true,
-            existingJobId: existing.id,
-            reason: 'URL exact match (${existing.company})',
+            existingJobId: id,
+            reason: 'Title and company match (${raw.company} - ${raw.title})',
           );
         }
       }
     }
-
-    // 2. Company + Title fuzzy normalized match
-    final cleanRawCompany = _normalizeText(rawJob.company);
-    final cleanRawTitle = _normalizeText(rawJob.title);
-
-    for (final existing in existingJobs) {
-      final cleanExistingCompany = _normalizeText(existing.company);
-      final cleanExistingTitle = _normalizeText(existing.title);
-
-      if (cleanRawCompany == cleanExistingCompany &&
-          (cleanRawTitle == cleanExistingTitle ||
-           cleanRawTitle.contains(cleanExistingTitle) ||
-           cleanExistingTitle.contains(cleanRawTitle))) {
-        return DeduplicationResult(
-          isDuplicate: true,
-          existingJobId: existing.id,
-          reason: 'Title and company match (${existing.company} - ${existing.title})',
-        );
-      }
-    }
-
     return const DeduplicationResult.unique();
-  }
-
-  static String _normalizeUrl(String url) {
-    return url.toLowerCase().replaceAll(RegExp(r'\?.*$'), '').replaceAll(RegExp(r'\/+$'), '');
-  }
-
-  static String _normalizeText(String text) {
-    return text.toLowerCase().replaceAll(RegExp(r'[^\w\s]'), '').replaceAll(RegExp(r'\s+'), ' ').trim();
   }
 }
 
@@ -74,217 +97,126 @@ class DiscoveryBatchResult {
   final int totalDiscovered;
   final int newJobsSaved;
   final int duplicatesSkipped;
-  final List<Job> currentJobs;
-  final String? errorMessage;
+  final List<SourceStatus> sources;
   final DateTime timestamp;
 
   const DiscoveryBatchResult({
     required this.totalDiscovered,
     required this.newJobsSaved,
     required this.duplicatesSkipped,
-    required this.currentJobs,
-    this.errorMessage,
+    this.sources = const [],
     required this.timestamp,
   });
+
+  List<SourceStatus> get failedSources => sources.where((s) => !s.ok).toList();
+  bool get allSourcesFailed => sources.isNotEmpty && sources.every((s) => !s.ok);
+
+  String get summary {
+    final failed = failedSources.length;
+    final base = 'Found $totalDiscovered jobs · $newJobsSaved new · $duplicatesSkipped duplicates';
+    return failed == 0 ? base : '$base · $failed of ${sources.length} sources failed';
+  }
 }
 
 class LiveJobDiscoveryService {
   final AppDatabase db;
   final List<JobProvider> _providers;
-  final _uuid = const Uuid();
+  static const _uuid = Uuid();
 
   LiveJobDiscoveryService({
     required this.db,
     List<JobProvider>? customProviders,
-  })  : _providers = customProviders ??
+  }) : _providers = customProviders ??
             [
-              RemoteOkJobProvider(),
-              RssJobProvider(
-                providerId: 'WWR_DEVELOPMENT',
-                providerName: 'WeWorkRemotely Dev',
-                feedUrl: 'https://weworkremotely.com/categories/remote-programming-jobs.rss',
-              ),
-              RssJobProvider(
-                providerId: 'REMOTIVE_ALL',
-                providerName: 'Remotive Feed',
-                feedUrl: 'https://remotive.com/remote-jobs/feed',
-              ),
-              // Additional public API source
-              RssJobProvider(
-                providerId: 'RSS_ALTERNATE',
-                providerName: 'RSS Alternate Feed',
-                feedUrl: 'https://www.smashingmagazine.com/articles/feed?tag=career',
-              ),
               GreenhouseJobProvider(),
               LeverJobProvider(),
+              AshbyJobProvider(),
+              RemoteOkJobProvider(),
+              RssJobProvider(
+                providerId: 'WWR',
+                providerName: 'WeWorkRemotely',
+                feedUrl: 'https://weworkremotely.com/categories/remote-programming-jobs.rss',
+              ),
             ];
 
+  /// Fetches every provider in parallel, de-duplicates against the database
+  /// and within the batch, and inserts new jobs in a single transaction.
+  ///
+  /// Never throws for network problems: failures are reported per source in
+  /// [DiscoveryBatchResult.sources] and nothing is fabricated to fill gaps.
   Future<DiscoveryBatchResult> discoverAndSyncJobs({
     required JobSearchCriteria criteria,
     bool saveToDatabase = true,
   }) async {
-    final rawJobs = <RawJobItem>[];
-
-    final providerFutures = _providers.map((provider) async {
+    final query = criteria.roleQueries.isNotEmpty ? criteria.roleQueries.first : null;
+    final fetches = await Future.wait(_providers.map((p) async {
       try {
-        final query = criteria.roleQueries.isNotEmpty ? criteria.roleQueries.first : null;
-        return await provider.searchJobs(
-          query: query,
-          location: criteria.preferredLocation,
-          remoteOnly: criteria.remoteOnly,
-        );
+        return await p.fetch(query: query, location: criteria.preferredLocation, remoteOnly: criteria.remoteOnly);
       } catch (e) {
-        debugPrint('Provider ${provider.providerName} error: $e');
-        return <RawJobItem>[];
+        return JobFetchResult(const [], [SourceStatus(sourceId: p.providerId, label: p.providerName, itemCount: 0, error: e.toString())]);
       }
-    });
+    }));
 
-    final providerBatches = await Future.wait(providerFutures);
-    for (final batch in providerBatches) {
-      rawJobs.addAll(batch);
-    }
+    final rawJobs = [for (final f in fetches) ...f.jobs];
+    final statuses = [for (final f in fetches) ...f.statuses];
 
-    // If completely empty (e.g. network offline), supply verified curated jobs from Greenhouse & RemoteOK
-    if (rawJobs.isEmpty) {
-      rawJobs.addAll(_getCuratedLiveSeedJobs());
-    }
-
-    final existingJobs = await db.getAllJobs();
+    final index = JobDedupIndex()..addAll(await db.getAllJobs());
     final newJobs = <JobsCompanion>[];
-    int duplicates = 0;
+    var duplicates = 0;
+    final now = DateTime.now();
 
     for (final raw in rawJobs) {
-      final dedupResult = JobDeduplicator.isDuplicate(raw, existingJobs);
-      if (dedupResult.isDuplicate) {
+      if (raw.url == null || raw.url!.isEmpty) continue; // unclickable -> useless
+      if (index.check(raw).isDuplicate) {
         duplicates++;
         continue;
       }
-
-      final companion = JobsCompanion(
-        id: Value(_uuid.v4()),
-        title: Value(raw.title),
-        company: Value(raw.company),
-        location: Value(raw.location ?? (raw.isRemote ? 'Remote' : 'Various')),
-        salary: Value(raw.salary),
-        employmentType: Value(raw.isRemote ? 'Remote' : 'Full-time'),
-        url: Value(raw.url),
-        source: Value(raw.isRemote ? 'RemoteOK / RSS' : 'Public Feed'),
-        description: Value(raw.description),
-        skills: Value(raw.skills),
-        atsProvider: Value(raw.atsProvider ?? (raw.isRemote ? 'REMOTEOK' : 'RSS_FEED')),
-        postedDate: Value(raw.publishedAt ?? DateTime.now()),
-        discoveredAt: Value(DateTime.now()),
-        isSaved: const Value(false),
-        createdAt: Value(DateTime.now()),
-        updatedAt: Value(DateTime.now()),
-      );
-
-      newJobs.add(companion);
+      index.addRaw(raw);
+      newJobs.add(toCompanion(raw, _uuid.v4(), now));
     }
 
     if (saveToDatabase && newJobs.isNotEmpty) {
-      await db.batch((batch) {
-        batch.insertAll(db.jobs, newJobs);
-      });
+      await db.batch((batch) => batch.insertAll(db.jobs, newJobs));
     }
-
-    final allUpdatedJobs = await db.getAllJobs();
 
     return DiscoveryBatchResult(
       totalDiscovered: rawJobs.length,
       newJobsSaved: newJobs.length,
       duplicatesSkipped: duplicates,
-      currentJobs: allUpdatedJobs,
-      timestamp: DateTime.now(),
+      sources: statuses,
+      timestamp: now,
     );
   }
 
-  List<RawJobItem> _getCuratedLiveSeedJobs() {
-    return [
-      RawJobItem(
-        title: 'Full Stack Engineer - Core Infrastructure',
-        company: 'STRIPE',
-        location: 'Remote Worldwide',
-        salary: '\$145,000 - \$210,000',
-        description: 'Design and build resilient payment infrastructure, distributed APIs, and developer workflows using Java, Ruby, Go, and React.',
-        skills: 'Java, Go, React, Distributed Systems, SQL, Cloud Architecture',
-        url: 'https://boards.greenhouse.io/stripe/jobs/core-infrastructure-eng',
-        atsProvider: 'GREENHOUSE',
-        publishedAt: DateTime.now().subtract(const Duration(hours: 3)),
-        isRemote: true,
-      ),
-      RawJobItem(
-        title: 'Mobile Engineer - Design Systems & App Performance',
-        company: 'AIRBNB',
-        location: 'San Francisco, CA / Remote',
-        salary: '\$150,000 - \$220,000',
-        description: 'Build best-in-class mobile experiences, fluid animations, and robust client architectures across iOS, Android, and cross-platform frameworks.',
-        skills: 'Flutter, Kotlin, Swift, Reactive Architecture, Performance Optimization',
-        url: 'https://boards.greenhouse.io/airbnb/jobs/mobile-engineer-design-systems',
-        atsProvider: 'GREENHOUSE',
-        publishedAt: DateTime.now().subtract(const Duration(hours: 6)),
-        isRemote: true,
-      ),
-      RawJobItem(
-        title: 'Senior Systems Engineer - Edge Compute & Network',
-        company: 'CLOUDFLARE',
-        location: 'Remote US / Europe',
-        salary: '\$160,000 - \$230,000',
-        description: 'Scale global edge computing networks, optimize latency, and implement secure proxy pipelines using Rust, Go, and Linux systems.',
-        skills: 'Rust, Go, Linux Systems, Networking, Docker, Kubernetes',
-        url: 'https://boards.greenhouse.io/cloudflare/jobs/systems-engineer-edge',
-        atsProvider: 'GREENHOUSE',
-        publishedAt: DateTime.now().subtract(const Duration(hours: 12)),
-        isRemote: true,
-      ),
-      RawJobItem(
-        title: 'Full Stack Product Engineer - Collaborative Canvas',
-        company: 'FIGMA',
-        location: 'San Francisco, CA / Remote',
-        salary: '\$155,000 - \$215,000',
-        description: 'Create ultra-responsive canvas interactions, multiplayer syncing protocols, and modern TypeScript / WebGL web interfaces.',
-        skills: 'TypeScript, React, WebGL, C++, WebAssembly, Collaborative Systems',
-        url: 'https://boards.greenhouse.io/figma/jobs/product-engineer-canvas',
-        atsProvider: 'GREENHOUSE',
-        publishedAt: DateTime.now().subtract(const Duration(hours: 18)),
-        isRemote: true,
-      ),
-      RawJobItem(
-        title: 'Distributed Systems & AI Infrastructure Engineer',
-        company: 'DATABRICKS',
-        location: 'San Francisco / Remote',
-        salary: '\$170,000 - \$245,000',
-        description: 'Develop next-generation Apache Spark and Lakehouse AI training pipelines handling exabytes of real-time enterprise data.',
-        skills: 'Scala, Python, Spark, Kubernetes, Distributed Compute, Cloud',
-        url: 'https://boards.greenhouse.io/databricks/jobs/ai-infrastructure-engineer',
-        atsProvider: 'GREENHOUSE',
-        publishedAt: DateTime.now().subtract(const Duration(days: 1)),
-        isRemote: true,
-      ),
-      RawJobItem(
-        title: 'Senior Frontend Architect - Next.js & UI Foundations',
-        company: 'PALANTIR',
-        location: 'Denver, CO / Remote',
-        salary: '\$140,000 - \$195,000',
-        description: 'Design foundational component architectures for data visualization suites and mission-critical decision workflows.',
-        skills: 'React, Next.js, TypeScript, D3.js, Redux, Performance Profiling',
-        url: 'https://jobs.lever.co/palantir/senior-frontend-architect',
-        atsProvider: 'LEVER',
-        publishedAt: DateTime.now().subtract(const Duration(days: 1)),
-        isRemote: true,
-      ),
-      RawJobItem(
-        title: 'Remote Full Stack Developer (Node.js & Flutter)',
-        company: 'REMOTE TECH COLLECTIVE',
-        location: 'Remote Worldwide',
-        salary: '\$90,000 - \$140,000',
-        description: 'Build end-to-end mobile and web products for global startups with clean code, testing, and modern CI/CD pipelines.',
-        skills: 'Flutter, Node.js, PostgreSQL, Docker, REST APIs, Git',
-        url: 'https://remoteok.com/remote-jobs/remote-fullstack-flutter-node',
-        atsProvider: 'REMOTEOK',
-        publishedAt: DateTime.now().subtract(const Duration(hours: 4)),
-        isRemote: true,
-      ),
-    ];
+  static const _sourceLabels = {
+    'GREENHOUSE': 'Greenhouse',
+    'LEVER': 'Lever',
+    'REMOTEOK': 'RemoteOK',
+    'WWR': 'WeWorkRemotely',
+    'ASHBY': 'Ashby',
+  };
+
+  /// Maps a feed item onto the Jobs table, clamping to the column limits
+  /// (title 200, company 150) so one long feed title can't fail the batch.
+  static JobsCompanion toCompanion(RawJobItem raw, String id, DateTime now) {
+    return JobsCompanion(
+      id: Value(id),
+      title: Value(FeedUtils.truncate(raw.title.isEmpty ? 'Untitled role' : raw.title, 200)),
+      company: Value(FeedUtils.truncate(raw.company.isEmpty ? 'Unknown company' : raw.company, 150)),
+      location: Value(raw.location ?? (raw.isRemote ? 'Remote' : null)),
+      salary: Value(raw.salary),
+      employmentType: Value(raw.employmentType ?? (raw.isRemote ? 'Remote' : 'Full-time')),
+      url: Value(raw.url),
+      source: Value(_sourceLabels[raw.atsProvider] ?? raw.atsProvider ?? 'Public feed'),
+      description: Value(raw.description == null ? null : FeedUtils.truncate(raw.description!, 12000)),
+      skills: Value(raw.skills?.isEmpty == true ? null : raw.skills),
+      atsProvider: Value(raw.atsProvider),
+      externalId: Value(raw.externalId),
+      postedDate: Value(raw.publishedAt),
+      discoveredAt: Value(now),
+      isSaved: const Value(false),
+      createdAt: Value(now),
+      updatedAt: Value(now),
+    );
   }
 }

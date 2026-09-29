@@ -33,6 +33,14 @@ dependencies:
   open_file: ^4.0.0
   http: ^1.2.1
   flutter_local_notifications: ^17.2.1
+  flutter_secure_storage: ^11.2.0
+  pdf: ^3.13.1
+  archive: ^4.3.0
+  career_core:
+    path: packages/career_core
+  timezone: ^0.9.4
+  workmanager: ^0.10.10
+  crypto: ^3.0.7
 
 dev_dependencies:
   flutter_test:

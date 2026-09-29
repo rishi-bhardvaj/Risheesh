@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/database/app_database.dart';
+import '../providers/career_providers.dart';
 import '../../../core/utils/resume_storage_helper.dart';
 
 class AddEditResumeDialog extends ConsumerStatefulWidget {
@@ -120,11 +121,26 @@ class _AddEditResumeDialogState extends ConsumerState<AddEditResumeDialog> {
       await db.setPrimaryResume(id);
     }
 
+    // Parse new or replaced files in the background; the notifier outlives
+    // this dialog, so grab it (and the messenger) before popping.
+    final fileChanged = !isEditing || widget.resumeToEdit!.filePath != _filePath;
+    final parser = ref.read(resumeParsingProvider.notifier);
+    final saved = await (db.select(db.resumes)..where((r) => r.id.equals(id))).getSingleOrNull();
+
     if (mounted) {
+      final messenger = ScaffoldMessenger.of(context);
       Navigator.of(context).pop(true);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(isEditing ? 'Resume updated' : 'Resume added to vault')),
+      messenger.showSnackBar(
+        SnackBar(content: Text(isEditing ? 'Resume updated' : 'Resume added. Scoring it now…')),
       );
+      if (fileChanged && saved != null) {
+        parser.parse(saved).then(
+          (r) => messenger.showSnackBar(SnackBar(
+            content: Text('${saved.name}: parsed ${r.profile.allUniqueSkills.length} skills, ${r.profile.experience.length} roles'),
+          )),
+          onError: (Object e) => messenger.showSnackBar(SnackBar(content: Text('Couldn’t read ${saved.name}: $e'))),
+        );
+      }
     }
   }
 

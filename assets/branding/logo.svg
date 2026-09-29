@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00D09C"/>
+      <stop offset="100%" stop-color="#00B386"/>
+    </linearGradient>
+  </defs>
+  <rect x="32" y="32" width="960" height="960" rx="220" fill="url(#bgGrad)"/>
+  <g fill="#FFFFFF">
+    <!-- Vertical stem -->
+    <rect x="270" y="240" width="115" height="544" rx="20"/>
+    <!-- Upper loop -->
+    <path d="M 370 240 L 560 240 C 720 240 750 340 750 410 C 750 485 715 570 560 570 L 370 570 Z M 385 340 L 540 340 C 630 340 640 385 640 410 C 640 435 625 470 540 470 L 385 470 Z" fill-rule="evenodd"/>
+    <!-- Leg junction -->
+    <polygon points="480,540 610,720 670,640 600,540"/>
+    <!-- Career growth upward arrow -->
+    <polygon points="790,490 650,580 690,640 740,600 630,750 700,784 810,630 855,670"/>
+  </g>
+</svg>

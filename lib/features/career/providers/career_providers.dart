@@ -3,10 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/database/app_database.dart';
+import '../../../core/theme/theme_provider.dart';
 import '../domain/job_match_service.dart';
 import '../domain/job_search_criteria_builder.dart';
 import '../domain/resume_profile_models.dart';
+import '../services/ats_scoring_service.dart';
 import '../services/live_job_discovery_service.dart';
+import '../services/resume_ingest_service.dart';
 
 // --- Profile Providers ---
 final careerProfileProvider = StreamProvider<UserProfile?>((ref) {
@@ -791,15 +794,36 @@ class LiveDiscoveryState {
 
 class LiveDiscoveryNotifier extends StateNotifier<LiveDiscoveryState> {
   final Ref _ref;
+  static const _lastSyncKey = 'live_jobs_last_sync_ms';
 
   LiveDiscoveryNotifier(this._ref) : super(const LiveDiscoveryState());
 
+  DateTime? get lastSync {
+    try {
+      final ms = _ref.read(sharedPreferencesProvider).getInt(_lastSyncKey);
+      return ms == null ? null : DateTime.fromMillisecondsSinceEpoch(ms);
+    } catch (_) {
+      return null; // prefs not initialised (tests)
+    }
+  }
+
+  bool isStale({Duration maxAge = const Duration(hours: 6)}) {
+    final last = lastSync;
+    return last == null || DateTime.now().difference(last) >= maxAge;
+  }
+
   Future<DiscoveryBatchResult?> discoverJobs() async {
+    if (state.isLoading) return null;
     state = state.copyWith(isLoading: true, error: null);
     try {
       final criteria = _ref.read(activeJobSearchCriteriaProvider);
       final service = _ref.read(liveJobDiscoveryServiceProvider);
       final result = await service.discoverAndSyncJobs(criteria: criteria);
+      if (!result.allSourcesFailed) {
+        try {
+          await _ref.read(sharedPreferencesProvider).setInt(_lastSyncKey, result.timestamp.millisecondsSinceEpoch);
+        } catch (_) {}
+      }
       state = state.copyWith(isLoading: false, lastResult: result);
       return result;
     } catch (e) {
@@ -812,3 +836,58 @@ class LiveDiscoveryNotifier extends StateNotifier<LiveDiscoveryState> {
 final liveDiscoveryProvider = StateNotifierProvider<LiveDiscoveryNotifier, LiveDiscoveryState>((ref) {
   return LiveDiscoveryNotifier(ref);
 });
+
+// ==========================================
+// RESUME PARSING & ATS
+// ==========================================
+
+final resumeIngestServiceProvider = Provider<ResumeIngestService>((ref) => ResumeIngestService(ref.watch(databaseProvider)));
+
+/// Resume ids currently being parsed (drives per-card spinners).
+class ResumeParsingNotifier extends StateNotifier<Set<String>> {
+  final Ref _ref;
+
+  ResumeParsingNotifier(this._ref) : super(const {});
+
+  /// Extracts + parses [resume]'s file (or [pastedText]) and stores the
+  /// result on the resume row. Returns null and marks FAILED on error;
+  /// the error is rethrown so callers can show it.
+  Future<ResumeIngestResult> parse(Resume resume, {String? pastedText, bool applyToProfile = false}) async {
+    state = {...state, resume.id};
+    final service = _ref.read(resumeIngestServiceProvider);
+    try {
+      final result = pastedText != null
+          ? ResumeIngestService.fromText(pastedText, resumeId: resume.id, resumeName: resume.name)
+          : await ResumeIngestService.fromFile(resume.filePath, resumeId: resume.id, resumeName: resume.name);
+      await service.saveParsed(resume.id, result.profile);
+      if (applyToProfile) await service.applyToProfile(result.profile);
+      return result;
+    } catch (_) {
+      await service.markFailed(resume.id);
+      rethrow;
+    } finally {
+      state = {...state}..remove(resume.id);
+    }
+  }
+}
+
+final resumeParsingProvider =
+    StateNotifierProvider<ResumeParsingNotifier, Set<String>>((ref) => ResumeParsingNotifier(ref));
+
+final atsScoringServiceProvider = Provider<AtsScoringService>((ref) => AtsScoringService());
+
+/// ATS report for a parsed resume, optionally against a specific job.
+final atsReportProvider = Provider.family<AtsReport?, ({String resumeId, String? jobId})>((ref, key) {
+  final profile = ref.watch(parsedResumeProfilesProvider)[key.resumeId];
+  if (profile == null) return null;
+  Job? job;
+  if (key.jobId != null) {
+    job = ref.watch(allJobsProvider).valueOrNull?.where((j) => j.id == key.jobId).firstOrNull;
+  }
+  return ref.read(atsScoringServiceProvider).evaluate(
+        profile,
+        jobDescription: job == null ? null : '${job.skills ?? ''}\n${job.description ?? ''}',
+        jobTitle: job?.title,
+      );
+});
+

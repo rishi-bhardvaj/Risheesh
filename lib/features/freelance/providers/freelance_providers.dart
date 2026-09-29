@@ -2,7 +2,9 @@ import 'package:drift/drift.dart' as drift;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/database/app_database.dart';
-import '../services/freelance_lead_discovery_service.dart';
+import '../../../core/ai/ai_service.dart';
+import '../business/business_discovery_service.dart';
+import '../business/website_inspector.dart';
 
 // --- Snapshot Model ---
 class FreelanceSnapshot {
@@ -749,8 +751,82 @@ final freelanceRepositoryProvider = Provider<FreelanceRepository>((ref) {
   return FreelanceRepository(db);
 });
 
-final freelanceLeadDiscoveryServiceProvider = Provider<FreelanceLeadDiscoveryService>((ref) {
+// ==========================================
+// BUSINESS LEADS (₹1Cr+ businesses with no / weak websites)
+// ==========================================
+
+final businessLeadsProvider = StreamProvider<List<BusinessLead>>((ref) => ref.watch(databaseProvider).watchBusinessLeads());
+
+final businessLeadByIdProvider = StreamProvider.family<BusinessLead?, String>((ref, id) {
   final db = ref.watch(databaseProvider);
-  return FreelanceLeadDiscoveryService(db: db);
+  return (db.select(db.businessLeads)..where((b) => b.id.equals(id))).watchSingleOrNull();
 });
 
+/// null = all categories.
+final businessPresenceFilterProvider = StateProvider<WebPresence?>((ref) => null);
+final businessSearchProvider = StateProvider<String>((ref) => '');
+
+/// Discovery tab shows untouched leads; everything the user has acted on
+/// lives in the pipeline.
+bool isPipelineStatus(String status) => status != 'NEW';
+
+List<BusinessLead> filterBusinessLeads(List<BusinessLead> all, {WebPresence? presence, String query = '', bool pipeline = false}) {
+  final q = query.trim().toLowerCase();
+  return all.where((b) {
+    if (isPipelineStatus(b.status) != pipeline) return false;
+    if (presence != null && b.webPresence != presence.value) return false;
+    if (q.isNotEmpty && !'${b.name} ${b.industry ?? ''} ${b.city ?? ''} ${b.country}'.toLowerCase().contains(q)) return false;
+    return true;
+  }).toList();
+}
+
+final filteredBusinessLeadsProvider = Provider<List<BusinessLead>>((ref) {
+  final all = ref.watch(businessLeadsProvider).valueOrNull ?? const [];
+  return filterBusinessLeads(all, presence: ref.watch(businessPresenceFilterProvider), query: ref.watch(businessSearchProvider));
+});
+
+final businessPresenceCountsProvider = Provider<Map<WebPresence?, int>>((ref) {
+  final fresh = (ref.watch(businessLeadsProvider).valueOrNull ?? const <BusinessLead>[]).where((b) => !isPipelineStatus(b.status));
+  final counts = <WebPresence?, int>{null: fresh.length};
+  for (final p in [WebPresence.noWebsite, WebPresence.shopify, WebPresence.needsWebsite]) {
+    counts[p] = fresh.where((b) => b.webPresence == p.value).length;
+  }
+  return counts;
+});
+
+final pipelineStatusFilterProvider = StateProvider<String>((ref) => 'ALL');
+
+final pipelineLeadsProvider = Provider<List<BusinessLead>>((ref) {
+  final all = ref.watch(businessLeadsProvider).valueOrNull ?? const [];
+  final status = ref.watch(pipelineStatusFilterProvider);
+  return filterBusinessLeads(all, pipeline: true).where((b) => status == 'ALL' || b.status == status).toList();
+});
+
+class BusinessDiscoveryState {
+  final bool isLoading;
+  final BusinessDiscoveryResult? lastResult;
+  final String? error;
+  const BusinessDiscoveryState({this.isLoading = false, this.lastResult, this.error});
+}
+
+class BusinessDiscoveryNotifier extends StateNotifier<BusinessDiscoveryState> {
+  final Ref _ref;
+  BusinessDiscoveryNotifier(this._ref) : super(const BusinessDiscoveryState());
+
+  Future<BusinessDiscoveryResult?> discover(BusinessSearchRequest request) async {
+    if (state.isLoading) return null;
+    state = BusinessDiscoveryState(isLoading: true, lastResult: state.lastResult);
+    try {
+      final service = BusinessDiscoveryService(db: _ref.read(databaseProvider), claude: _ref.read(aiServiceProvider).claude);
+      final result = await service.discover(request);
+      state = BusinessDiscoveryState(lastResult: result);
+      return result;
+    } catch (e) {
+      state = BusinessDiscoveryState(lastResult: state.lastResult, error: e.toString());
+      return null;
+    }
+  }
+}
+
+final businessDiscoveryProvider =
+    StateNotifierProvider<BusinessDiscoveryNotifier, BusinessDiscoveryState>((ref) => BusinessDiscoveryNotifier(ref));
