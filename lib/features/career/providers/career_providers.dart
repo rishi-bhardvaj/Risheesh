@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/database/app_database.dart';
+import '../../../core/network/api_client.dart';
+import '../../../core/network/dtos/job_dto.dart';
 import '../../../core/theme/theme_provider.dart';
 import '../domain/job_match_service.dart';
 import '../domain/job_search_criteria_builder.dart';
@@ -388,9 +390,32 @@ final careerSnapshotProvider = Provider<CareerSnapshotData>((ref) {
 // Career Repository / Actions
 class CareerRepository {
   final AppDatabase db;
+  final ApiClient? apiClient;
   static const _uuid = Uuid();
 
-  CareerRepository(this.db);
+  CareerRepository(this.db, {this.apiClient});
+
+  Future<int> syncJobsFromBackend() async {
+    if (apiClient == null) return 0;
+    try {
+      final response = await apiClient!.get('/api/v1/jobs', queryParams: {'limit': 100});
+      if (response is Map && response['items'] is List) {
+        final items = response['items'] as List;
+        int count = 0;
+        for (final item in items) {
+          if (item is Map) {
+            final dto = JobDto.fromJson(Map<String, dynamic>.from(item));
+            await db.insertJob(dto.toCompanion());
+            count++;
+          }
+        }
+        return count;
+      }
+    } catch (_) {
+      // Graceful offline fallback
+    }
+    return 0;
+  }
 
   Future<void> addJob({
     required String title,
@@ -428,6 +453,26 @@ class CareerRepository {
       updatedAt: Value(now),
     );
     await db.insertJob(companion);
+
+    if (apiClient != null) {
+      try {
+        await apiClient!.post('/api/v1/jobs', body: {
+          'id': companion.id.value,
+          'title': title.trim(),
+          'company': company.trim(),
+          if (location?.trim().isNotEmpty == true) 'location': location!.trim(),
+          if (salary?.trim().isNotEmpty == true) 'salary': salary!.trim(),
+          if (employmentType?.trim().isNotEmpty == true) 'employment_type': employmentType!.trim(),
+          if (experienceRequirement?.trim().isNotEmpty == true) 'experience_requirement': experienceRequirement!.trim(),
+          if (url?.trim().isNotEmpty == true) 'url': url!.trim(),
+          'source': source?.trim().isNotEmpty == true ? source!.trim() : 'Manual',
+          if (description?.trim().isNotEmpty == true) 'description': description!.trim(),
+          'skills': skills?.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty).toList() ?? [],
+          'is_saved': isSaved,
+          if (notes?.trim().isNotEmpty == true) 'notes': notes!.trim(),
+        });
+      } catch (_) {}
+    }
   }
 
   Future<void> updateJob({
@@ -464,11 +509,44 @@ class CareerRepository {
       updatedAt: Value(DateTime.now()),
     );
     await db.updateJob(companion);
+
+    if (apiClient != null) {
+      try {
+        await apiClient!.patch('/api/v1/jobs/$id', body: {
+          'title': title.trim(),
+          'company': company.trim(),
+          'location': location?.trim().isEmpty == true ? null : location?.trim(),
+          'salary': salary?.trim().isEmpty == true ? null : salary?.trim(),
+          'employment_type': employmentType?.trim().isEmpty == true ? null : employmentType?.trim(),
+          'experience_requirement': experienceRequirement?.trim().isEmpty == true ? null : experienceRequirement?.trim(),
+          'url': url?.trim().isEmpty == true ? null : url?.trim(),
+          'source': source?.trim().isEmpty == true ? 'Manual' : source?.trim(),
+          'description': description?.trim().isEmpty == true ? null : description?.trim(),
+          'skills': skills?.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty).toList() ?? [],
+          'is_saved': ?isSaved,
+          'notes': notes?.trim().isEmpty == true ? null : notes?.trim(),
+        });
+      } catch (_) {}
+    }
   }
 
-  Future<void> deleteJob(String id) => db.deleteJob(id);
+  Future<void> deleteJob(String id) async {
+    await db.deleteJob(id);
+    if (apiClient != null) {
+      try {
+        await apiClient!.delete('/api/v1/jobs/$id');
+      } catch (_) {}
+    }
+  }
 
-  Future<void> toggleJobSaved(String id, bool isSaved) => db.toggleJobSaved(id, isSaved);
+  Future<void> toggleJobSaved(String id, bool isSaved) async {
+    await db.toggleJobSaved(id, isSaved);
+    if (apiClient != null) {
+      try {
+        await apiClient!.patch('/api/v1/jobs/$id/saved', body: {'is_saved': isSaved});
+      } catch (_) {}
+    }
+  }
 
   Future<void> convertJobToApplication({
     required Job job,
@@ -692,7 +770,8 @@ class CareerRepository {
 
 final careerRepositoryProvider = Provider<CareerRepository>((ref) {
   final db = ref.watch(databaseProvider);
-  return CareerRepository(db);
+  final apiClient = ref.watch(apiClientProvider);
+  return CareerRepository(db, apiClient: apiClient);
 });
 
 // ==========================================

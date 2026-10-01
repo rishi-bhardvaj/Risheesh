@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/database/app_database.dart';
 import '../../../core/ai/ai_service.dart';
+import '../../../core/network/api_client.dart';
+import '../../../core/network/dtos/freelance_dto.dart';
 import '../business/business_discovery_service.dart';
 import '../business/website_inspector.dart';
 
@@ -427,9 +429,32 @@ final freelanceSnapshotProvider = Provider<FreelanceSnapshot>((ref) {
 // --- Repository ---
 class FreelanceRepository {
   final AppDatabase _db;
+  final ApiClient? apiClient;
   static const _uuid = Uuid();
 
-  FreelanceRepository(this._db);
+  FreelanceRepository(this._db, {this.apiClient});
+
+  Future<int> syncLeadsFromBackend() async {
+    if (apiClient == null) return 0;
+    try {
+      final response = await apiClient!.get('/api/v1/freelance/leads', queryParams: {'limit': 100});
+      if (response is Map && response['items'] is List) {
+        final items = response['items'] as List;
+        int count = 0;
+        for (final item in items) {
+          if (item is Map) {
+            final dto = FreelanceLeadDto.fromJson(Map<String, dynamic>.from(item));
+            await _db.insertLead(dto.toCompanion());
+            count++;
+          }
+        }
+        return count;
+      }
+    } catch (_) {
+      // Graceful offline fallback
+    }
+    return 0;
+  }
 
   // --- Lead Operations ---
   Future<String> addLead({
@@ -483,6 +508,33 @@ class FreelanceRepository {
       updatedAt: drift.Value(now),
     ));
 
+    if (apiClient != null) {
+      try {
+        await apiClient!.post('/api/v1/freelance/leads', body: {
+          'id': id,
+          'title': title.trim(),
+          if (clientName?.trim().isNotEmpty == true) 'client_name': clientName!.trim(),
+          if (contactName?.trim().isNotEmpty == true) 'contact_name': contactName!.trim(),
+          if (contactInfo?.trim().isNotEmpty == true) 'contact_info': contactInfo!.trim(),
+          'platform': ?platform,
+          if (description?.trim().isNotEmpty == true) 'description': description!.trim(),
+          'skills': skills?.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty).toList() ?? [],
+          'budget': ?budget,
+          'currency': currency,
+          if (url?.trim().isNotEmpty == true) 'url': url!.trim(),
+          'status': status,
+          if (proposal?.trim().isNotEmpty == true) 'proposal': proposal!.trim(),
+          if (deadline != null) 'deadline': deadline.toIso8601String(),
+          if (followUpDate != null) 'follow_up_date': followUpDate.toIso8601String(),
+          if (followUpNote?.trim().isNotEmpty == true) 'follow_up_note': followUpNote!.trim(),
+          if (nextAction?.trim().isNotEmpty == true) 'next_action': nextAction!.trim(),
+          if (notes?.trim().isNotEmpty == true) 'notes': notes!.trim(),
+          'client_id': ?clientId,
+          'project_id': ?projectId,
+        });
+      } catch (_) {}
+    }
+
     return id;
   }
 
@@ -510,7 +562,7 @@ class FreelanceRepository {
     String? projectId,
     required DateTime createdAt,
   }) async {
-    return _db.updateLead(FreelanceLeadsCompanion(
+    final result = await _db.updateLead(FreelanceLeadsCompanion(
       id: drift.Value(id),
       title: drift.Value(title.trim()),
       clientName: drift.Value(clientName?.trim().isEmpty ?? true ? null : clientName!.trim()),
@@ -535,11 +587,55 @@ class FreelanceRepository {
       createdAt: drift.Value(createdAt),
       updatedAt: drift.Value(DateTime.now()),
     ));
+
+    if (apiClient != null) {
+      try {
+        await apiClient!.patch('/api/v1/freelance/leads/$id', body: {
+          'title': title.trim(),
+          'client_name': clientName?.trim().isEmpty ?? true ? null : clientName!.trim(),
+          'contact_name': contactName?.trim().isEmpty ?? true ? null : contactName!.trim(),
+          'contact_info': contactInfo?.trim().isEmpty ?? true ? null : contactInfo!.trim(),
+          'platform': platform,
+          'description': description?.trim().isEmpty ?? true ? null : description!.trim(),
+          'skills': skills?.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty).toList() ?? [],
+          'budget': budget,
+          'currency': currency,
+          'url': url?.trim().isEmpty ?? true ? null : url!.trim(),
+          'status': status,
+          'proposal': proposal?.trim().isEmpty ?? true ? null : proposal!.trim(),
+          'deadline': deadline?.toIso8601String(),
+          'follow_up_date': followUpDate?.toIso8601String(),
+          'follow_up_note': followUpNote?.trim().isEmpty ?? true ? null : followUpNote!.trim(),
+          'next_action': nextAction?.trim().isEmpty ?? true ? null : nextAction!.trim(),
+          'notes': notes?.trim().isEmpty ?? true ? null : notes!.trim(),
+          'client_id': clientId,
+          'project_id': projectId,
+        });
+      } catch (_) {}
+    }
+
+    return result;
   }
 
-  Future<int> deleteLead(String id) => _db.deleteLead(id);
+  Future<int> deleteLead(String id) async {
+    final res = await _db.deleteLead(id);
+    if (apiClient != null) {
+      try {
+        await apiClient!.delete('/api/v1/freelance/leads/$id');
+      } catch (_) {}
+    }
+    return res;
+  }
 
-  Future<int> updateLeadStatus(String id, String status) => _db.updateLeadStatus(id, status);
+  Future<int> updateLeadStatus(String id, String status) async {
+    final res = await _db.updateLeadStatus(id, status);
+    if (apiClient != null) {
+      try {
+        await apiClient!.patch('/api/v1/freelance/leads/$id', body: {'status': status});
+      } catch (_) {}
+    }
+    return res;
+  }
 
   // --- Convert Lead to Client ---
   Future<String> convertLeadToClient({
@@ -748,7 +844,8 @@ class FreelanceRepository {
 // Global Provider for FreelanceRepository
 final freelanceRepositoryProvider = Provider<FreelanceRepository>((ref) {
   final db = ref.watch(databaseProvider);
-  return FreelanceRepository(db);
+  final apiClient = ref.watch(apiClientProvider);
+  return FreelanceRepository(db, apiClient: apiClient);
 });
 
 // ==========================================
