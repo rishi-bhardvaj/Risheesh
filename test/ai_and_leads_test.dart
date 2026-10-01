@@ -161,12 +161,14 @@ void main() {
       expect(() => ai.gemini, throwsA(isA<AiMissingKeyException>()));
     });
 
-    test('required keys are Claude and Gemini', () {
-      var keys = const AiKeys().copyWith(AiProvider.claude, 'a');
-      expect(keys.hasRequired, isFalse);
-      keys = keys.copyWith(AiProvider.gemini, 'b');
+    test('all AI keys are optional so user can use career and freelance without external keys', () {
+      final keys = const AiKeys();
       expect(keys.hasRequired, isTrue);
-      expect(keys.copyWith(AiProvider.gemini, '  ').hasRequired, isFalse);
+      expect(keys.has(AiProvider.gemini), isFalse);
+      expect(keys.has(AiProvider.claude), isFalse);
+      expect(keys.has(AiProvider.nemotron), isFalse);
+      final withGemini = keys.copyWith(AiProvider.gemini, 'AIzaSy...');
+      expect(withGemini.has(AiProvider.gemini), isTrue);
     });
   });
 

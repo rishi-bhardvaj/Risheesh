@@ -89,7 +89,7 @@ class SettingsScreen extends ConsumerWidget {
                 Text('Version ${AppConstants.appVersion}', style: theme.textTheme.bodySmall),
                 const SizedBox(height: 8),
                 Text(
-                  'Your data stays in a local database on this phone. AI requests go directly from the phone to Anthropic, Google or NVIDIA using your own keys.',
+                  'Your data is stored in the local reactive cache and synchronized with the backend. AI requests go directly using your own keys (Google Gemini, NVIDIA) or local Ollama.',
                   style: theme.textTheme.bodySmall,
                 ),
               ],

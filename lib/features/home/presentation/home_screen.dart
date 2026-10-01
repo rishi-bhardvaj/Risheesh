@@ -75,7 +75,7 @@ class HomeScreen extends ConsumerWidget {
                 ],
               ),
             ),
-            if (!keys.hasRequired)
+            if (!keys.has(AiProvider.gemini))
               AppCard(
                 margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                 color: AppTheme.warning.withValues(alpha: 0.1),
@@ -84,7 +84,7 @@ class HomeScreen extends ConsumerWidget {
                   children: [
                     const Icon(Icons.key_rounded, color: AppTheme.warning),
                     const SizedBox(width: 12),
-                    Expanded(child: Text('Add your Claude & Gemini keys to unlock AI job search, lead finding and documents.', style: theme.textTheme.bodySmall)),
+                    Expanded(child: Text('Optional: Connect Gemini in Settings to generate cover letters and proposals.', style: theme.textTheme.bodySmall)),
                     const Icon(Icons.chevron_right_rounded),
                   ],
                 ),

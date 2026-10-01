@@ -21,7 +21,7 @@ enum AiProvider {
 
   const AiProvider(this.label, this.purpose, this.keyUrl, this.keyPrefix);
 
-  bool get required => this != AiProvider.nemotron;
+  bool get required => false;
 }
 
 class AiKeys {
