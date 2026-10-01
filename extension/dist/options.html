@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Career OS Settings</title>
+  <style>
+    body {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 24px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #121212;
+      color: #E2E8F0;
+    }
+    h1 {
+      font-size: 20px;
+      color: #00D09C;
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-top: 14px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #94A3B8;
+    }
+    input[type="text"], input[type="url"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border: 1px solid #2D3748;
+      border-radius: 6px;
+      background: #1C1C1E;
+      color: #FFF;
+      box-sizing: border-box;
+    }
+    .btn {
+      padding: 10px 18px;
+      margin-top: 20px;
+      background: #00D09C;
+      color: #121212;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Career OS Pairing & Settings</h1>
+  <label for="serverUrl">Career OS Server URL (HTTPS)</label>
+  <input type="url" id="serverUrl" placeholder="https://127.0.0.1:8787">
+
+  <label for="pairCode">6-Digit Pairing Code (from Mobile App)</label>
+  <input type="text" id="pairCode" placeholder="123456" maxlength="6">
+
+  <button class="btn" id="pairBtn">Pair Extension</button>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "name": "career-os-extension",
+  "version": "1.0.0",
+  "description": "Chrome MV3 extension for Career OS job capture, policy gating, and sync.",
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "test": "node --test test/*.test.js",
+    "zip": "node -e \"const fs = require('fs'); const archiver = require('child_process'); if (process.platform === 'win32') { archiver.execSync('tar -a -c -f dist/career-os-extension.zip -C dist manifest.json background.js popup.html popup.js options.html options.js content.js'); }\""
+  },
+  "type": "module"
+}

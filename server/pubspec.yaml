@@ -1,0 +1,21 @@
+name: career_os_server
+description: Companion ingestion and sync engine for Career OS.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.5.0
+
+dependencies:
+  args: ^2.4.2
+  shelf: ^1.4.1
+  shelf_router: ^1.1.4
+  shelf_cors_headers: ^0.1.5
+  career_core:
+    path: ../packages/career_core
+  crypto: ^3.0.3
+  uuid: ^4.3.3
+
+dev_dependencies:
+  lints: ^3.0.0
+  test: ^1.24.0

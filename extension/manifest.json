@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Career OS Companion",
+  "version": "1.0.0",
+  "description": "Privacy-first job capture and sync companion for Career OS.",
+  "permissions": [
+    "storage",
+    "alarms",
+    "contextMenus",
+    "activeTab",
+    "scripting",
+    "notifications"
+  ],
+  "host_permissions": [
+    "https://boards-api.greenhouse.io/*",
+    "https://api.lever.co/*",
+    "https://jobs.ashbyhq.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  }
+}

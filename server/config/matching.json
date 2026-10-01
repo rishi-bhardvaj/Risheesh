@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "weights": {
+    "role": 0.22,
+    "skill": 0.30,
+    "semantic": 0.18,
+    "experience": 0.12,
+    "project": 0.06,
+    "domain": 0.04,
+    "education": 0.03,
+    "location": 0.05
+  },
+  "alpha": 0.55,
+  "thresholds": {
+    "high": 80,
+    "relevant": 65,
+    "possible": 50,
+    "llmGateMin": 45,
+    "semanticFloor": 0.55,
+    "llmMinConfidenceHigh": 0.7
+  },
+  "experienceToleranceMonths": 18,
+  "internshipWeight": 0.5,
+  "seniorityMaxGap": 1,
+  "overqualifiedPenalty": 8,
+  "feedbackAdjMin": -15,
+  "feedbackAdjMax": 5,
+  "alwaysAllowedFamilies": [],
+  "familyAdjacency": {
+    "MOBILE": ["FULLSTACK", "FRONTEND"],
+    "BACKEND": ["FULLSTACK", "DEVOPS_SRE_PLATFORM"],
+    "FRONTEND": ["FULLSTACK", "MOBILE"],
+    "FULLSTACK": ["BACKEND", "FRONTEND", "MOBILE"]
+  },
+  "blockingRedFlags": [
+    "unpaid",
+    "commission only",
+    "bond",
+    "security deposit",
+    "pay to apply"
+  ]
+}
