@@ -18,14 +18,6 @@ export function errorHandler(
         details: [],
       },
     });
-  if (err instanceof SyntaxError && 'status' in err && (err as any).status === 400) {
-    res.status(400).json({
-      success: false,
-      error: {
-        code: 'BAD_REQUEST',
-        message: 'Malformed JSON payload',
-      },
-    });
     return;
   }
 
