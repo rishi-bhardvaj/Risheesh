@@ -1,0 +1,70 @@
+{
+  "schema_version": "1.0",
+  "data_type": "freelance",
+  "generated_at": "2026-10-01T05:00:00Z",
+  "source": "daily_freelance_research",
+  "projects": [
+    {
+      "external_id": "freelance-ext-201",
+      "title": "Flutter Multiplatform Mobile App Development",
+      "client_name": "Horizon Digital Agency",
+      "platform": "Upwork",
+      "description": "Looking for an experienced Flutter engineer to build a production MVP with clean architecture, offline-first sync, and smooth animations.",
+      "skills": ["Flutter", "Dart", "Firebase", "REST API", "Riverpod"],
+      "budget": 3500,
+      "currency": "USD",
+      "url": "https://upwork.example/jobs/~01horizonproject201",
+      "contact_info": "jobs@horizondigital.example",
+      "deadline": "2026-11-15T00:00:00Z",
+      "posted_date": "2026-09-30T16:00:00Z",
+      "discovered_at": "2026-10-01T05:00:00Z",
+      "match_score": 96,
+      "match_reason": "Direct match for Flutter cross-platform mobile expertise",
+      "metadata": {
+        "client_spend": "$50k+",
+        "rating": 4.95
+      }
+    },
+    {
+      "external_id": "freelance-ext-202",
+      "title": "Node.js & PostgreSQL Migration & API Service",
+      "client_name": "Quantum Fintech Corp",
+      "platform": "Freelancer",
+      "description": "Migrate SQLite database persistence to PostgreSQL with a secure Node.js TypeScript REST backend and automated daily JSON ingest pipelines.",
+      "skills": ["Node.js", "TypeScript", "PostgreSQL", "Data Migration", "Jest"],
+      "budget": 4200,
+      "currency": "USD",
+      "url": "https://freelancer.example/projects/quantum-pg-migration-202",
+      "contact_info": "tech@quantumfintech.example",
+      "deadline": "2026-10-31T00:00:00Z",
+      "posted_date": "2026-10-01T01:30:00Z",
+      "discovered_at": "2026-10-01T05:00:00Z",
+      "match_score": 93,
+      "match_reason": "Exact fit for backend migration and PostgreSQL data pipelines",
+      "metadata": {
+        "payment_verified": true,
+        "location": "Singapore"
+      }
+    },
+    {
+      "external_id": "freelance-ext-203",
+      "title": "Custom E-Commerce Mobile App & Admin Portal",
+      "client_name": "Artisan Goods Global",
+      "platform": "Direct",
+      "description": "Develop full-stack solution: Flutter mobile client plus backend API managing inventory, orders, customer CRM, and payment tracking.",
+      "skills": ["Flutter", "Express", "PostgreSQL", "Stripe API"],
+      "budget": 2800,
+      "currency": "USD",
+      "url": "https://artisangoods.example/inquiry/rfp-203",
+      "contact_info": "contact@artisangoods.example",
+      "deadline": "2026-11-30T00:00:00Z",
+      "posted_date": "2026-09-29T12:00:00Z",
+      "discovered_at": "2026-10-01T05:00:00Z",
+      "match_score": 88,
+      "match_reason": "Solid match for full-stack mobile e-commerce with payments",
+      "metadata": {
+        "lead_tier": "VIP"
+      }
+    }
+  ]
+}
