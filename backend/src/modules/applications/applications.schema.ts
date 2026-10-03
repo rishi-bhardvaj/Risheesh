@@ -29,6 +29,7 @@ export const queryApplicationsSchema = z.object({
   search: z.string().optional(),
   status: z.string().optional(),
   job_id: z.string().uuid().optional(),
+  applied_after: z.string().optional(),
   sort: z.enum(['newest', 'oldest', 'applied', 'company']).optional().default('newest'),
 });
 

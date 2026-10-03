@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/ai/ai_keys.dart';
 import '../../../core/constants/app_constants.dart';
-import '../../../core/network/api_config.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/theme_provider.dart';
 import '../../../shared/widgets/ui_kit.dart';
@@ -70,30 +69,6 @@ class SettingsScreen extends ConsumerWidget {
               ],
             ),
           ),
-          const SectionHeader(title: 'Backend Server', padding: EdgeInsets.fromLTRB(4, 20, 4, 8)),
-          AppCard(
-            onTap: () => _showServerUrlDialog(context, ref),
-            child: Row(
-              children: [
-                const Icon(Icons.cloud_sync_rounded, color: AppTheme.accent),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Server URL', style: theme.textTheme.titleSmall),
-                      Text(
-                        ref.watch(sharedPreferencesProvider).getString('custom_backend_url') ?? ApiConfig.baseUrl,
-                        style: theme.textTheme.bodySmall,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-                const Icon(Icons.edit_outlined),
-              ],
-            ),
-          ),
           const SectionHeader(title: 'Appearance', padding: EdgeInsets.fromLTRB(4, 20, 4, 8)),
           SegmentedButton<ThemeMode>(
             showSelectedIcon: false,
@@ -119,62 +94,6 @@ class SettingsScreen extends ConsumerWidget {
                 ),
               ],
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showServerUrlDialog(BuildContext context, WidgetRef ref) {
-    final prefs = ref.read(sharedPreferencesProvider);
-    final current = prefs.getString('custom_backend_url') ?? ApiConfig.baseUrl;
-    final controller = TextEditingController(text: current);
-
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Backend Server URL'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Enter your deployed backend URL. Live jobs, applications, and freelance data sync with this server.',
-              style: TextStyle(fontSize: 13),
-            ),
-            const SizedBox(height: 14),
-            TextField(
-              controller: controller,
-              decoration: const InputDecoration(
-                labelText: 'Server URL',
-                hintText: 'https://risheesh-backend.onrender.com',
-                prefixIcon: Icon(Icons.link_rounded),
-                border: OutlineInputBorder(),
-              ),
-              keyboardType: TextInputType.url,
-              autocorrect: false,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              await prefs.remove('custom_backend_url');
-              if (ctx.mounted) Navigator.pop(ctx);
-            },
-            child: const Text('Reset Default'),
-          ),
-          FilledButton(
-            onPressed: () async {
-              final val = controller.text.trim();
-              if (val.isNotEmpty) {
-                await prefs.setString('custom_backend_url', val);
-              } else {
-                await prefs.remove('custom_backend_url');
-              }
-              if (ctx.mounted) Navigator.pop(ctx);
-            },
-            child: const Text('Save'),
           ),
         ],
       ),

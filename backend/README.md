@@ -58,6 +58,8 @@ cp .env.example .env
 | `DATABASE_URL` | PostgreSQL connection string | `postgresql://postgres:postgres@localhost:5432/career_os` |
 | `PORT` | HTTP server port | `8080` |
 | `IMPORT_API_KEY` | Bearer token for server-to-server import API | `your_secure_import_key` |
+| `JOB_SYNC_SECRET` | Bearer token for hourly job sync scheduler | (min 24 chars) |
+| `ASSISTANT_API_KEY` | Bearer token for read-only ChatGPT / Assistant API | (min 16 chars; see `docs/ASSISTANT_API.md`) |
 | `JWT_SECRET` | Secret for user sessions | `your_secure_jwt_secret` |
 | `CORS_ORIGINS` | Allowed CORS origins | `*` |
 | `NODE_ENV` | Application environment | `development` / `production` / `test` |

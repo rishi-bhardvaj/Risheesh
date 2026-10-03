@@ -2,6 +2,8 @@ import { Router, Request, Response } from 'express';
 import { checkDatabaseConnection } from '../db';
 import { requireImportAuth } from '../middleware/auth';
 import { requireJobSyncAuth } from '../middleware/jobSyncAuth';
+import { requireAssistantAuth } from '../middleware/assistantAuth';
+import { assistantController } from '../modules/assistant/assistant.controller';
 import { jobSyncController } from '../modules/job-sync/job-sync.controller';
 import { importController } from '../modules/imports/import.controller';
 import { jobsController } from '../modules/jobs/jobs.controller';
@@ -39,6 +41,13 @@ v1.get('/import/runs', requireImportAuth, (req, res, next) => importController.g
 // --- Internal job sync (scheduler/CLI; protected with JOB_SYNC_SECRET) ---
 v1.post('/internal/jobs/sync', requireJobSyncAuth, (req, res, next) => jobSyncController.triggerSync(req, res, next));
 v1.get('/internal/jobs/sync/status', requireJobSyncAuth, (req, res, next) => jobSyncController.getStatus(req, res, next));
+
+// --- Dedicated Assistant Read-Only Endpoints (Protected with ASSISTANT_API_KEY) ---
+v1.get('/assistant/health', requireAssistantAuth, (req, res, next) => assistantController.getHealth(req, res, next));
+v1.get('/assistant/summary', requireAssistantAuth, (req, res, next) => assistantController.getSummary(req, res, next));
+v1.get('/assistant/jobs', requireAssistantAuth, (req, res, next) => assistantController.getJobs(req, res, next));
+v1.get('/assistant/freelance', requireAssistantAuth, (req, res, next) => assistantController.getFreelance(req, res, next));
+v1.get('/assistant/applications', requireAssistantAuth, (req, res, next) => assistantController.getApplications(req, res, next));
 
 // --- Jobs Endpoints ---
 v1.get('/jobs', (req, res, next) => jobsController.getJobs(req, res, next));

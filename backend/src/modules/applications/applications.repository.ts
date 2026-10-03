@@ -28,6 +28,12 @@ export class ApplicationsRepository {
       idx++;
     }
 
+    if (params.applied_after) {
+      conditions.push(`applied_at >= $${idx}`);
+      values.push(new Date(params.applied_after));
+      idx++;
+    }
+
     const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
     let orderBy = 'updated_at DESC';

@@ -11,6 +11,8 @@ export const config = {
   jwtSecret: process.env.JWT_SECRET || 'default_jwt_secret',
   // Protects /api/v1/internal/*. No default on purpose: when unset the endpoints are disabled (503).
   jobSyncSecret: process.env.JOB_SYNC_SECRET || '',
+  // Protects /api/v1/assistant/*. Dedicated read-only key for ChatGPT routines / personal assistant.
+  assistantApiKey: process.env.ASSISTANT_API_KEY || '',
   corsOrigins: process.env.CORS_ORIGINS || '*',
   logLevel: process.env.LOG_LEVEL || 'info',
 };

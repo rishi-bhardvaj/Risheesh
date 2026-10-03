@@ -36,6 +36,8 @@ export const queryLeadsSchema = z.object({
   platform: z.string().optional(),
   status: z.string().optional(),
   client_id: z.string().uuid().optional(),
+  min_score: z.coerce.number().min(0).max(100).optional(),
+  created_after: z.string().optional(),
   sort: z.enum(['newest', 'oldest', 'budget', 'title']).optional().default('newest'),
 });
 

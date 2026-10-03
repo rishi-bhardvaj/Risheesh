@@ -4,7 +4,7 @@ const MASK = '[REDACTED]';
 
 /** Secrets that must never reach logs, however a message was built. */
 function secretValues(): string[] {
-  return [config.jobSyncSecret, config.importApiKey, config.jwtSecret, process.env.DATABASE_URL]
+  return [config.jobSyncSecret, config.assistantApiKey, config.importApiKey, config.jwtSecret, process.env.DATABASE_URL]
     .filter((v): v is string => typeof v === 'string' && v.length >= 8);
 }
 

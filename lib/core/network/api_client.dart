@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'api_config.dart';
 import 'api_exception.dart';
-import '../theme/theme_provider.dart';
 
 /// One page of a paginated list endpoint (`{success, data: [...], pagination: {...}}`).
 class ApiPage {
@@ -171,12 +170,5 @@ class ApiClient {
 }
 
 final apiClientProvider = Provider<ApiClient>((ref) {
-  try {
-    final prefs = ref.watch(sharedPreferencesProvider);
-    final customUrl = prefs.getString('custom_backend_url');
-    if (customUrl != null && customUrl.trim().isNotEmpty) {
-      return ApiClient(baseUrl: customUrl.trim());
-    }
-  } catch (_) {}
   return ApiClient();
 });

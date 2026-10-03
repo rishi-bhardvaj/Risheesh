@@ -44,6 +44,18 @@ export class FreelanceRepository {
       idx++;
     }
 
+    if (params.min_score !== undefined) {
+      conditions.push(`match_score >= $${idx}`);
+      values.push(params.min_score);
+      idx++;
+    }
+
+    if (params.created_after) {
+      conditions.push(`created_at >= $${idx}`);
+      values.push(new Date(params.created_after));
+      idx++;
+    }
+
     const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
     let orderBy = 'created_at DESC';
