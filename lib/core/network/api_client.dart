@@ -4,6 +4,18 @@ import 'package:http/http.dart' as http;
 import 'api_config.dart';
 import 'api_exception.dart';
 
+/// One page of a paginated list endpoint (`{success, data: [...], pagination: {...}}`).
+class ApiPage {
+  final List<dynamic> items;
+  final int page;
+  final int totalPages;
+  final int total;
+
+  const ApiPage({required this.items, this.page = 1, this.totalPages = 1, this.total = 0});
+
+  bool get hasMore => page < totalPages;
+}
+
 class ApiClient {
   final http.Client _client;
   final String _baseUrl;
@@ -80,6 +92,35 @@ class ApiClient {
       final uri = _uri(path, queryParams);
       final res = await _client.get(uri, headers: _headers).timeout(timeout);
       return _processResponse(res);
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(message: 'Connection failed: $e');
+    }
+  }
+
+  /// GET a paginated list and keep the pagination metadata that [get] discards.
+  /// Also accepts the legacy `{data: {items: [...]}}` shape.
+  Future<ApiPage> getPage(String path,
+      {Map<String, dynamic>? queryParams, Duration timeout = const Duration(seconds: 20)}) async {
+    try {
+      final res = await _client.get(_uri(path, queryParams), headers: _headers).timeout(timeout);
+      final data = _processResponse(res);
+      Map<String, dynamic> pagination = const {};
+      try {
+        final body = jsonDecode(utf8.decode(res.bodyBytes));
+        if (body is Map && body['pagination'] is Map) {
+          pagination = Map<String, dynamic>.from(body['pagination'] as Map);
+        }
+      } catch (_) {}
+      final items = data is List ? data : (data is Map && data['items'] is List ? data['items'] as List : const []);
+      int asInt(dynamic v, int fallback) => v is num ? v.toInt() : int.tryParse('$v') ?? fallback;
+      return ApiPage(
+        items: items,
+        page: asInt(pagination['page'], 1),
+        totalPages: asInt(pagination['totalPages'], 1),
+        total: asInt(pagination['total'], items.length),
+      );
     } on ApiException {
       rethrow;
     } catch (e) {

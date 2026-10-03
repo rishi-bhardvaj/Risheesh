@@ -1,0 +1,60 @@
+name: Hourly job sync
+
+# Calls the protected sync endpoint of the deployed backend once an hour.
+# The repo has no native scheduler (no Render/Railway/Vercel/Fly config), so GitHub Actions is the
+# smallest dependable trigger. Required repository secrets (Settings > Secrets and variables > Actions):
+#   BACKEND_URL      e.g. https://your-backend.example.com   (no trailing path)
+#   JOB_SYNC_SECRET  the same value as the backend's JOB_SYNC_SECRET
+# Details: docs/HOURLY_JOB_SYNC.md
+
+on:
+  schedule:
+    - cron: '17 * * * *' # minute 17: avoids the top-of-hour rush when GitHub delays/drops runs
+  workflow_dispatch: {}
+
+permissions: {} # the job needs no GitHub token permissions
+
+concurrency:
+  group: hourly-job-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      BACKEND_URL: ${{ secrets.BACKEND_URL }}
+      JOB_SYNC_SECRET: ${{ secrets.JOB_SYNC_SECRET }}
+    steps:
+      - name: Check configuration
+        run: |
+          missing=0
+          [ -z "$BACKEND_URL" ] && echo "::error::Repository secret BACKEND_URL is not set" && missing=1
+          [ -z "$JOB_SYNC_SECRET" ] && echo "::error::Repository secret JOB_SYNC_SECRET is not set" && missing=1
+          case "$BACKEND_URL" in https://*) ;; *) echo "::error::BACKEND_URL must start with https://"; missing=1 ;; esac
+          exit $missing
+
+      - name: Wake backend (cold starts on free tiers)
+        run: |
+          curl -fsS --max-time 30 --retry 6 --retry-delay 10 --retry-all-errors \
+            "${BACKEND_URL%/}/health" > /dev/null
+
+      - name: Trigger sync
+        run: |
+          # The Authorization header is passed via stdin config so it never appears in argv.
+          code=$(curl -sS -o response.json -w '%{http_code}' --max-time 600 -X POST \
+            -H 'Content-Type: application/json' -d '{}' \
+            --config - "${BACKEND_URL%/}/api/v1/internal/jobs/sync" <<EOF
+          header = "Authorization: Bearer ${JOB_SYNC_SECRET}"
+          EOF
+          )
+          echo "HTTP $code"
+          # Print only non-sensitive counters from the response.
+          jq '{status: .data.status, providersSucceeded: .data.providersSucceeded, providersFailed: .data.providersFailed,
+               discovered: .data.jobsDiscovered, inserted: .data.jobsInserted, updated: .data.jobsUpdated,
+               rejected: .data.jobsRejected, errors: .data.errorSummary}' response.json | tee -a "$GITHUB_STEP_SUMMARY" || true
+          case "$code" in
+            200|202) echo "Sync OK" ;;
+            409)     echo "::notice::Another sync was already running; exited safely" ;;
+            *)       echo "::error::Sync failed with HTTP $code"; exit 1 ;;
+          esac

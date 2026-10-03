@@ -32,7 +32,11 @@ export const queryJobsSchema = z.object({
   employment_type: z.string().optional(),
   source: z.string().optional(),
   saved: z.enum(['true', 'false']).optional(),
-  sort: z.enum(['newest', 'oldest', 'company', 'title']).optional().default('newest'),
+  // OPEN by default so closed/stale postings drop out of the live feed; ALL disables the filter.
+  status: z.enum(['OPEN', 'STALE', 'CLOSED', 'UNKNOWN', 'ALL']).optional().default('OPEN'),
+  min_score: z.coerce.number().min(0).max(100).optional(),
+  posted_after: z.string().datetime({ offset: true }).or(z.string().regex(/^\d{4}-\d{2}-\d{2}$/)).optional(),
+  sort: z.enum(['relevance', 'newest', 'oldest', 'company', 'title']).optional().default('relevance'),
 });
 
 export type CreateJobInput = z.infer<typeof createJobSchema>;

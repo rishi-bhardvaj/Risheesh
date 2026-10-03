@@ -147,3 +147,20 @@ Runs the automated test suite verifying all CRUD endpoints, authentication, dedu
 ```bash
 npm test
 ```
+
+---
+
+## Hourly live-job sync
+
+The backend discovers, filters, scores and deduplicates live jobs from Greenhouse, Lever, Ashby,
+RemoteOK and WeWorkRemotely, and the Flutter app reads them from `GET /api/v1/jobs`.
+
+```bash
+npm run migrate        # applies 005_job_sync.sql
+npm run jobs:setup     # idempotent: .env, local JOB_SYNC_SECRET, schema checks
+npm run jobs:verify    # end-to-end self check (-- --live also dry-runs real providers)
+npm run jobs:sync      # run a sync now (-- --dry-run to write nothing)
+```
+
+Production trigger: `POST /api/v1/internal/jobs/sync` with `Authorization: Bearer <JOB_SYNC_SECRET>`,
+called hourly by `.github/workflows/hourly-job-sync.yml`. Full guide: [docs/HOURLY_JOB_SYNC.md](../docs/HOURLY_JOB_SYNC.md).

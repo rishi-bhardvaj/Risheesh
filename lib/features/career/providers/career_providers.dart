@@ -4,6 +4,8 @@ import 'package:uuid/uuid.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/database/app_database.dart';
 import '../../../core/network/api_client.dart';
+import '../../../core/network/api_exception.dart';
+import '../../../core/network/feed_utils.dart';
 import '../../../core/network/dtos/job_dto.dart';
 import '../../../core/theme/theme_provider.dart';
 import '../domain/job_match_service.dart';
@@ -387,6 +389,19 @@ final careerSnapshotProvider = Provider<CareerSnapshotData>((ref) {
   );
 });
 
+/// Outcome of [CareerRepository.refreshJobsFromBackend].
+class BackendRefreshResult {
+  final int fetched;
+  final int inserted;
+  final int updated;
+  final int skipped;
+  final String? error;
+
+  const BackendRefreshResult({this.fetched = 0, this.inserted = 0, this.updated = 0, this.skipped = 0, this.error});
+
+  bool get ok => error == null;
+}
+
 // Career Repository / Actions
 class CareerRepository {
   final AppDatabase db;
@@ -395,27 +410,57 @@ class CareerRepository {
 
   CareerRepository(this.db, {this.apiClient});
 
-  Future<int> syncJobsFromBackend() async {
-    if (apiClient == null) return 0;
+  /// Pulls the backend's live, already-filtered and scored jobs into the local cache
+  /// (the hourly server sync does the provider scraping; the app only reads).
+  /// Local state (saved flag, notes, on-device score) survives refreshes. Never throws:
+  /// when the backend is unreachable the cached jobs stay available and [BackendRefreshResult.error] is set.
+  Future<BackendRefreshResult> refreshJobsFromBackend({int pageSize = 100, int maxPages = 5}) async {
+    if (apiClient == null) return const BackendRefreshResult(error: 'Backend not configured');
+    var fetched = 0, inserted = 0, updated = 0, skipped = 0;
+    BackendRefreshResult snapshot([String? error]) =>
+        BackendRefreshResult(fetched: fetched, inserted: inserted, updated: updated, skipped: skipped, error: error);
     try {
-      final response = await apiClient!.get('/api/v1/jobs', queryParams: {'limit': 100});
-      if (response is Map && response['items'] is List) {
-        final items = response['items'] as List;
-        int count = 0;
-        for (final item in items) {
-          if (item is Map) {
-            final dto = JobDto.fromJson(Map<String, dynamic>.from(item));
-            await db.insertJob(dto.toCompanion());
-            count++;
+      for (var page = 1; page <= maxPages; page++) {
+        final result = await apiClient!
+            .getPage('/api/v1/jobs', queryParams: {'page': page, 'limit': pageSize, 'status': 'OPEN'});
+        for (final item in result.items) {
+          if (item is! Map) continue;
+          final dto = JobDto.fromJson(Map<String, dynamic>.from(item));
+          if (dto.id.isEmpty || dto.title.isEmpty) continue;
+          fetched++;
+          final existing = await db.getJobById(dto.id);
+          if (existing != null) {
+            await (db.update(db.jobs)..where((j) => j.id.equals(dto.id))).write(dto.toBackendUpdateCompanion());
+            updated++;
+            continue;
           }
+          // A copy found earlier by the old on-device discovery has a different id but the same URL.
+          final url = dto.url;
+          final dup = (url == null || url.isEmpty)
+              ? null
+              : await (db.select(db.jobs)
+                    ..where((j) => j.url.equals(url))
+                    ..limit(1))
+                  .getSingleOrNull();
+          if (dup != null) {
+            skipped++;
+            continue;
+          }
+          await db.insertJob(dto.toCompanion());
+          inserted++;
         }
-        return count;
+        if (!result.hasMore) break;
       }
-    } catch (_) {
-      // Graceful offline fallback
+      return snapshot();
+    } on ApiException catch (e) {
+      return snapshot(e.message);
+    } catch (e) {
+      return snapshot(e.toString());
     }
-    return 0;
   }
+
+  /// Back-compat wrapper: number of backend jobs written to the local cache.
+  Future<int> syncJobsFromBackend() async => (await refreshJobsFromBackend()).fetched;
 
   Future<void> addJob({
     required String title,
@@ -543,7 +588,7 @@ class CareerRepository {
     await db.toggleJobSaved(id, isSaved);
     if (apiClient != null) {
       try {
-        await apiClient!.patch('/api/v1/jobs/$id/saved', body: {'is_saved': isSaved});
+        await apiClient!.post('/api/v1/jobs/$id/${isSaved ? 'save' : 'unsave'}');
       } catch (_) {}
     }
   }
@@ -895,9 +940,17 @@ class LiveDiscoveryNotifier extends StateNotifier<LiveDiscoveryState> {
     if (state.isLoading) return null;
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final criteria = _ref.read(activeJobSearchCriteriaProvider);
-      final service = _ref.read(liveJobDiscoveryServiceProvider);
-      final result = await service.discoverAndSyncJobs(criteria: criteria);
+      // The backend's hourly sync owns provider scraping, dedupe and scoring; the app only reads from it.
+      final refresh = await _ref.read(careerRepositoryProvider).refreshJobsFromBackend();
+      final result = DiscoveryBatchResult(
+        totalDiscovered: refresh.fetched,
+        newJobsSaved: refresh.inserted,
+        duplicatesSkipped: refresh.updated + refresh.skipped,
+        sources: [
+          SourceStatus(sourceId: 'backend', label: 'Backend', itemCount: refresh.fetched, error: refresh.error),
+        ],
+        timestamp: DateTime.now(),
+      );
       if (!result.allSourcesFailed) {
         try {
           await _ref.read(sharedPreferencesProvider).setInt(_lastSyncKey, result.timestamp.millisecondsSinceEpoch);

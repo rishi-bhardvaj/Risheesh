@@ -121,6 +121,38 @@ class JobDto {
     };
   }
 
+  /// Local `atsProvider` tag the Jobs screen uses to recognise synced (non-manual) jobs.
+  static const _atsBySource = {
+    'greenhouse': 'GREENHOUSE',
+    'lever': 'LEVER',
+    'ashby': 'ASHBY',
+    'remoteok': 'REMOTEOK',
+    'weworkremotely': 'WWR',
+  };
+
+  String? get atsProvider => _atsBySource[(source ?? '').toLowerCase()];
+
+  /// Fields the backend owns. Deliberately excludes `isSaved`, `notes` and `matchScore` so a
+  /// refresh never wipes what the user did locally or the per-resume score computed on-device.
+  JobsCompanion toBackendUpdateCompanion() {
+    return JobsCompanion(
+      title: Value(title),
+      company: Value(company),
+      location: Value(location),
+      salary: Value(salary),
+      employmentType: Value(employmentType),
+      experienceRequirement: Value(experienceRequirement),
+      url: Value(url),
+      source: Value(source ?? 'Remote'),
+      description: Value(description),
+      skills: Value(skills.join(', ')),
+      postedDate: Value(postedDate),
+      atsProvider: Value(atsProvider),
+      externalId: Value(externalId),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
   JobsCompanion toCompanion() {
     return JobsCompanion(
       id: Value(id),
@@ -135,6 +167,7 @@ class JobDto {
       description: Value(description),
       skills: Value(skills.join(', ')),
       postedDate: Value(postedDate),
+      atsProvider: Value(atsProvider),
       discoveredAt: Value(discoveredAt),
       isSaved: Value(isSaved),
       notes: Value(notes),

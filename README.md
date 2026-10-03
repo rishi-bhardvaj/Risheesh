@@ -138,6 +138,10 @@ To leverage the AI features without sending data to third parties:
 
 ---
 
+## 🔄 Hourly Live-Job Sync
+
+The Node backend pulls live jobs from Greenhouse, Lever, Ashby, RemoteOK and WeWorkRemotely every hour (GitHub Actions → protected `POST /api/v1/internal/jobs/sync`), filters and scores them against the candidate profile, deduplicates them into PostgreSQL, and the app reads them via `GET /api/v1/jobs`. See [docs/HOURLY_JOB_SYNC.md](docs/HOURLY_JOB_SYNC.md).
+
 ## 🗄️ Database Architecture & Migrations
 
 Career OS uses **Drift ORM** on top of SQLite with non-destructive migrations (currently Schema Version 8) spanning 32 tables.

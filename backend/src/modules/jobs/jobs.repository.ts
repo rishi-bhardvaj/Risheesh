@@ -3,6 +3,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { CreateJobInput, UpdateJobInput, QueryJobsInput } from './jobs.schema';
 import { normalizeUrl } from '../../utils/normalizer';
 
+// raw_data is import bookkeeping and can be large; it is never sent to clients.
+const JOB_COLUMNS = `id, external_id, title, company, location, salary, employment_type, experience_requirement,
+  url, source, description, skills, posted_date, discovered_at, match_score, match_reason, is_saved, notes,
+  metadata, status, last_seen_at, created_at, updated_at`;
+
 export class JobsRepository {
   async findMany(params: QueryJobsInput) {
     const {
@@ -15,7 +20,10 @@ export class JobsRepository {
       employment_type,
       source,
       saved,
-      sort = 'newest',
+      status = 'OPEN',
+      min_score,
+      posted_after,
+      sort = 'relevance',
     } = params;
 
     const offset = (page - 1) * limit;
@@ -67,10 +75,30 @@ export class JobsRepository {
       idx++;
     }
 
+    if (status !== 'ALL') {
+      conditions.push(`status = $${idx}`);
+      values.push(status);
+      idx++;
+    }
+
+    if (min_score !== undefined) {
+      conditions.push(`match_score >= $${idx}`);
+      values.push(min_score);
+      idx++;
+    }
+
+    if (posted_after) {
+      conditions.push(`COALESCE(posted_date, discovered_at) >= $${idx}`);
+      values.push(new Date(posted_after));
+      idx++;
+    }
+
     const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
-    let orderBy = 'created_at DESC';
-    if (sort === 'oldest') orderBy = 'created_at ASC';
+    // Default: most relevant first, then freshest. id keeps pagination stable across ties.
+    let orderBy = 'match_score DESC NULLS LAST, COALESCE(posted_date, discovered_at) DESC, id';
+    if (sort === 'newest') orderBy = 'created_at DESC, id';
+    else if (sort === 'oldest') orderBy = 'created_at ASC';
     else if (sort === 'company') orderBy = 'company ASC';
     else if (sort === 'title') orderBy = 'title ASC';
 
@@ -78,7 +106,7 @@ export class JobsRepository {
     const countRes = await query(countSql, values);
     const total = parseInt(countRes.rows[0].total, 10);
 
-    const dataSql = `SELECT * FROM jobs ${whereClause} ORDER BY ${orderBy} LIMIT $${idx} OFFSET $${idx + 1}`;
+    const dataSql = `SELECT ${JOB_COLUMNS} FROM jobs ${whereClause} ORDER BY ${orderBy} LIMIT $${idx} OFFSET $${idx + 1}`;
     values.push(limit, offset);
     const dataRes = await query(dataSql, values);
 
@@ -94,7 +122,7 @@ export class JobsRepository {
   }
 
   async findById(id: string) {
-    const res = await query('SELECT * FROM jobs WHERE id = $1', [id]);
+    const res = await query(`SELECT ${JOB_COLUMNS} FROM jobs WHERE id = $1`, [id]);
     return res.rows[0] || null;
   }
 
@@ -115,7 +143,7 @@ export class JobsRepository {
         $8, $9, $10, $11, $12::jsonb,
         $13, $14, $15, $16, $17,
         $18::jsonb, '{}'::jsonb, NOW(), NOW()
-      ) RETURNING *`,
+      ) RETURNING ${JOB_COLUMNS}`,
       [
         id,
         data.external_id || null,
@@ -156,7 +184,7 @@ export class JobsRepository {
         fields.push(`metadata = $${idx}::jsonb`);
         values.push(JSON.stringify(val));
       } else if (key === 'posted_date') {
-        fields.push(`posted_date = ${idx}`);
+        fields.push(`posted_date = $${idx}`);
         values.push(val ? new Date(val as string) : null);
       } else if (key === 'url') {
         fields.push(`url = $${idx}`);
@@ -175,7 +203,7 @@ export class JobsRepository {
     fields.push('updated_at = NOW()');
     values.push(id);
 
-    const sql = `UPDATE jobs SET ${fields.join(', ')} WHERE id = $${idx} RETURNING *`;
+    const sql = `UPDATE jobs SET ${fields.join(', ')} WHERE id = $${idx} RETURNING ${JOB_COLUMNS}`;
     const res = await query(sql, values);
     return res.rows[0] || null;
   }
@@ -187,7 +215,7 @@ export class JobsRepository {
 
   async setSaved(id: string, isSaved: boolean) {
     const res = await query(
-      'UPDATE jobs SET is_saved = $1, updated_at = NOW() WHERE id = $2 RETURNING *',
+      `UPDATE jobs SET is_saved = $1, updated_at = NOW() WHERE id = $2 RETURNING ${JOB_COLUMNS}`,
       [isSaved, id]
     );
     return res.rows[0] || null;

@@ -142,6 +142,11 @@ class LiveJobDiscoveryService {
   /// Fetches every provider in parallel, de-duplicates against the database
   /// and within the batch, and inserts new jobs in a single transaction.
   ///
+  /// DEPRECATED for live jobs: the Jobs screen and the background worker now read from the
+  /// backend (`GET /api/v1/jobs`), whose hourly sync is the single discovery engine. This
+  /// on-device path remains only as a manual fallback / for [AiJobSearchService.toCompanion]
+  /// and its tests; do not add new callers.
+  ///
   /// Never throws for network problems: failures are reported per source in
   /// [DiscoveryBatchResult.sources] and nothing is fabricated to fill gaps.
   Future<DiscoveryBatchResult> discoverAndSyncJobs({

@@ -7,6 +7,6 @@ module.exports = {
   transform: {
     '^.+\\.tsx?$': ['ts-jest', { tsconfig: 'tsconfig.json' }],
   },
-  setupFiles: ['dotenv/config'],
+  setupFiles: ['dotenv/config', '<rootDir>/tests/setup-env.ts'],
   testTimeout: 20000,
 };

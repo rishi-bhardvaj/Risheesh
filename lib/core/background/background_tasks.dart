@@ -3,10 +3,10 @@ import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
 import 'package:workmanager/workmanager.dart';
 import '../database/app_database.dart';
+import '../network/api_client.dart';
 import '../notifications/notification_service.dart';
-import '../../features/career/domain/job_search_criteria_builder.dart';
+import '../../features/career/providers/career_providers.dart';
 import '../../features/career/services/job_scoring_service.dart';
-import '../../features/career/services/live_job_discovery_service.dart';
 
 const String kPeriodicJobSyncTask = 'com.risheesh.sync_jobs';
 
@@ -20,23 +20,11 @@ void callbackDispatcher() {
 
         final profile = await db.getProfile();
         final resume = await db.getPrimaryResume();
-        final candidate = JobScoringService.buildCandidateProfile(
-          profile: profile,
-          primaryResume: resume,
-        );
 
-        final discovery = LiveJobDiscoveryService(db: db);
-        final criteria = JobSearchCriteria(
-          roleQueries: candidate.primarySkills.isNotEmpty
-              ? [candidate.currentRole, ...candidate.primarySkills.take(2)]
-              : ['Flutter', 'Software Engineer'],
-          topSkills: candidate.primarySkills,
-          remoteOnly: profile?.remotePreference == 'remote',
-        );
+        // Jobs are discovered by the backend's hourly sync; the device only pulls the results.
+        final result = await CareerRepository(db, apiClient: ApiClient()).refreshJobsFromBackend();
 
-        final result = await discovery.discoverAndSyncJobs(criteria: criteria);
-
-        if (result.newJobsSaved > 0) {
+        if (result.inserted > 0) {
           // Score newly inserted jobs
           await JobScoringService.reScoreAllJobs(db, profile: profile, primaryResume: resume);
 
@@ -50,7 +38,7 @@ void callbackDispatcher() {
           if (topJobs.isNotEmpty) {
             final top = topJobs.first;
             await notifService.notifyMatchingJobs(
-              count: result.newJobsSaved,
+              count: result.inserted,
               topTitle: top.title,
               company: top.company,
               topScore: top.matchScore ?? 80,

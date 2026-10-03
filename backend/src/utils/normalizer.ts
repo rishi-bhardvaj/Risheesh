@@ -1,3 +1,5 @@
+import { URL, URLSearchParams } from 'url';
+
 export function normalizeUrl(url?: string | null): string | null {
   if (!url) return null;
   const trimmed = url.trim();
@@ -6,7 +8,7 @@ export function normalizeUrl(url?: string | null): string | null {
     const parsed = new URL(trimmed);
     // remove tracking query parameters
     const searchParams = new URLSearchParams(parsed.search);
-    for (const key of Array.from(searchParams.keys())) {
+    for (const key of Array.from(searchParams.keys()) as string[]) {
       if (
         key.startsWith('utm_') ||
         key === 'ref' ||
